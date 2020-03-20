@@ -1,0 +1,2 @@
+rootProject.name='ANDROID_DCT'
+include ':app'
