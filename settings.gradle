@@ -1,2 +1,3 @@
 rootProject.name='ANDROID_DCT'
-include ':app'
+include ':app', ':alienapi'
+include ':scanner'
