@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -8,13 +8,13 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.finnflare.android_dct"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
@@ -35,7 +35,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -47,9 +46,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.4"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4"
 
-    //RuntimePermissions
-    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
-
     def room_version = "2.2.5"
 
     // Room
@@ -58,8 +54,4 @@ dependencies {
 
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
-
-    implementation project(path: ':scanner')
-    implementation project(path: ':dct_network')
-    implementation project(path: ':dct_database')
 }
