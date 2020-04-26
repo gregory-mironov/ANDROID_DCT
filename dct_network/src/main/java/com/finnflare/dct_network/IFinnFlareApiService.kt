@@ -1,19 +1,19 @@
 package com.finnflare.dct_network
 
-import com.finnflare.dct_network.dataclasses.actual_docs.CActualDocsRequest
-import com.finnflare.dct_network.dataclasses.actual_docs.CActualDocsResponse
-import com.finnflare.dct_network.dataclasses.auth.CAuthRequest
-import com.finnflare.dct_network.dataclasses.auth.CAuthResponse
-import com.finnflare.dct_network.dataclasses.docs.CDocsRequest
-import com.finnflare.dct_network.dataclasses.docs.CDocsResponse
-import com.finnflare.dct_network.dataclasses.shops.CShopsRequest
-import com.finnflare.dct_network.dataclasses.shops.CShopsResponse
-import com.finnflare.dct_network.dataclasses.stocks.CStocksRequest
-import com.finnflare.dct_network.dataclasses.stocks.CStocksResponse
-import com.finnflare.dct_network.dataclasses.stores.CStoresRequest
-import com.finnflare.dct_network.dataclasses.stores.CStoresResponse
-import com.finnflare.dct_network.dataclasses.users.CUsersRequest
-import com.finnflare.dct_network.dataclasses.users.CUsersResponse
+import com.finnflare.dct_network.classes.actual_docs.CActualDocsRequest
+import com.finnflare.dct_network.classes.actual_docs.CActualDocsResponse
+import com.finnflare.dct_network.classes.auth.CAuthRequest
+import com.finnflare.dct_network.classes.auth.CAuthResponse
+import com.finnflare.dct_network.classes.docs.CDocsRequest
+import com.finnflare.dct_network.classes.docs.CDocsResponse
+import com.finnflare.dct_network.classes.shops.CShopsRequest
+import com.finnflare.dct_network.classes.shops.CShopsResponse
+import com.finnflare.dct_network.classes.stocks.CStocksRequest
+import com.finnflare.dct_network.classes.stocks.CStocksResponse
+import com.finnflare.dct_network.classes.stores.CStoresRequest
+import com.finnflare.dct_network.classes.stores.CStoresResponse
+import com.finnflare.dct_network.classes.users.CUsersRequest
+import com.finnflare.dct_network.classes.users.CUsersResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
