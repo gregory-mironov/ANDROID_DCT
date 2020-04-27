@@ -82,7 +82,7 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                 }
 
                 if (!response.body()!!.response.error)
-                    authSuccessful.value = true
+                    authSuccessful.postValue(true)
                 
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
