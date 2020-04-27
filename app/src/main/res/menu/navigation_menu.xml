@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/grp1">
+        <item
+            android:title="@string/save_results"/>
+        <item
+            android:title="@string/upload_result_from_file"/>
+        <item
+            android:title="@string/change_location"/>
+        <item
+            android:title="@string/change_storage"/>
+        <item
+            android:title="@string/reset_results"/>
+    </group>
+
+    <group android:id="@+id/grp2">
+        <item
+            android:title="@string/setting"/>
+        <item
+            android:title="@string/info"/>
+    </group>
+</menu>
