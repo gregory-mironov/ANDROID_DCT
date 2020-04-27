@@ -2,6 +2,7 @@ package com.finnflare.dct_network
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.dct_database.insertable_classes.*
 import com.finnflare.dct_network.classes.Header
@@ -24,7 +25,9 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
     private val token = "dc93c239cfcb11d8d0789183204e35462ca9b69c"
 
     private val database by inject<CDatabaseViewModel>()
-    
+
+    val authSuccessful = MutableLiveData<Boolean>()
+
     fun getUsersList() {
         CoroutineScope(netDispatcher).launch {
             try {
@@ -77,6 +80,10 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                 if (!response.isSuccessful) {
                     return@launch
                 }
+
+                if (!response.body()!!.response.error)
+                    authSuccessful.value = true
+                
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
