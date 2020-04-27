@@ -1,12 +1,15 @@
 package com.finnflare.android_dct.di
 
-import com.finnflare.android_dct.presenter.CDatabasePresenter
-import com.finnflare.android_dct.presenter.CNetworkPresenter
-import com.finnflare.android_dct.repository.database.request_results.CAppDatabase
-import org.koin.android.ext.koin.androidContext
+import com.finnflare.dct_database.CDatabaseViewModel
+import com.finnflare.dct_network.CNetworkViewModel
+import com.finnflare.scanner.CScannerViewModel
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
-val presentersModule = module(override = true) {
-    single { CNetworkPresenter() }
-    single { CAppDatabase.getInstance(androidContext())}
+@ObsoleteCoroutinesApi
+val viewModelsModule = module(override = true) {
+    single { CScannerViewModel(androidApplication()) }
+    single { CNetworkViewModel(androidApplication()) }
+    single { CDatabaseViewModel(androidApplication()) }
 }
