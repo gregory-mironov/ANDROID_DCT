@@ -13,7 +13,7 @@ data class MarkingCode(
     @Json(name = "_RFID")
     val rfid: Any,
     @Json(name = "_SN")
-    val sd: Any,
+    val sn: Any,
     @Json(name = "_STATE")
     val state: String
 )

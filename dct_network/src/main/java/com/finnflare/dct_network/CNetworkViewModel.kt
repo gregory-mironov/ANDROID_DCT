@@ -2,6 +2,8 @@ package com.finnflare.dct_network
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.finnflare.dct_database.CDatabaseViewModel
+import com.finnflare.dct_database.insertable_classes.*
 import com.finnflare.dct_network.classes.Header
 import com.finnflare.dct_network.classes.actual_docs.CActualDocsRequest
 import com.finnflare.dct_network.classes.auth.CAuthRequest
@@ -12,15 +14,17 @@ import com.finnflare.dct_network.classes.stores.CStoresRequest
 import com.finnflare.dct_network.classes.users.CUsersRequest
 import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 @ObsoleteCoroutinesApi
 class CNetworkViewModel(application: Application): AndroidViewModel(application), KoinComponent {
     private val netDispatcher: CoroutineDispatcher = newSingleThreadContext("NetCoroutine")
-
     private val token = "dc93c239cfcb11d8d0789183204e35462ca9b69c"
 
+    private val database by inject<CDatabaseViewModel>()
+    
     fun getUsersList() {
         CoroutineScope(netDispatcher).launch {
             try {
@@ -37,6 +41,16 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                 if (!response.isSuccessful) {
                     return@launch
                 }
+
+                response.body()?.response?.data?.let {
+                    val users = mutableListOf<User>()
+
+                    it.forEach {user ->
+                        users.add(User(user.id, user.name))
+                    }
+
+                    database.insertUsers(users)
+                }
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
@@ -44,7 +58,7 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun verifyLogin(login: String, password: String) {
+    fun checkAuth(login: String, password: String) {
         CoroutineScope(netDispatcher).launch {
             try {
                 val request = CAuthRequest(
@@ -63,7 +77,6 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                 if (!response.isSuccessful) {
                     return@launch
                 }
-
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
@@ -87,6 +100,16 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                 if (!response.isSuccessful) {
                     return@launch
                 }
+
+                response.body()?.response?.data?.let {
+                    val shops = mutableListOf<Shop>()
+
+                    it.forEach { shop ->
+                        shops.add(Shop(shop.id, shop.name, shop.httpRef))
+                    }
+
+                    database.insertShops(shops)
+                }
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
@@ -109,6 +132,21 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
 
                 if (!response.isSuccessful) {
                     return@launch
+                }
+
+                response.body()?.response?.data?.let {
+                    val stores = mutableListOf<Store>()
+
+                    it.forEach { store ->
+                        stores.add(Store(
+                            store.id,
+                            store.name,
+                            store.shopId,
+                            store.storeType.toString()
+                        ))
+                    }
+
+                    database.insertStores(stores)
                 }
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
@@ -137,6 +175,27 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                     return@launch
                 }
 
+                response.body()?.response?.data?.let {
+                    val docs = mutableListOf<Doc>()
+
+                    it.forEach { doc ->
+                        docs.add(Doc(
+                            doc.auditor,
+                            doc.basis,
+                            doc.comment,
+                            doc.docDate,
+                            doc.docNumber,
+                            doc.docSum,
+                            doc.id,
+                            doc.priceType,
+                            doc.qty,
+                            doc.qtyFact,
+                            doc.storeId
+                        ))
+                    }
+
+                    database.insertDocs(docs)
+                }
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
@@ -163,6 +222,50 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                     return@launch
                 }
 
+                response.body()?.response?.let {
+                    val goods = mutableListOf<Good>()
+                    it.goods.Goods.forEach {good ->
+                        goods.add(
+                            Good(
+                            good.color,
+                            good.guid,
+                            good.model,
+                            good.name,
+                            good.size
+                        )
+                        )
+                    }
+
+                    val leftovers = mutableListOf<Leftover>()
+                    it.leftovers.leftovers.forEach {lo ->
+                        leftovers.add(
+                            Leftover(
+                            lo.docGuid,
+                            lo.docNumber,lo.gtin,
+                            lo.guid,
+                            lo.qtyin,
+                            lo.rfid.toString(),
+                            lo.sn.toString(),
+                            lo.state,
+                            lo.storeGuid
+                        )
+                        )
+                    }
+
+                    val markingCodes = mutableListOf<MarkingCode>()
+                    it.markingCodes.markingCodes.forEach {mc ->
+                        markingCodes.add(
+                            MarkingCode(
+                            mc.gtin,
+                            mc.guid,
+                            mc.rfid.toString(),
+                            mc.sn.toString(),
+                            mc.state
+                        ))
+                    }
+
+                    database.insertStocks(goods, leftovers, markingCodes)
+                }
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
@@ -188,7 +291,6 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                 if (!response.isSuccessful) {
                     return@launch
                 }
-
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {

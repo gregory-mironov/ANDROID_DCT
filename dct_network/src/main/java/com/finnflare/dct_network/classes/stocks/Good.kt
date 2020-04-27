@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class GOODSX(
+data class Good(
     @Json(name = "_COLOR")
     val color: String,
     @Json(name = "_GUID")

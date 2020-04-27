@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.finnflare.dct_database.entity.CEntityLeftovers
-import com.finnflare.dct_database.entity.CEntityRfidLeftovers
 
 @Dao
 abstract class CDaoLeftovers:
@@ -28,5 +27,5 @@ abstract class CDaoLeftovers:
     abstract fun findByGuid(aGuid: String): List<CEntityLeftovers>
 
     @Query("SELECT * FROM leftovers WHERE _rfid = :aRfid")
-    abstract fun findByRfid(aRfid: String): CEntityRfidLeftovers
+    abstract fun findByRfid(aRfid: String): CEntityLeftovers
 }
