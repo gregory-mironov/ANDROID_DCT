@@ -4,25 +4,23 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.finnflare.android_dct.repository.database.entity.*
-import com.finnflare.dct_database.dao.*
 import com.finnflare.dct_database.entity.*
+import com.finnflare.dct_database.dao.*
 
 @Database(
     entities = [
         CEntityUsers::class,
         CEntityShops::class,
         CEntityStores::class,
-        CEntityDoc::class,
+        CEntityDocs::class,
         CEntityGoods::class,
         CEntityLeftovers::class,
-        CEntityRfidLeftovers::class,
         CEntityMarkingCodes::class,
         CEntityStates::class
     ],
     version = 1
 )
-abstract class CAppDatabase: RoomDatabase() {
+internal abstract class CAppDatabase: RoomDatabase() {
     abstract fun usersDao(): CDaoUsers
     abstract fun shopsDao(): CDaoShops
     abstract fun storesDao(): CDaoStores

@@ -1,4 +1,4 @@
-package com.finnflare.android_dct.repository.database.entity
+package com.finnflare.dct_database.entity
 
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo

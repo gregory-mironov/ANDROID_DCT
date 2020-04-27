@@ -3,7 +3,7 @@ package com.finnflare.dct_database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.finnflare.android_dct.repository.database.entity.CEntityUsers
+import com.finnflare.dct_database.entity.CEntityUsers
 
 @Dao
 abstract class CDaoUsers:

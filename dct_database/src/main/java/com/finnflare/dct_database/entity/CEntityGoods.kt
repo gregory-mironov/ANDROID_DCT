@@ -11,6 +11,5 @@ data class CEntityGoods (
     @ColumnInfo(name = "_description")                      var mDescription: String,
     @ColumnInfo(name = "_model")                            var mModel: String,
     @ColumnInfo(name = "_color")                            var mColor: String,
-    @ColumnInfo(name = "_size")                             var mSize: String,
-    @ColumnInfo(name = "_qtyout")                           var mQtyout: Int = 0
+    @ColumnInfo(name = "_size")                             var mSize: String
 )
