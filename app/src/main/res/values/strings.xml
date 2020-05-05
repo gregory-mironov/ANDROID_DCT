@@ -15,8 +15,6 @@
 
     <string name="label_save_results">Save results</string>
     <string name="label_upload_result_from_file">Upload result from file</string>
-    <string name="label_change_location">Change location</string>
-    <string name="label_change_storage">Change storage</string>
     <string name="label_reset_results">Reset results</string>
     <string name="label_setting">Setting</string>
     <string name="label_info">Info</string>

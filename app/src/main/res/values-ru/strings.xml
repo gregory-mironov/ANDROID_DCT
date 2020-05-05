@@ -11,8 +11,6 @@
 
     <string name="label_save_results">Сохранить результаты</string>
     <string name="label_upload_result_from_file">Загрузить результаты из файла</string>
-    <string name="label_change_location">Изменить локацию</string>
-    <string name="label_change_storage">Изменить зону сканирования</string>
     <string name="label_reset_results">Сброс результатов</string>
     <string name="label_setting">Настройки</string>
     <string name="label_info">Информация</string>

@@ -7,10 +7,6 @@
         <item
             android:title="@string/label_upload_result_from_file"/>
         <item
-            android:title="@string/label_change_location"/>
-        <item
-            android:title="@string/label_change_storage"/>
-        <item
             android:title="@string/label_reset_results"/>
     </group>
 
