@@ -2,15 +2,14 @@ package com.finnflare.android_dct.ui.location.location
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
-
 import com.finnflare.android_dct.ui.location.location.DummyLocationChooseFragmentContent.LocationDummyItem
 
 class LocationChooseFragment : Fragment() {
@@ -34,7 +33,7 @@ class LocationChooseFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_location_choose, container, false)
 
         // Set the adapter
-        val recyclerView = view.findViewById<RecyclerView>(R.id.fragment_location_choose_recycler)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.f_location_recycler)
         with(recyclerView) {
             layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)

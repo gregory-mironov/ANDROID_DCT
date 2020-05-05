@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/barcode_nav"
+        android:icon="@drawable/ic_star_border_black_24dp"
+        android:title="@string/bottom_navigation_barcode" />
+
+    <item
+        android:id="@+id/rfid_nav"
+        android:icon="@drawable/ic_rfid_black_24dp"
+        android:title="@string/bottom_navigation_rfid" />
+
+    <item
+        android:id="@+id/plan_nav"
+        android:icon="@drawable/ic_stars_black_24dp"
+        android:title="@string/bottom_navigation_plan" />
+
+    <item
+        android:id="@+id/fact_nav"
+        android:icon="@drawable/ic_star_black_24dp"
+        android:title="@string/bottom_navigation_fact" />
+
+    <item
+        android:id="@+id/search_nav"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/bottom_navigation_search" />
+
+</menu>

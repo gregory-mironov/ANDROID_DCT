@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorPrimary">#B2BCC6</color>
+    <color name="colorPrimaryDark">#47525e</color>
     <color name="colorAccent">#03DAC5</color>
 
-    <color name="toolbar_background">#B2BCC6</color>
+    <color name="foreground_on_dark">#FFFFFF</color>
+    <color name="foreground_on_light">#000000</color>
 
-    <color name="login_button_background">#47525e</color>
-    <color name="login_button_foreground">#ffffff</color>
+    <color name="toolbar_background">@color/colorPrimary</color>
 
-    <color name="navigation_background">#1d2d3d</color>
-    <color name="navigation_foreground">#ffffff</color>
-    <color name="navigation_header_background">#273445</color>
-    <color name="navigation_header_foreground">#ffffff</color>
+    <color name="login_button_background">@color/colorPrimaryDark</color>
+    <color name="login_button_foreground">@color/foreground_on_dark</color>
 
-    <color name="recycledview_title">#000000</color>
-    <color name="recycledview_subtitle">#7D7D7D</color>
-    <color name="bottom_nav_foreground">#000000</color>
+    <color name="drawer_navigation_menu_background">#1d2d3d</color>
+    <color name="drawer_navigation_menu_foreground">@color/foreground_on_dark</color>
+    <color name="drawer_navigation_header_background">#273445</color>
+    <color name="drawer_navigation_header_foreground">@color/foreground_on_dark</color>
+
+    <color name="item_recycled_title">@color/foreground_on_light</color>
+    <color name="item_recycled_subtitle">#7D7D7D</color>
+    <color name="bottom_navigation_foreground">@color/foreground_on_light</color>
 
 </resources>

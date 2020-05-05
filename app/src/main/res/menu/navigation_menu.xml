@@ -3,21 +3,21 @@
 
     <group android:id="@+id/grp1">
         <item
-            android:title="@string/save_results"/>
+            android:title="@string/label_save_results"/>
         <item
-            android:title="@string/upload_result_from_file"/>
+            android:title="@string/label_upload_result_from_file"/>
         <item
-            android:title="@string/change_location"/>
+            android:title="@string/label_change_location"/>
         <item
-            android:title="@string/change_storage"/>
+            android:title="@string/label_change_storage"/>
         <item
-            android:title="@string/reset_results"/>
+            android:title="@string/label_reset_results"/>
     </group>
 
     <group android:id="@+id/grp2">
         <item
-            android:title="@string/setting"/>
+            android:title="@string/label_setting"/>
         <item
-            android:title="@string/info"/>
+            android:title="@string/label_info"/>
     </group>
 </menu>

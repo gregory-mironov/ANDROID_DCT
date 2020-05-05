@@ -13,6 +13,6 @@ class ItemScanFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_item_scan, container, false)
+        return inflater.inflate(R.layout.fragment_barcode, container, false)
     }
 }

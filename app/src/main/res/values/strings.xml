@@ -5,37 +5,35 @@
     <string name="label_password">Password</string>
     <string name="label_log_in">Log in</string>
 
-    <string name="activity_login_toolbar_label">TCD</string>
-    <string name="item_1">Item 1</string>
-    <string name="item_2">Item 2</string>
+    <string name="a_login_title">Authorization</string>
+    <string name="a_location_title">Location</string>
+    <string name="a_items_title">Items</string>
 
-    <string name="activity_login_title">Authorization</string>
-    <string name="activity_location_title">Location</string>
-    <string name="activity_items_title">Items</string>
+    <string name="label_finn_flare">Finn Flare</string>
 
-    <string name="andorid_dct">ANDORID DCT</string>
-    <string name="finn_flare">Finn Flare</string>
+    <string name="label_save_results">Save results</string>
+    <string name="label_upload_result_from_file">Upload result from file</string>
+    <string name="label_change_location">Change location</string>
+    <string name="label_change_storage">Change storage</string>
+    <string name="label_reset_results">Reset results</string>
+    <string name="label_setting">Setting</string>
+    <string name="label_info">Info</string>
 
-    <string name="save_results">Save results</string>
-    <string name="upload_result_from_file">Upload result from file</string>
-    <string name="change_location">Change location</string>
-    <string name="change_storage">Change storage</string>
-    <string name="reset_results">Reset results</string>
-    <string name="setting">Setting</string>
-    <string name="info">Info</string>
-    <string name="location_list">Location list</string>
-    <string name="storages">Storages</string>
-    <string name="title_activity_items">ItemsActivity</string>
+    <string name="label_location_list">Location list</string>
+    <string name="label_storages_list">Storages list</string>
 
-    <string name="barcode_nav">Barcode</string>
-    <string name="rfid_nav">RFID</string>
-    <string name="plan_nav">Plan</string>
-    <string name="fact_nav">Fact</string>
-    <string name="search_nav">Item</string>
-    <string name="label_search">Search</string>
+    <string name="bottom_navigation_barcode">Barcode</string>
+    <string name="bottom_navigation_rfid">RFID</string>
+    <string name="bottom_navigation_plan">Plan</string>
+    <string name="bottom_navigation_fact">Fact</string>
+    <string name="bottom_navigation_search">Item</string>
+
     <string name="label_fragment_item_scan">Fragment item scan</string>
     <string name="label_fragment_item_search">Fragment item search</string>
     <string name="label_fragment_rfid_item_scan">Fragment RFID item scan</string>
+
+    <string name="label_search">Search</string>
+
     <string name="label_some_information">Some information</string>
     <string name="label_item_image">Item image</string>
 

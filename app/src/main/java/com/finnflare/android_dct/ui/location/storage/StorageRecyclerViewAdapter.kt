@@ -1,17 +1,15 @@
 package com.finnflare.android_dct.ui.location.storage
 
-import androidx.recyclerview.widget.RecyclerView
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
-
-
-import com.finnflare.android_dct.ui.location.storage.StorageChooseFragment.OnListStorageChooseFragmentInteractionListener
 import com.finnflare.android_dct.ui.location.storage.DummyStorageChooseFragmentContent.StorageDummyItem
-
-import kotlinx.android.synthetic.main.fragment_location_choose_item.view.*
+import com.finnflare.android_dct.ui.location.storage.StorageChooseFragment.OnListStorageChooseFragmentInteractionListener
+import kotlinx.android.synthetic.main.fragment_storage_choose_item.view.*
 
 class StorageRecyclerViewAdapter(
     private val mValues: List<StorageDummyItem>,
@@ -31,14 +29,14 @@ class StorageRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_location_choose_item, parent, false)
+            .inflate(R.layout.fragment_storage_choose_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues.get(position)
-        holder.mIdView.text = item.title
-        holder.mContentView.text = item.subtitle
+        holder.mTitleView.text = item.title
+        holder.mSubtitleView.text = item.subtitle
 
         with(holder.mView) {
             tag = item
@@ -49,11 +47,11 @@ class StorageRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.location_textview
-        val mContentView: TextView = mView.storages_number_textview
+        val mTitleView: TextView = mView.f_storage_item_title
+        val mSubtitleView: TextView = mView.f_storage_item_subtitle
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
+            return super.toString() + mTitleView.text + " : " + mSubtitleView.text
         }
     }
 }

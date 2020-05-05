@@ -2,22 +2,16 @@ package com.finnflare.android_dct.ui.location.storage
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
-
 import com.finnflare.android_dct.ui.location.storage.DummyStorageChooseFragmentContent.StorageDummyItem
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [StorageChooseFragment.OnListStorageChooseFragmentInteractionListener] interface.
- */
 class StorageChooseFragment : Fragment() {
 
     private var columnCount = 1
@@ -36,10 +30,10 @@ class StorageChooseFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_location_choose, container, false)
+        val view = inflater.inflate(R.layout.fragment_storage_choose, container, false)
 
         // Set the adapter
-        val recyclerView = view.findViewById<RecyclerView>(R.id.fragment_location_choose_recycler)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.f_storage_recycler)
         with(recyclerView) {
             layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)
@@ -70,17 +64,6 @@ class StorageChooseFragment : Fragment() {
         listener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
     interface OnListStorageChooseFragmentInteractionListener {
         fun onListStorageChooseFragmentInteraction(item: StorageDummyItem?)
     }

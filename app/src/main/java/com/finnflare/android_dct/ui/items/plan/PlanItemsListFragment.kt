@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,10 +35,10 @@ class PlanItemsListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_plan_items, container, false)
+        val view = inflater.inflate(R.layout.fragment_plan, container, false)
 
         // Set the adapter
-        val recyclerView = view.findViewById<RecyclerView>(R.id.fragment_plan_items_recycler)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.f_plan_recycler)
         with(recyclerView) {
             layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)

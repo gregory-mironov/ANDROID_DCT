@@ -1,13 +1,12 @@
 package com.finnflare.android_dct.ui.items.plan
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
-
-import kotlinx.android.synthetic.main.fragment_items_list_item.view.*
+import kotlinx.android.synthetic.main.fragment_list_item.view.*
 
 class PlanRecyclerViewAdapter(
     private val mValues: List<DummyPlanItemsListFragmentContent.PlanDummyItem>,
@@ -27,14 +26,14 @@ class PlanRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_items_list_item, parent, false)
+            .inflate(R.layout.fragment_list_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues.get(position)
-        holder.mIdView.text = item.title
-        holder.mContentView.text = item.subtitle
+        holder.mTitleView.text = item.title
+        holder.mSubtitleView.text = item.subtitle
 
         with(holder.mView) {
             tag = item
@@ -45,11 +44,11 @@ class PlanRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.fragment_plan_item_title
-        val mContentView: TextView = mView.fragment_plan_item_subtitle
+        val mTitleView: TextView = mView.f_items_item_title
+        val mSubtitleView: TextView = mView.f_items_item_subtitle
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
+            return super.toString() + " '" + mSubtitleView.text + "'"
         }
     }
 }

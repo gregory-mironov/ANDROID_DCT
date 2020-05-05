@@ -10,9 +10,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.items.barcode.ItemScanFragment
-import com.finnflare.android_dct.ui.items.plan.ContentFactItemsListFragment
+import com.finnflare.android_dct.ui.items.fact.ContentFactItemsListFragment
+import com.finnflare.android_dct.ui.items.fact.FactItemsListFragment
 import com.finnflare.android_dct.ui.items.plan.DummyPlanItemsListFragmentContent
-import com.finnflare.android_dct.ui.items.plan.FactItemsListFragment
 import com.finnflare.android_dct.ui.items.plan.PlanItemsListFragment
 import com.finnflare.android_dct.ui.items.rfid.RFIDItemScanFragment
 import com.finnflare.android_dct.ui.items.search.ItemSearchFragment
@@ -29,21 +29,21 @@ class ItemsActivity : AppCompatActivity(),
 
         configureToolbar()
 
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.a_items_bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(
-                R.id.activity_items_placeholder,
+                R.id.a_items_placeholder,
                 ItemScanFragment()
             ).commit()
         }
     }
 
     private fun configureToolbar() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val toolbar: Toolbar = findViewById(R.id.a_items_toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = getString(R.string.activity_items_title)
+        supportActionBar?.title = getString(R.string.a_items_title)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
@@ -64,7 +64,7 @@ class ItemsActivity : AppCompatActivity(),
                     else -> throw Exception("Error in when !!!")
                 }
                 supportFragmentManager.beginTransaction().replace(
-                    R.id.activity_items_placeholder,
+                    R.id.a_items_placeholder,
                     selectedFragment
                 ).commit()
                 return true
@@ -87,7 +87,7 @@ class ItemsActivity : AppCompatActivity(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> findViewById<DrawerLayout>(R.id.activity_items_drawer_layout).
+            android.R.id.home -> findViewById<DrawerLayout>(R.id.a_items_drawer_layout).
             openDrawer(GravityCompat.START)
         }
         return true

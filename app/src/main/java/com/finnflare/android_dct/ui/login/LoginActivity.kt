@@ -2,8 +2,6 @@ package com.finnflare.android_dct.ui.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -27,18 +25,18 @@ class LoginActivity : AppCompatActivity() {
 
         configureToolbar()
 
-        val button = findViewById<Button>(R.id.login_button)
+        val button = findViewById<Button>(R.id.a_login_button)
         button.setOnClickListener {
-            network.checkAuth(loginField.text.toString(), pwdField.text.toString())
+            network.checkAuth(a_login_login_field.text.toString(), a_login_password_field.text.toString())
         }
 
         configureObservers()
     }
 
     private fun configureToolbar() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val toolbar: Toolbar = findViewById(R.id.a_login_toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = getString(R.string.activity_login_title)
+        supportActionBar?.title = getString(R.string.a_login_title)
     }
 
     private fun configureObservers() {
