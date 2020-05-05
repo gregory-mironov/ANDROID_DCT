@@ -21,4 +21,7 @@
     <color name="item_recycled_subtitle">#7D7D7D</color>
     <color name="bottom_navigation_foreground">@color/foreground_on_light</color>
 
+    <color name="dialog_fragment_title">#000000</color>
+    <color name="dialog_fragment_main_text">#898989</color>
+
 </resources>

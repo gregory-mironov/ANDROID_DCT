@@ -11,8 +11,6 @@
 
     <string name="label_save_results">Сохранить результаты</string>
     <string name="label_upload_result_from_file">Загрузить результаты из файла</string>
-    <string name="label_change_location">Изменить локацию</string>
-    <string name="label_change_storage">Изменить зону сканирования</string>
     <string name="label_reset_results">Сброс результатов</string>
     <string name="label_setting">Настройки</string>
     <string name="label_info">Информация</string>
@@ -32,6 +30,11 @@
     <string name="label_search">Поиск</string>
 
     <string name="label_some_information">Некоторая информация</string>
+
+    <string name="d_f_info_title">Информация</string>
+    <string name="d_f_info_developers">Разработчики:\nМиронов Григорий\nНедолужко Денис</string>
+    <string name="d_f_info_about_app">Это приложение разработано для терминалов сбора данных о товарах</string>
+    <string name="d_f_info_version">Версия 1.0</string>
 
     <string-array name="f_plan_sninner_items">
         <item>Найденные ожидаемые</item>
