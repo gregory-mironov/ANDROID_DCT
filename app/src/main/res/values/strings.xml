@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ANDROID_DCT</string>
+
+    <string name="app_name" translatable="false">ANDROID_DCT</string>
 
     <string name="label_login">Login</string>
     <string name="label_password">Password</string>
@@ -9,7 +11,7 @@
     <string name="a_location_title">Location</string>
     <string name="a_items_title">Items</string>
 
-    <string name="label_finn_flare">Finn Flare</string>
+    <string name="label_finn_flare" translatable="false">Finn Flare</string>
 
     <string name="label_save_results">Save results</string>
     <string name="label_upload_result_from_file">Upload result from file</string>
@@ -23,10 +25,10 @@
     <string name="label_storages_list">Storages list</string>
 
     <string name="bottom_navigation_barcode">Barcode</string>
-    <string name="bottom_navigation_rfid">RFID</string>
+    <string name="bottom_navigation_rfid" translatable="false">RFID</string>
     <string name="bottom_navigation_plan">Plan</string>
     <string name="bottom_navigation_fact">Fact</string>
-    <string name="bottom_navigation_search">Item</string>
+    <string name="bottom_navigation_search">Search</string>
 
     <string name="label_fragment_item_scan">Fragment item scan</string>
     <string name="label_fragment_item_search">Fragment item search</string>
@@ -35,6 +37,16 @@
     <string name="label_search">Search</string>
 
     <string name="label_some_information">Some information</string>
-    <string name="label_item_image">Item image</string>
+    <string name="label_item_image" translatable="false">Item image</string>
+
+    <string-array name="f_plan_sninner_items">
+        <item>Correct plan</item>
+        <item>Wrong plan</item>
+    </string-array>
+
+    <string-array name="f_fact_sninner_items">
+        <item>Correct fact</item>
+        <item>Wrong fact</item>
+    </string-array>
 
 </resources>

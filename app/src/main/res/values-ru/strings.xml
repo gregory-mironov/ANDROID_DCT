@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="label_login">Логин</string>
+    <string name="label_password">Пароль</string>
+    <string name="label_log_in">Войти</string>
+
+    <string name="a_login_title">Авторизация</string>
+    <string name="a_location_title">Местоположение</string>
+    <string name="a_items_title">Товары</string>
+
+    <string name="label_save_results">Сохранить результаты</string>
+    <string name="label_upload_result_from_file">Загрузить результаты из файла</string>
+    <string name="label_change_location">Изменить локацию</string>
+    <string name="label_change_storage">Изменить зону сканирования</string>
+    <string name="label_reset_results">Сброс результатов</string>
+    <string name="label_setting">Настройки</string>
+    <string name="label_info">Информация</string>
+
+    <string name="label_location_list">Список локаций</string>
+    <string name="label_storages_list">Список зон сканирования</string>
+
+    <string name="bottom_navigation_barcode">Штрихкод</string>
+    <string name="bottom_navigation_plan">Ожидаемые</string>
+    <string name="bottom_navigation_fact">Полученные</string>
+    <string name="bottom_navigation_search">Поиск</string>
+
+    <string name="label_fragment_item_scan">Фрагмент сканирования товаров</string>
+    <string name="label_fragment_item_search">Фрагмент поиска товавор</string>
+    <string name="label_fragment_rfid_item_scan">Фрагмент сканирования по RFID</string>
+
+    <string name="label_search">Поиск</string>
+
+    <string name="label_some_information">Некоторая информация</string>
+
+    <string-array name="f_plan_sninner_items">
+        <item>Найденные ожидаемые</item>
+        <item>Ненайденные ожидаемые</item>
+    </string-array>
+
+    <string-array name="f_fact_sninner_items">
+        <item>Ожидаемые полученные</item>
+        <item>Лишние полученные</item>
+    </string-array>
+
+</resources>
