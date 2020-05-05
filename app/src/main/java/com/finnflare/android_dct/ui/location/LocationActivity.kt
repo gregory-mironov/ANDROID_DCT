@@ -12,11 +12,13 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import com.finnflare.android_dct.R
+import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
 import com.finnflare.android_dct.ui.items.ItemsActivity
 import com.finnflare.android_dct.ui.location.location.DummyLocationChooseFragmentContent
 import com.finnflare.android_dct.ui.location.location.LocationChooseFragment
 import com.finnflare.android_dct.ui.location.storage.DummyStorageChooseFragmentContent
 import com.finnflare.android_dct.ui.location.storage.StorageChooseFragment
+import com.google.android.material.navigation.NavigationView
 
 
 class LocationActivity : AppCompatActivity(),
@@ -32,6 +34,10 @@ class LocationActivity : AppCompatActivity(),
         val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
         ft.replace(R.id.a_location_placeholder, LocationChooseFragment())
         ft.commit()
+
+        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
+        DrawerNavigationListener.context = this
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
     }
 
     private fun configureToolbar() {

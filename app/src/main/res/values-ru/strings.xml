@@ -31,6 +31,11 @@
 
     <string name="label_some_information">Некоторая информация</string>
 
+    <string name="d_f_info_title">Информация</string>
+    <string name="d_f_info_developers">Разработчики:\nМиронов Григорий\nНедолужко Денис</string>
+    <string name="d_f_info_about_app">Это приложение разработано для терминалов сбора данных о товарах</string>
+    <string name="d_f_info_version">Версия 1.0</string>
+
     <string-array name="f_plan_sninner_items">
         <item>Найденные ожидаемые</item>
         <item>Ненайденные ожидаемые</item>

@@ -37,6 +37,12 @@
     <string name="label_some_information">Some information</string>
     <string name="label_item_image" translatable="false">Item image</string>
 
+    <string name="d_f_info_title">Info</string>
+    <string name="d_f_info_about_app">This app is designed for a terminal for collecting
+        product data.</string>
+    <string name="d_f_info_developers">Developers:\nMironov Gregory\nNedoluzhko Denis</string>
+    <string name="d_f_info_version">Version 1.0</string>
+
     <string-array name="f_plan_sninner_items">
         <item>Correct plan</item>
         <item>Wrong plan</item>

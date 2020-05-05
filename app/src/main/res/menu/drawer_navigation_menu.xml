@@ -3,17 +3,22 @@
 
     <group android:id="@+id/grp1">
         <item
+            android:id="@+id/d_nav_save_results"
             android:title="@string/label_save_results"/>
         <item
+            android:id="@+id/d_nav_upload_result_from_file"
             android:title="@string/label_upload_result_from_file"/>
         <item
+            android:id="@+id/d_nav_reset_results"
             android:title="@string/label_reset_results"/>
     </group>
 
     <group android:id="@+id/grp2">
         <item
+            android:id="@+id/d_nav_setting"
             android:title="@string/label_setting"/>
         <item
+            android:id="@+id/d_nav_info"
             android:title="@string/label_info"/>
     </group>
 </menu>

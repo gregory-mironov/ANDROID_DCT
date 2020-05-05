@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.finnflare.android_dct.R
+import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
 import com.finnflare.android_dct.ui.items.barcode.ItemScanFragment
 import com.finnflare.android_dct.ui.items.fact.ContentFactItemsListFragment
 import com.finnflare.android_dct.ui.items.fact.FactItemsListFragment
@@ -17,7 +18,7 @@ import com.finnflare.android_dct.ui.items.plan.PlanItemsListFragment
 import com.finnflare.android_dct.ui.items.rfid.RFIDItemScanFragment
 import com.finnflare.android_dct.ui.items.search.ItemSearchFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
+import com.google.android.material.navigation.NavigationView
 
 class ItemsActivity : AppCompatActivity(),
     PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener,
@@ -30,7 +31,11 @@ class ItemsActivity : AppCompatActivity(),
         configureToolbar()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.a_items_bottom_navigation)
-        bottomNavigationView.setOnNavigationItemSelectedListener(navListener)
+        bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavigationListener)
+
+        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
+        DrawerNavigationListener.context = this
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(
@@ -48,25 +53,23 @@ class ItemsActivity : AppCompatActivity(),
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    private val navListener: BottomNavigationView.OnNavigationItemSelectedListener =
+    private val bottomNavigationListener: BottomNavigationView.OnNavigationItemSelectedListener =
         object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                val selectedFragment: Fragment?
-                when (item.getItemId()) {
-                    R.id.barcode_nav -> selectedFragment =
-                        ItemScanFragment()
-                    R.id.rfid_nav -> selectedFragment =
-                        RFIDItemScanFragment()
-                    R.id.plan_nav -> selectedFragment = PlanItemsListFragment()
-                    R.id.fact_nav -> selectedFragment = FactItemsListFragment()
-                    R.id.search_nav -> selectedFragment =
-                        ItemSearchFragment()
-                    else -> throw Exception("Error in when !!!")
+                val selectedFragment: Fragment? = when (item.itemId) {
+                    R.id.barcode_nav -> ItemScanFragment()
+                    R.id.rfid_nav -> RFIDItemScanFragment()
+                    R.id.plan_nav -> PlanItemsListFragment()
+                    R.id.fact_nav ->  FactItemsListFragment()
+                    R.id.search_nav -> ItemSearchFragment()
+                    else -> throw Exception("bottomNavigationView got incorrect itemId")
                 }
-                supportFragmentManager.beginTransaction().replace(
-                    R.id.a_items_placeholder,
-                    selectedFragment
-                ).commit()
+                if (selectedFragment != null) {
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.a_items_placeholder,
+                        selectedFragment
+                    ).commit()
+                }
                 return true
             }
         }
