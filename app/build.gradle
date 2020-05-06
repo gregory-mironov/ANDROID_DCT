@@ -89,4 +89,6 @@ dependencies {
     // AppBarLayout
     implementation 'com.google.android.material:material:1.1.0'
 
+    // Setting
+    implementation 'androidx.preference:preference:1.1.1'
 }
