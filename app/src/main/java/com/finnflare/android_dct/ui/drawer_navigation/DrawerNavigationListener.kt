@@ -29,7 +29,6 @@ object DrawerNavigationListener: NavigationView.OnNavigationItemSelectedListener
                 (context as FragmentActivity).startActivity(intent)
             }
             R.id.d_nav_info -> {
-                Log.w("context == null ", "is " + (this.context == null))
                 val fm = (context as FragmentActivity).supportFragmentManager
                 val dialogFragment = DialogFragmentInfo()
                 dialogFragment.show(fm, "dialog_fragment_info")

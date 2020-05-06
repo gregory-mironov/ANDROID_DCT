@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".ui.login.LoginActivity">
 
-    <include layout="@layout/login_app_bar" />
+    <include layout="@layout/activity_login_app_bar" />
 
     <EditText
         android:id="@+id/a_login_login_field"

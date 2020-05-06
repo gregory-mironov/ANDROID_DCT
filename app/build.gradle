@@ -37,7 +37,8 @@ android {
             res.srcDirs = ['src/main/res',
                            'src/main/res/activity_res/login',
                            'src/main/res/activity_res/location',
-                           'src/main/res/activity_res/items']
+                           'src/main/res/activity_res/items',
+                           'src/main/res/activity_res/settings']
         }
     }
     // To inline the bytecode built with JVM target 1.8 into
