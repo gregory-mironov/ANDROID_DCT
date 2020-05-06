@@ -16,14 +16,14 @@ import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
 import com.finnflare.android_dct.ui.items.ItemsActivity
 import com.finnflare.android_dct.ui.location.location.DummyLocationChooseFragmentContent
 import com.finnflare.android_dct.ui.location.location.LocationChooseFragment
-import com.finnflare.android_dct.ui.location.storage.DummyStorageChooseFragmentContent
-import com.finnflare.android_dct.ui.location.storage.StorageChooseFragment
+import com.finnflare.android_dct.ui.location.document.DummyDocumentChooseFragmentContent
+import com.finnflare.android_dct.ui.location.document.DocumentChooseFragment
 import com.google.android.material.navigation.NavigationView
 
 
 class LocationActivity : AppCompatActivity(),
     LocationChooseFragment.OnListLocationChooseFragmentInteractionListener,
-    StorageChooseFragment.OnListStorageChooseFragmentInteractionListener{
+    DocumentChooseFragment.OnListDocumentChooseFragmentInteractionListener{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,13 +62,13 @@ class LocationActivity : AppCompatActivity(),
         }
 
         val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.a_location_placeholder, StorageChooseFragment())
+        ft.replace(R.id.a_location_placeholder, DocumentChooseFragment())
         ft.addToBackStack("Some string")
         ft.commit()
     }
 
-    override fun onListStorageChooseFragmentInteraction(item: DummyStorageChooseFragmentContent.StorageDummyItem?) {
-//        TODO("Change onListStorage...Interaction")
+    override fun onListDocumentChooseFragmentInteraction(item: DummyDocumentChooseFragmentContent.DocumentDummyItem?) {
+//        TODO("Change onListDocument...Interaction")
 
         val intent = Intent(this, ItemsActivity::class.java)
         startActivity(intent)

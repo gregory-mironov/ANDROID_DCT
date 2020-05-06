@@ -9,15 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="@string/label_storages_list"
+        android:text="@string/label_documents_list"
         android:textColor="@android:color/secondary_text_light" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/f_storage_recycler"
-        android:name="com.finnflare.android_dct.ui.location.StorageChooseFragment"
+        android:id="@+id/f_document_recycler"
+        android:name="com.finnflare.android_dct.ui.location.DocumentChooseFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.location.storage.StorageChooseFragment"
-        tools:listitem="@layout/fragment_storage_choose_item" />
+        tools:context=".ui.location.document.DocumentChooseFragment"
+        tools:listitem="@layout/fragment_document_choose_item" />
 
 </LinearLayout>

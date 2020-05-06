@@ -26,7 +26,7 @@
 
     <!-- Location Activity -->
     <string name="label_location_list">Location list</string>
-    <string name="label_storages_list">Storages list</string>
+    <string name="label_documents_list">Documents list</string>
 
     <!-- Items Activity botton navigation menu lavel -->
     <string name="bottom_navigation_barcode">Barcode</string>

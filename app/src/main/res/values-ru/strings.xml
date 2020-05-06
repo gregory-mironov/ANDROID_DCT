@@ -22,7 +22,7 @@
 
     <!-- Location Activity -->
     <string name="label_location_list">Список локаций</string>
-    <string name="label_storages_list">Список зон сканирования</string>
+    <string name="label_documents_list">Список зон сканирования</string>
 
     <!-- Items Activity botton navigation menu lavel -->
     <string name="bottom_navigation_barcode">Штрихкод</string>

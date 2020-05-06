@@ -1,4 +1,4 @@
-package com.finnflare.android_dct.ui.location.storage
+package com.finnflare.android_dct.ui.location.document
 
 import java.util.ArrayList
 
@@ -6,24 +6,24 @@ import java.util.ArrayList
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
  */
-object DummyStorageChooseFragmentContent {
+object DummyDocumentChooseFragmentContent {
 
     /**
      * An array of sample (dummy) items.
      */
-    val STORAGE_ITEMS: MutableList<StorageDummyItem> = ArrayList()
+    val DOCUMENT_ITEMS: MutableList<DocumentDummyItem> = ArrayList()
 
     private val COUNT = 25
 
     init {
         // Add some sample items.
         for (i in 1..COUNT)
-            STORAGE_ITEMS.add(createDummyItem(i))
+            DOCUMENT_ITEMS.add(createDummyItem(i))
     }
 
-    private fun createDummyItem(position: Int): StorageDummyItem {
-        return StorageDummyItem(
-            "Storage " + position,
+    private fun createDummyItem(position: Int): DocumentDummyItem {
+        return DocumentDummyItem(
+            "Document " + position,
             "User\'s comment " + position
         )
     }
@@ -31,7 +31,7 @@ object DummyStorageChooseFragmentContent {
     /**
      * A dummy item representing a piece of content.
      */
-    data class StorageDummyItem(val title: String, val subtitle: String) {
+    data class DocumentDummyItem(val title: String, val subtitle: String) {
         override fun toString(): String = subtitle
     }
 }

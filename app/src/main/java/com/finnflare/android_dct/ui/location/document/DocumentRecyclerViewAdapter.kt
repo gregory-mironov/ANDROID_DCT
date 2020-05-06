@@ -1,4 +1,4 @@
-package com.finnflare.android_dct.ui.location.storage
+package com.finnflare.android_dct.ui.location.document
 
 
 import android.view.LayoutInflater
@@ -7,29 +7,29 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.location.storage.DummyStorageChooseFragmentContent.StorageDummyItem
-import com.finnflare.android_dct.ui.location.storage.StorageChooseFragment.OnListStorageChooseFragmentInteractionListener
-import kotlinx.android.synthetic.main.fragment_storage_choose_item.view.*
+import com.finnflare.android_dct.ui.location.document.DummyDocumentChooseFragmentContent.DocumentDummyItem
+import com.finnflare.android_dct.ui.location.document.DocumentChooseFragment.OnListDocumentChooseFragmentInteractionListener
+import kotlinx.android.synthetic.main.fragment_document_choose_item.view.*
 
-class StorageRecyclerViewAdapter(
-    private val mValues: List<StorageDummyItem>,
-    private val mListener: OnListStorageChooseFragmentInteractionListener?
-) : RecyclerView.Adapter<StorageRecyclerViewAdapter.ViewHolder>() {
+class DocumentRecyclerViewAdapter(
+    private val mValues: List<DocumentDummyItem>,
+    private val mListener: OnListDocumentChooseFragmentInteractionListener?
+) : RecyclerView.Adapter<DocumentRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as StorageDummyItem
+            val item = v.tag as DocumentDummyItem
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onListStorageChooseFragmentInteraction(item)
+            mListener?.onListDocumentChooseFragmentInteraction(item)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_storage_choose_item, parent, false)
+            .inflate(R.layout.fragment_document_choose_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -47,8 +47,8 @@ class StorageRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mTitleView: TextView = mView.f_storage_item_title
-        val mSubtitleView: TextView = mView.f_storage_item_subtitle
+        val mTitleView: TextView = mView.f_document_item_title
+        val mSubtitleView: TextView = mView.f_document_item_subtitle
 
         override fun toString(): String {
             return super.toString() + mTitleView.text + " : " + mSubtitleView.text

@@ -7,14 +7,14 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/f_storage_item_title"
+        android:id="@+id/f_document_item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/item_recycled_title"
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/f_storage_item_subtitle"
+        android:id="@+id/f_document_item_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/item_recycled_subtitle"

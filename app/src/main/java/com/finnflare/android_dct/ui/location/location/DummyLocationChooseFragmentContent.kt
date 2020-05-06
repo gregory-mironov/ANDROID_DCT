@@ -20,7 +20,7 @@ object DummyLocationChooseFragmentContent {
     private fun createDummyItem(position: Int): LocationDummyItem {
         return LocationDummyItem(
             "Location " + position,
-            'A' + (position - 1) % 26 + " storages"
+            'A' + (position - 1) % 26 + " documents"
         )
     }
 

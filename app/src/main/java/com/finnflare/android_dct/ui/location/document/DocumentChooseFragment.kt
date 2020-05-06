@@ -1,4 +1,4 @@
-package com.finnflare.android_dct.ui.location.storage
+package com.finnflare.android_dct.ui.location.document
 
 import android.content.Context
 import android.os.Bundle
@@ -10,13 +10,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.location.storage.DummyStorageChooseFragmentContent.StorageDummyItem
+import com.finnflare.android_dct.ui.location.document.DummyDocumentChooseFragmentContent.DocumentDummyItem
 
-class StorageChooseFragment : Fragment() {
+class DocumentChooseFragment : Fragment() {
 
     private var columnCount = 1
 
-    private var listener: OnListStorageChooseFragmentInteractionListener? = null
+    private var listener: OnListDocumentChooseFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,18 +30,18 @@ class StorageChooseFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_storage_choose, container, false)
+        val view = inflater.inflate(R.layout.fragment_document_choose, container, false)
 
         // Set the adapter
-        val recyclerView = view.findViewById<RecyclerView>(R.id.f_storage_recycler)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.f_document_recycler)
         with(recyclerView) {
             layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)
                 else -> GridLayoutManager(context, columnCount)
             }
             adapter =
-                StorageRecyclerViewAdapter(
-                    DummyStorageChooseFragmentContent.STORAGE_ITEMS,
+                DocumentRecyclerViewAdapter(
+                    DummyDocumentChooseFragmentContent.DOCUMENT_ITEMS,
                     listener
                 )
         }
@@ -51,11 +51,11 @@ class StorageChooseFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnListStorageChooseFragmentInteractionListener) {
+        if (context is OnListDocumentChooseFragmentInteractionListener) {
             listener = context
         } else {
             throw RuntimeException(context.toString() +
-                    " must implement OnListStorageChooseFragmentInteractionListener")
+                    " must implement OnListDocumentChooseFragmentInteractionListener")
         }
     }
 
@@ -64,8 +64,8 @@ class StorageChooseFragment : Fragment() {
         listener = null
     }
 
-    interface OnListStorageChooseFragmentInteractionListener {
-        fun onListStorageChooseFragmentInteraction(item: StorageDummyItem?)
+    interface OnListDocumentChooseFragmentInteractionListener {
+        fun onListDocumentChooseFragmentInteraction(item: DocumentDummyItem?)
     }
 
     companion object {
@@ -76,7 +76,7 @@ class StorageChooseFragment : Fragment() {
         // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            StorageChooseFragment()
+            DocumentChooseFragment()
                 .apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
