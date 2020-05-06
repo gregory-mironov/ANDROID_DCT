@@ -1,49 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--  LoginActivity labels  -->
     <string name="label_login">Логин</string>
     <string name="label_password">Пароль</string>
     <string name="label_log_in">Войти</string>
 
+    <!--  Activity titles  -->
     <string name="a_login_title">Авторизация</string>
     <string name="a_location_title">Местоположение</string>
     <string name="a_items_title">Товары</string>
+    <string name="a_settings_title">Настройки</string>
 
+
+    <!-- Drawer Navigation menu labels -->
     <string name="label_save_results">Сохранить результаты</string>
     <string name="label_upload_result_from_file">Загрузить результаты из файла</string>
     <string name="label_reset_results">Сброс результатов</string>
     <string name="label_setting">Настройки</string>
     <string name="label_info">Информация</string>
 
+    <!-- Location Activity -->
     <string name="label_location_list">Список локаций</string>
     <string name="label_storages_list">Список зон сканирования</string>
 
+    <!-- Items Activity botton navigation menu lavel -->
     <string name="bottom_navigation_barcode">Штрихкод</string>
     <string name="bottom_navigation_plan">Ожидаемые</string>
     <string name="bottom_navigation_fact">Полученные</string>
     <string name="bottom_navigation_search">Поиск</string>
 
+    <!-- Items Activity dummy labels -->
     <string name="label_fragment_item_scan">Фрагмент сканирования товаров</string>
     <string name="label_fragment_item_search">Фрагмент поиска товавор</string>
     <string name="label_fragment_rfid_item_scan">Фрагмент сканирования по RFID</string>
 
+    <!-- Label for popup menu -->
     <string name="label_search">Поиск</string>
 
+    <!-- Recycler dummy labels -->
     <string name="label_some_information">Некоторая информация</string>
 
+    <!-- DialogFragmentInfo data -->
     <string name="d_f_info_title">Информация</string>
     <string name="d_f_info_developers">Разработчики:\nМиронов Григорий\nНедолужко Денис</string>
     <string name="d_f_info_about_app">Это приложение разработано для терминалов сбора данных о товарах</string>
     <string name="d_f_info_version">Версия 1.0</string>
 
-    <string-array name="f_plan_sninner_items">
-        <item>Найденные ожидаемые</item>
-        <item>Ненайденные ожидаемые</item>
-    </string-array>
-
-    <string-array name="f_fact_sninner_items">
-        <item>Ожидаемые полученные</item>
-        <item>Лишние полученные</item>
-    </string-array>
-
+    <!-- Setting labels -->
+    <string name="setting_center_servel_url_title">URL центрального сервера</string>
+    <string name="setting_image_url_title">URL изображений</string>
+    <string name="setting_send_errors_title">Передавать ошибки на сервер</string>
+    <string name="setting_upload_images_title">Загружать изображения</string>
+    <string name="setting_search_unknown_title">Искать неизветсные товары</string>
+    <string name="setting_send_data_online">Передавать данные онлайн1</string>
 </resources>

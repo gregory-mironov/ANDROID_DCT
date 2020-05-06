@@ -1,10 +1,12 @@
 package com.finnflare.android_dct.ui.drawer_navigation
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.FragmentActivity
 import com.finnflare.android_dct.R
+import com.finnflare.android_dct.ui.SettingsActivity
 import com.google.android.material.navigation.NavigationView
 
 object DrawerNavigationListener: NavigationView.OnNavigationItemSelectedListener {
@@ -23,10 +25,10 @@ object DrawerNavigationListener: NavigationView.OnNavigationItemSelectedListener
                 Log.w("Drawer-navigation", "Reset results not implemented")
             }
             R.id.d_nav_setting -> {
-                Log.w("Drawer-navigation", "Setting not implemented")
+                val intent = Intent(context, SettingsActivity::class.java)
+                (context as FragmentActivity).startActivity(intent)
             }
             R.id.d_nav_info -> {
-                Log.w("context == null ", "is " + (this.context == null))
                 val fm = (context as FragmentActivity).supportFragmentManager
                 val dialogFragment = DialogFragmentInfo()
                 dialogFragment.show(fm, "dialog_fragment_info")

@@ -1,0 +1,11 @@
+<resources>
+    <!-- Item spinners data -->
+    <string-array name="f_plan_sninner_items">
+        <item>Correct plan</item>
+        <item>Wrong plan</item>
+    </string-array>
+    <string-array name="f_fact_sninner_items">
+        <item>Correct fact</item>
+        <item>Wrong fact</item>
+    </string-array>
+</resources>

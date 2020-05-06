@@ -1,56 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- Application name -->
     <string name="app_name" translatable="false">ANDROID_DCT</string>
 
+    <!--  LoginActivity labels  -->
     <string name="label_login">Login</string>
     <string name="label_password">Password</string>
     <string name="label_log_in">Log in</string>
 
+    <!--  Activity titles  -->
     <string name="a_login_title">Authorization</string>
     <string name="a_location_title">Location</string>
     <string name="a_items_title">Items</string>
+    <string name="a_settings_title">Settings</string>
 
+    <!--  Drawer Navigation suntitle  -->
     <string name="label_finn_flare" translatable="false">Finn Flare</string>
 
+    <!-- Drawer Navigation menu labels -->
     <string name="label_save_results">Save results</string>
     <string name="label_upload_result_from_file">Upload result from file</string>
     <string name="label_reset_results">Reset results</string>
     <string name="label_setting">Setting</string>
     <string name="label_info">Info</string>
 
+    <!-- Location Activity -->
     <string name="label_location_list">Location list</string>
     <string name="label_storages_list">Storages list</string>
 
+    <!-- Items Activity botton navigation menu lavel -->
     <string name="bottom_navigation_barcode">Barcode</string>
     <string name="bottom_navigation_rfid" translatable="false">RFID</string>
     <string name="bottom_navigation_plan">Plan</string>
     <string name="bottom_navigation_fact">Fact</string>
     <string name="bottom_navigation_search">Search</string>
 
+    <!-- Items Activity dummy labels -->
     <string name="label_fragment_item_scan">Fragment item scan</string>
     <string name="label_fragment_item_search">Fragment item search</string>
     <string name="label_fragment_rfid_item_scan">Fragment RFID item scan</string>
 
+    <!-- Label for popup menu -->
     <string name="label_search">Search</string>
 
+    <!-- Recycler dummy labels -->
     <string name="label_some_information">Some information</string>
     <string name="label_item_image" translatable="false">Item image</string>
 
+    <!-- DialogFragmentInfo data -->
     <string name="d_f_info_title">Info</string>
     <string name="d_f_info_about_app">This app is designed for a terminal for collecting
         product data.</string>
     <string name="d_f_info_developers">Developers:\nMironov Gregory\nNedoluzhko Denis</string>
     <string name="d_f_info_version">Version 1.0</string>
 
-    <string-array name="f_plan_sninner_items">
-        <item>Correct plan</item>
-        <item>Wrong plan</item>
-    </string-array>
-
-    <string-array name="f_fact_sninner_items">
-        <item>Correct fact</item>
-        <item>Wrong fact</item>
-    </string-array>
-
+    <!-- Setting labels -->
+    <string name="setting_center_servel_url_title">Central server URL</string>
+    <string name="setting_image_url_title">Images URL</string>
+    <string name="setting_send_errors_title">Send errors to server</string>
+    <string name="setting_upload_images_title">Upload images</string>
+    <string name="setting_search_unknown_title">Search for unknown items</string>
+    <string name="setting_send_data_online">Send data online</string>
 </resources>
