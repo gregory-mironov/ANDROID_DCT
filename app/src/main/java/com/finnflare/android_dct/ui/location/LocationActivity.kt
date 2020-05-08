@@ -34,7 +34,14 @@ class LocationActivity : AppCompatActivity(),
         val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
         ft.replace(R.id.a_location_placeholder, LocationChooseFragment())
         ft.commit()
+    }
 
+    override fun onStart() {
+        super.onStart()
+        setDrawerNavigationListener()
+    }
+
+    private fun setDrawerNavigationListener() {
         val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
         DrawerNavigationListener.context = this
         drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
