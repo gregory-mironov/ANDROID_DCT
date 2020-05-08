@@ -25,16 +25,31 @@ class LocationActivity : AppCompatActivity(),
     LocationChooseFragment.OnListLocationChooseFragmentInteractionListener,
     DocumentChooseFragment.OnListDocumentChooseFragmentInteractionListener{
 
+    val IS_FIRST_START_KEY = "isFirstStart"
+    var isFirstStart: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_location)
 
+        if (savedInstanceState != null)
+            isFirstStart = savedInstanceState.getBoolean(IS_FIRST_START_KEY)
+
         configureToolbar()
 
-        val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.a_location_placeholder, LocationChooseFragment())
-        ft.commit()
+        if (isFirstStart) {
+            val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+            ft.replace(R.id.a_location_placeholder, LocationChooseFragment())
+            ft.commit()
+        }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        setDrawerNavigationListener()
+    }
+
+    private fun setDrawerNavigationListener() {
         val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
         DrawerNavigationListener.context = this
         drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
@@ -80,5 +95,11 @@ class LocationActivity : AppCompatActivity(),
                     openDrawer(GravityCompat.START)
         }
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        isFirstStart = false
+        outState.putBoolean(IS_FIRST_START_KEY, isFirstStart)
     }
 }

@@ -21,7 +21,7 @@
     <androidx.preference.SwitchPreferenceCompat
         app:iconSpaceReserved="false"
         app:key="setting_upload_images"
-        app:title="@string/setting_upload_images_title" />
+        app:title="@string/setting_download_images_title" />
 
     <androidx.preference.SwitchPreferenceCompat
         app:iconSpaceReserved="false"

@@ -51,7 +51,7 @@
     <string name="setting_center_servel_url_title">URL центрального сервера</string>
     <string name="setting_image_url_title">URL изображений</string>
     <string name="setting_send_errors_title">Передавать ошибки на сервер</string>
-    <string name="setting_upload_images_title">Загружать изображения</string>
+    <string name="setting_download_images_title">Загружать изображения</string>
     <string name="setting_search_unknown_title">Искать неизветсные товары</string>
     <string name="setting_send_data_online">Передавать данные онлайн1</string>
 </resources>

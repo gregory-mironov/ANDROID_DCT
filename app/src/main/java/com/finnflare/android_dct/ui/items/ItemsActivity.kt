@@ -33,16 +33,23 @@ class ItemsActivity : AppCompatActivity(),
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.a_items_bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavigationListener)
 
-        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
-        DrawerNavigationListener.context = this
-        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
-
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.a_items_placeholder,
                 ItemScanFragment()
             ).commit()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setDrawerNavigationListener()
+    }
+
+    private fun setDrawerNavigationListener() {
+        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
+        DrawerNavigationListener.context = this
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
     }
 
     private fun configureToolbar() {

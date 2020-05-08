@@ -58,7 +58,7 @@
     <string name="setting_center_servel_url_title">Central server URL</string>
     <string name="setting_image_url_title">Images URL</string>
     <string name="setting_send_errors_title">Send errors to server</string>
-    <string name="setting_upload_images_title">Upload images</string>
+    <string name="setting_download_images_title">Download images</string>
     <string name="setting_search_unknown_title">Search for unknown items</string>
     <string name="setting_send_data_online">Send data online</string>
 </resources>
