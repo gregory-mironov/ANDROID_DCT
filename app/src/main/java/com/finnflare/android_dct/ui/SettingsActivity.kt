@@ -31,7 +31,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun configureToolbar() {
         val toolbar: Toolbar = findViewById(R.id.a_setting_toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = getString(R.string.a_location_title)
+        supportActionBar?.title = getString(R.string.a_settings_title)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
