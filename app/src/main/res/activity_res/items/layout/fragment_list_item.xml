@@ -11,6 +11,7 @@
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:contentDescription="@string/label_item_image"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_launcher_background" />
