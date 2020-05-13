@@ -15,9 +15,7 @@ import com.finnflare.android_dct.di.FragmentInstance.itemSearchFragment
 import com.finnflare.android_dct.di.FragmentInstance.planItemsListFragment
 import com.finnflare.android_dct.di.FragmentInstance.rfidItemScanFragment
 import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
-import com.finnflare.android_dct.ui.items.fact.ContentFactItemsListFragment
 import com.finnflare.android_dct.ui.items.fact.FactItemsListFragment
-import com.finnflare.android_dct.ui.items.plan.DummyPlanItemsListFragmentContent
 import com.finnflare.android_dct.ui.items.plan.PlanItemsListFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
@@ -89,14 +87,14 @@ class ItemsActivity : AppCompatActivity(),
             }
         }
 
-    override fun onListPlanItemsListFragmentInteraction(item: DummyPlanItemsListFragmentContent.PlanDummyItem?) {
+    override fun onListPlanItemsListFragmentInteraction(item: PlanFactListItem?) {
 //        TODO("Change onListPlan...Interaction")
         if (item != null) {
             Toast.makeText(getApplicationContext(), item.title + " clicked", Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onListFactItemsListFragmentInteraction(item: ContentFactItemsListFragment.FactDummyItem?) {
+    override fun onListFactItemsListFragmentInteraction(item: PlanFactListItem?) {
 //        TODO("Change onListFact...Interaction")
         if (item != null) {
             Toast.makeText(getApplicationContext(), item.title + " clicked", Toast.LENGTH_SHORT).show()
@@ -116,5 +114,12 @@ class ItemsActivity : AppCompatActivity(),
 
         isFirstStart = false
         outState.putBoolean(IS_FIRST_START_KEY, isFirstStart)
+    }
+
+    data class PlanFactListItem(
+        val title: String,
+        val subtitle: String
+    ) {
+        override fun toString(): String = title + " : " + subtitle
     }
 }
