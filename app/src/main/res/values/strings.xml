@@ -61,4 +61,11 @@
     <string name="setting_download_images_title">Download images</string>
     <string name="setting_search_unknown_title">Search for unknown items</string>
     <string name="setting_send_data_online">Send data online</string>
+
+    <!-- Array data -->
+    <string name="array_correct_plan">Correct plan</string>
+    <string name="array_wrong_plan">Wrong plan</string>
+    <string name="array_correct_fact">Correct fact</string>
+    <string name="array_wrong_fact">Wrong fact</string>
+
 </resources>

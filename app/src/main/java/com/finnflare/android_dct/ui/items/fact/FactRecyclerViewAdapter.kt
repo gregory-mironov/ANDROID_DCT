@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
+import com.finnflare.android_dct.ui.items.ItemsActivity
 import kotlinx.android.synthetic.main.fragment_list_item.view.*
 
 class FactRecyclerViewAdapter(
-    private val mValues: List<ContentFactItemsListFragment.FactDummyItem>,
+    private var mValues: List<ItemsActivity.PlanFactListItem>,
     private val mListener: FactItemsListFragment.OnListFactItemsListFragmentInteractionListener?
 ) : RecyclerView.Adapter<FactRecyclerViewAdapter.ViewHolder>() {
 
@@ -17,7 +18,7 @@ class FactRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as ContentFactItemsListFragment.FactDummyItem
+            val item = v.tag as ItemsActivity.PlanFactListItem
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
             mListener?.onListFactItemsListFragmentInteraction(item)
@@ -42,6 +43,11 @@ class FactRecyclerViewAdapter(
     }
 
     override fun getItemCount(): Int = mValues.size
+
+    fun changeData(newValues: List<ItemsActivity.PlanFactListItem>) {
+        mValues = newValues
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mTitleView: TextView = mView.f_items_item_title

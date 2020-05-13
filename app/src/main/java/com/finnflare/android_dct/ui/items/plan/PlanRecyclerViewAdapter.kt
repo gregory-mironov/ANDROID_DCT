@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
+import com.finnflare.android_dct.ui.items.ItemsActivity
 import kotlinx.android.synthetic.main.fragment_list_item.view.*
 
 class PlanRecyclerViewAdapter(
-    private val mValues: List<DummyPlanItemsListFragmentContent.PlanDummyItem>,
+    private var mValues: List<ItemsActivity.PlanFactListItem>,
     private val mListener: PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener?
 ) : RecyclerView.Adapter<PlanRecyclerViewAdapter.ViewHolder>() {
 
@@ -17,7 +18,7 @@ class PlanRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyPlanItemsListFragmentContent.PlanDummyItem
+            val item = v.tag as ItemsActivity.PlanFactListItem
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
             mListener?.onListPlanItemsListFragmentInteraction(item)
@@ -42,6 +43,11 @@ class PlanRecyclerViewAdapter(
     }
 
     override fun getItemCount(): Int = mValues.size
+
+    fun changeData(newValues: List<ItemsActivity.PlanFactListItem>) {
+        mValues = newValues
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mTitleView: TextView = mView.f_items_item_title

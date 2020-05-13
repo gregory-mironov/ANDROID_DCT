@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/barcode_nav"
-        android:icon="@drawable/ic_star_border_black_24dp"
+        android:icon="@drawable/ic_barcode_black"
         android:title="@string/bottom_navigation_barcode" />
 
     <item
@@ -13,12 +13,12 @@
 
     <item
         android:id="@+id/plan_nav"
-        android:icon="@drawable/ic_stars_black_24dp"
+        android:icon="@drawable/ic_plan_list_black"
         android:title="@string/bottom_navigation_plan" />
 
     <item
         android:id="@+id/fact_nav"
-        android:icon="@drawable/ic_star_black_24dp"
+        android:icon="@drawable/ic_fact_list_black"
         android:title="@string/bottom_navigation_fact" />
 
     <item

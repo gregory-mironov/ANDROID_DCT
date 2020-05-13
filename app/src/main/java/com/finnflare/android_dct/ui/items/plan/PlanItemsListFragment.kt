@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
+import com.finnflare.android_dct.ui.items.ItemsActivity
 
 
 /**
@@ -17,11 +20,13 @@ import com.finnflare.android_dct.R
  * Activities containing this fragment MUST implement the
  * [PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener] interface.
  */
-class PlanItemsListFragment : Fragment() {
+class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var columnCount = 1
 
     private var listener: OnListPlanItemsListFragmentInteractionListener? = null
+
+    private var adapter: PlanRecyclerViewAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,17 +42,25 @@ class PlanItemsListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_plan, container, false)
 
-        // Set the adapter
-        val recyclerView = view.findViewById<RecyclerView>(R.id.f_plan_recycler)
-        with(recyclerView) {
-            layoutManager = when {
-                columnCount <= 1 -> LinearLayoutManager(context)
-                else -> GridLayoutManager(context, columnCount)
-            }
-            adapter = PlanRecyclerViewAdapter(DummyPlanItemsListFragmentContent.PLAN_ITEMS, listener)
-        }
+        setSpinnerListener(view)
+        setRecyclerAdapter(view)
 
         return view
+    }
+
+    private fun setRecyclerAdapter(view: View){
+        val recyclerView = view.findViewById<RecyclerView>(R.id.f_plan_recycler)
+        recyclerView.layoutManager = when {
+            columnCount == 1 -> LinearLayoutManager(context)
+            else -> GridLayoutManager(context, columnCount)
+        }
+        adapter = PlanRecyclerViewAdapter(DummyCorrectPlanItemsList.PLAN_ITEMS, listener)
+        recyclerView.adapter = adapter
+    }
+
+    private fun setSpinnerListener(view: View) {
+        val spinner = view.findViewById<Spinner>(R.id.f_plan_spinner)
+        spinner.onItemSelectedListener = this
     }
 
     override fun onAttach(context: Context) {
@@ -65,19 +78,8 @@ class PlanItemsListFragment : Fragment() {
         listener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
     interface OnListPlanItemsListFragmentInteractionListener {
-        fun onListPlanItemsListFragmentInteraction(item: DummyPlanItemsListFragmentContent.PlanDummyItem?)
+        fun onListPlanItemsListFragmentInteraction(item: ItemsActivity.PlanFactListItem?)
     }
 
     companion object {
@@ -93,5 +95,19 @@ class PlanItemsListFragment : Fragment() {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }
             }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        val choose = resources.getStringArray(R.array.f_plan_sninner_items)
+
+        when (choose[position]) {
+            getString(R.string.array_correct_plan) ->
+                adapter?.changeData(DummyCorrectPlanItemsList.PLAN_ITEMS)
+            getString(R.string.array_wrong_plan) ->
+                adapter?.changeData(DummyWrongPlanItemsList.PLAN_ITEMS)
+            else -> throw RuntimeException(context.toString() + " unknown spinner item")
+        }
     }
 }

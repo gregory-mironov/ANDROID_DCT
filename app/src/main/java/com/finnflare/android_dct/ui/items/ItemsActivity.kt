@@ -9,20 +9,23 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.finnflare.android_dct.R
+import com.finnflare.android_dct.di.FragmentInstance.factItemsListFragment
+import com.finnflare.android_dct.di.FragmentInstance.itemScanFragment
+import com.finnflare.android_dct.di.FragmentInstance.itemSearchFragment
+import com.finnflare.android_dct.di.FragmentInstance.planItemsListFragment
+import com.finnflare.android_dct.di.FragmentInstance.rfidItemScanFragment
 import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
-import com.finnflare.android_dct.ui.items.barcode.ItemScanFragment
-import com.finnflare.android_dct.ui.items.fact.ContentFactItemsListFragment
 import com.finnflare.android_dct.ui.items.fact.FactItemsListFragment
-import com.finnflare.android_dct.ui.items.plan.DummyPlanItemsListFragmentContent
 import com.finnflare.android_dct.ui.items.plan.PlanItemsListFragment
-import com.finnflare.android_dct.ui.items.rfid.RFIDItemScanFragment
-import com.finnflare.android_dct.ui.items.search.ItemSearchFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 
 class ItemsActivity : AppCompatActivity(),
     PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener,
-    FactItemsListFragment.OnListFactItemsListFragmentInteractionListener{
+    FactItemsListFragment.OnListFactItemsListFragmentInteractionListener {
+
+    val IS_FIRST_START_KEY = "isFirstStart"
+    var isFirstStart: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +36,13 @@ class ItemsActivity : AppCompatActivity(),
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.a_items_bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavigationListener)
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState != null)
+            isFirstStart = savedInstanceState.getBoolean(IS_FIRST_START_KEY)
+
+        if (isFirstStart) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.a_items_placeholder,
-                ItemScanFragment()
+                itemScanFragment
             ).commit()
         }
     }
@@ -64,11 +70,11 @@ class ItemsActivity : AppCompatActivity(),
         object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 val selectedFragment: Fragment? = when (item.itemId) {
-                    R.id.barcode_nav -> ItemScanFragment()
-                    R.id.rfid_nav -> RFIDItemScanFragment()
-                    R.id.plan_nav -> PlanItemsListFragment()
-                    R.id.fact_nav ->  FactItemsListFragment()
-                    R.id.search_nav -> ItemSearchFragment()
+                    R.id.barcode_nav -> itemScanFragment
+                    R.id.rfid_nav -> rfidItemScanFragment
+                    R.id.plan_nav -> planItemsListFragment
+                    R.id.fact_nav -> factItemsListFragment
+                    R.id.search_nav -> itemSearchFragment
                     else -> throw Exception("bottomNavigationView got incorrect itemId")
                 }
                 if (selectedFragment != null) {
@@ -81,14 +87,14 @@ class ItemsActivity : AppCompatActivity(),
             }
         }
 
-    override fun onListPlanItemsListFragmentInteraction(item: DummyPlanItemsListFragmentContent.PlanDummyItem?) {
+    override fun onListPlanItemsListFragmentInteraction(item: PlanFactListItem?) {
 //        TODO("Change onListPlan...Interaction")
         if (item != null) {
             Toast.makeText(getApplicationContext(), item.title + " clicked", Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onListFactItemsListFragmentInteraction(item: ContentFactItemsListFragment.FactDummyItem?) {
+    override fun onListFactItemsListFragmentInteraction(item: PlanFactListItem?) {
 //        TODO("Change onListFact...Interaction")
         if (item != null) {
             Toast.makeText(getApplicationContext(), item.title + " clicked", Toast.LENGTH_SHORT).show()
@@ -101,5 +107,19 @@ class ItemsActivity : AppCompatActivity(),
             openDrawer(GravityCompat.START)
         }
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        isFirstStart = false
+        outState.putBoolean(IS_FIRST_START_KEY, isFirstStart)
+    }
+
+    data class PlanFactListItem(
+        val title: String,
+        val subtitle: String
+    ) {
+        override fun toString(): String = title + " : " + subtitle
     }
 }
