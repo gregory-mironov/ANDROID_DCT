@@ -5,6 +5,10 @@ import com.alien.common.KeyCode
 import com.alien.rfid.*
 import com.finnflare.scanner.CScannerViewModel
 import com.finnflare.scanner.ScanDecoder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -26,34 +30,32 @@ object CRFIDScanner: RFIDCallback, KoinComponent {
         }
     }
 
-    private fun startScan(){
-        reader?.let{
+    fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean{
+        if (keyCode != KeyCode.ALR_H450.SCAN || event?.repeatCount != 0)
+            return false
+
+        reader?.let {
             if (!it.isRunning)
                 it.inventory(this)
         }
-    }
 
-    private fun stopScan() {
-        reader?.stop()
-    }
-
-    fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean{
-        if (keyCode != KeyCode.ALR_H450.SCAN || event.repeatCount != 0)
-            return false
-
-        startScan()
         return true
     }
 
-    fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean{
+    fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean{
         if (keyCode != KeyCode.ALR_H450.SCAN)
             return false
-        stopScan()
+
+        reader?.stop()
+
         return true
     }
 
     override fun onTagRead(tag: Tag) {
-        val rssi: Double = tag.rssi
-        viewModel.scanResult.value = ScanDecoder.decodeScanResult(tag.epc)
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                viewModel.scanResult.value = ScanDecoder.decodeScanResult(tag.epc)
+            }
+        }
     }
 }

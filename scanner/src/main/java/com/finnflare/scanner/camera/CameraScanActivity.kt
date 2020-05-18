@@ -1,4 +1,4 @@
-package com.finnflare.scanner
+package com.finnflare.scanner.camera
 
 import android.app.Activity
 import android.content.Intent
@@ -8,6 +8,9 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.finnflare.scanner.CScannerViewModel
+import com.finnflare.scanner.R
+import com.finnflare.scanner.ScanDecoder
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.ResultPoint
 import com.google.zxing.client.android.BeepManager
@@ -15,8 +18,11 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import kotlinx.android.synthetic.main.activity_continuous_scan.*
+import org.koin.android.ext.android.inject
 
 class CameraScanActivity: AppCompatActivity() {
+    private val viewModel by inject<CScannerViewModel>()
+
     private val ARG_FLASH = "flash_arg"
     private val ARG_SCAN = "scan_arg"
 
@@ -25,10 +31,18 @@ class CameraScanActivity: AppCompatActivity() {
     private var mScan = true
     private var mFlash = false
 
+    private var lastScanTime = 0L
+
     private val callback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
-            onResumePauseClick()
+            if (System.currentTimeMillis() - lastScanTime < 750)
+                return
+
             beepManager!!.playBeepSoundAndVibrate()
+
+            viewModel.scanResult.value = ScanDecoder.decodeScanResult(result.text)
+
+            lastScanTime = System.currentTimeMillis()
         }
 
         override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
