@@ -2,6 +2,8 @@ package com.finnflare.android_dct.ui.items
 
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,10 +13,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
-import com.finnflare.android_dct.ui.items.barcode.ItemScanFragment
 import com.finnflare.android_dct.ui.items.fact.FactItemsListFragment
 import com.finnflare.android_dct.ui.items.plan.PlanItemsListFragment
-import com.finnflare.android_dct.ui.items.rfid.RFIDItemScanFragment
 import com.finnflare.scanner.CScannerViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
@@ -44,10 +44,10 @@ class ItemsActivity : AppCompatActivity(),
             isFirstStart = savedInstanceState.getBoolean(IS_FIRST_START_KEY)
 
         if (isFirstStart) {
-            uiViewModel.selectedFragment = uiViewModel.planItemsListFragment
+            uiViewModel.selectedFragment = 2
             supportFragmentManager.beginTransaction().replace(
                 R.id.a_items_placeholder,
-                uiViewModel.planItemsListFragment
+                uiViewModel.fragmentsList[uiViewModel.selectedFragment]
             ).commit()
         }
     }
@@ -79,34 +79,38 @@ class ItemsActivity : AppCompatActivity(),
     private val bottomNavigationListener: BottomNavigationView.OnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             uiViewModel.selectedFragment = when (item.itemId) {
-                R.id.barcode_nav -> uiViewModel.itemScanFragment
-                R.id.rfid_nav -> uiViewModel.rfidItemScanFragment
-                R.id.plan_nav -> uiViewModel.planItemsListFragment
-                R.id.fact_nav -> uiViewModel.factItemsListFragment
-                R.id.search_nav -> uiViewModel.itemSearchFragment
+                R.id.barcode_nav -> 0
+                R.id.rfid_nav -> 1
+                R.id.plan_nav -> 2
+                R.id.fact_nav -> 3
+                R.id.search_nav -> 4
                 else -> throw Exception("bottomNavigationView got incorrect itemId")
             }
 
             supportFragmentManager.beginTransaction().replace(
                 R.id.a_items_placeholder,
-                uiViewModel.selectedFragment!!
+                uiViewModel.fragmentsList[uiViewModel.selectedFragment]
             ).commit()
 
             true
         }
 
     override fun onListPlanItemsListFragmentInteraction(item: PlanFactListItem?) {
-//        TODO("Change onListPlan...Interaction")
         if (item != null) {
             Toast.makeText(applicationContext, item.title + " clicked", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onListFactItemsListFragmentInteraction(item: PlanFactListItem?) {
-//        TODO("Change onListFact...Interaction")
         if (item != null) {
             Toast.makeText(applicationContext, item.title + " clicked", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_items_list, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -125,20 +129,20 @@ class ItemsActivity : AppCompatActivity(),
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (uiViewModel.selectedFragment is ItemScanFragment)
+        if (uiViewModel.selectedFragment == 0)
             scannerViewModel.scanner.startBarcodeScan(keyCode, event!!)
 
-        if (uiViewModel.selectedFragment is RFIDItemScanFragment)
+        if (uiViewModel.selectedFragment == 1)
             scannerViewModel.scanner.startRFIDScan(keyCode, event!!)
 
         return super.onKeyDown(keyCode, event)
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (uiViewModel.selectedFragment is ItemScanFragment)
+        if (uiViewModel.selectedFragment == 0)
             scannerViewModel.scanner.stopBarcodeScan(keyCode, event!!)
 
-        if (uiViewModel.selectedFragment is RFIDItemScanFragment)
+        if (uiViewModel.selectedFragment == 1)
             scannerViewModel.scanner.stopRFIDScan(keyCode, event!!)
 
         return super.onKeyUp(keyCode, event)

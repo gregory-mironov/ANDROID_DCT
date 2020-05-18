@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.finnflare.android_dct.Document
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.location.document.DummyDocumentChooseFragmentContent.DocumentDummyItem
 import com.finnflare.android_dct.ui.location.document.DocumentChooseFragment.OnListDocumentChooseFragmentInteractionListener
 import kotlinx.android.synthetic.main.fragment_document_choose_item.view.*
 
 class DocumentRecyclerViewAdapter(
-    private val mValues: List<DocumentDummyItem>,
+    private val mValues: List<Document>,
     private val mListener: OnListDocumentChooseFragmentInteractionListener?
 ) : RecyclerView.Adapter<DocumentRecyclerViewAdapter.ViewHolder>() {
 
@@ -20,10 +20,7 @@ class DocumentRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DocumentDummyItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            mListener?.onListDocumentChooseFragmentInteraction(item)
+            mListener?.onListDocumentChooseFragmentInteraction(v.tag as Document)
         }
     }
 

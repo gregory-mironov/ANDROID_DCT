@@ -5,25 +5,31 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.Toast
+import android.view.View
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.FragmentTransaction
+import com.finnflare.android_dct.CUIViewModel
+import com.finnflare.android_dct.Document
+import com.finnflare.android_dct.Location
 import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
 import com.finnflare.android_dct.ui.items.ItemsActivity
-import com.finnflare.android_dct.ui.location.location.DummyLocationChooseFragmentContent
-import com.finnflare.android_dct.ui.location.location.LocationChooseFragment
-import com.finnflare.android_dct.ui.location.document.DummyDocumentChooseFragmentContent
 import com.finnflare.android_dct.ui.location.document.DocumentChooseFragment
+import com.finnflare.android_dct.ui.location.location.LocationChooseFragment
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 
 class LocationActivity : AppCompatActivity(),
     LocationChooseFragment.OnListLocationChooseFragmentInteractionListener,
     DocumentChooseFragment.OnListDocumentChooseFragmentInteractionListener{
+
+    private val uiViewModel by inject<CUIViewModel>()
 
     val IS_FIRST_START_KEY = "isFirstStart"
     var isFirstStart: Boolean = true
@@ -37,10 +43,14 @@ class LocationActivity : AppCompatActivity(),
 
         configureToolbar()
 
-        if (isFirstStart) {
-            val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-            ft.replace(R.id.a_location_placeholder, LocationChooseFragment())
-            ft.commit()
+        if (isFirstStart)
+            supportFragmentManager.beginTransaction().apply {
+                this.replace(R.id.a_location_placeholder, LocationChooseFragment())
+                this.commit()
+            }
+
+        GlobalScope.launch {
+            uiViewModel.getLocationsList()
         }
     }
 
@@ -58,9 +68,11 @@ class LocationActivity : AppCompatActivity(),
     private fun configureToolbar() {
         val toolbar: Toolbar = findViewById(R.id.a_location_toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = getString(R.string.a_location_title)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.let {
+            title = getString(R.string.a_location_title)
+            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -69,30 +81,18 @@ class LocationActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onListLocationChooseFragmentInteraction(item: DummyLocationChooseFragmentContent.LocationDummyItem?) {
-//        TODO("Change onListLocation...Interaction")
-
-        if (item != null) {
-            Toast.makeText(getApplicationContext(), item.title + " clicked", Toast.LENGTH_SHORT).show()
-        }
-
-        val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.a_location_placeholder, DocumentChooseFragment())
-        ft.addToBackStack("Some string")
-        ft.commit()
-    }
-
-    override fun onListDocumentChooseFragmentInteraction(item: DummyDocumentChooseFragmentContent.DocumentDummyItem?) {
-//        TODO("Change onListDocument...Interaction")
-
-        val intent = Intent(this, ItemsActivity::class.java)
-        startActivity(intent)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> findViewById<DrawerLayout>(R.id.a_location_drawer_layout).
-                    openDrawer(GravityCompat.START)
+            openDrawer(GravityCompat.START)
+            R.id.a_location_menu_search -> {
+                findViewById<EditText>(R.id.locationSearchEditText)?.let {
+                    it.visibility = if (it.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                }
+                findViewById<EditText>(R.id.documentSearchEditText)?.let {
+                    it.visibility = if (it.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                }
+            }
         }
         return true
     }
@@ -101,5 +101,21 @@ class LocationActivity : AppCompatActivity(),
         super.onSaveInstanceState(outState)
         isFirstStart = false
         outState.putBoolean(IS_FIRST_START_KEY, isFirstStart)
+    }
+
+    override fun onListLocationChooseFragmentInteraction(item: Location) {
+        GlobalScope.launch {
+            uiViewModel.getDocumentsList(item.id)
+        }
+        supportFragmentManager.beginTransaction().apply {
+            this.replace(R.id.a_location_placeholder, DocumentChooseFragment())
+            this.addToBackStack("Some string")
+            this.commit()
+        }
+    }
+
+    override fun onListDocumentChooseFragmentInteraction(item: Document) {
+        val intent = Intent(this, ItemsActivity::class.java)
+        startActivity(intent)
     }
 }

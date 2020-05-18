@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.finnflare.android_dct.Location
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.location.location.DummyLocationChooseFragmentContent.LocationDummyItem
 import com.finnflare.android_dct.ui.location.location.LocationChooseFragment.OnListLocationChooseFragmentInteractionListener
 import kotlinx.android.synthetic.main.fragment_location_choose_item.view.*
 
 class LocationRecyclerViewAdapter(
-    private val mValues: List<LocationDummyItem>,
+    private val mValues: List<Location>,
     private val mListener: OnListLocationChooseFragmentInteractionListener?
 ) : RecyclerView.Adapter<LocationRecyclerViewAdapter.ViewHolder>() {
 
@@ -20,10 +20,7 @@ class LocationRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as LocationDummyItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            mListener?.onListLocationChooseFragmentInteraction(item)
+            mListener?.onListLocationChooseFragmentInteraction(v.tag as Location)
         }
     }
 

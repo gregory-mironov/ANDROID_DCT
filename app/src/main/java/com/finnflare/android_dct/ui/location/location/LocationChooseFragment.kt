@@ -5,14 +5,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.finnflare.android_dct.CUIViewModel
+import com.finnflare.android_dct.Location
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.location.location.DummyLocationChooseFragmentContent.LocationDummyItem
+import org.koin.android.ext.android.inject
 
 class LocationChooseFragment : Fragment() {
+    private val uiViewModel by inject<CUIViewModel>()
 
     private var columnCount = 1
 
@@ -32,18 +37,20 @@ class LocationChooseFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_location_choose, container, false)
 
-        // Set the adapter
-        val recyclerView = view.findViewById<RecyclerView>(R.id.f_location_recycler)
-        with(recyclerView) {
-            layoutManager = when {
+        view.findViewById<RecyclerView>(R.id.f_location_recycler)?.let {
+            it.layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)
                 else -> GridLayoutManager(context, columnCount)
             }
-            adapter =
+            it.adapter =
                 LocationRecyclerViewAdapter(
-                    DummyLocationChooseFragmentContent.LOCATION_ITEMS,
+                    uiViewModel.locationList,
                     listener
                 )
+        }
+
+        view.findViewById<EditText>(R.id.locationSearchEditText).addTextChangedListener {
+
         }
 
         return view
@@ -65,15 +72,12 @@ class LocationChooseFragment : Fragment() {
     }
 
     interface OnListLocationChooseFragmentInteractionListener {
-        fun onListLocationChooseFragmentInteraction(item: LocationDummyItem?)
+        fun onListLocationChooseFragmentInteraction(item: Location)
     }
 
     companion object {
-
-        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
             LocationChooseFragment()
