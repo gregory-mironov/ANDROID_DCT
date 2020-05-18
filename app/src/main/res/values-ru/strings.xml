@@ -63,7 +63,7 @@
 
     <!-- Scanner's fragments labels -->
     <string name="start_scan">Начать сканирование</string>
-    <string name="stop_scan">Начать сканирование</string>
+    <string name="stop_scan">Завершить сканирование</string>
 
     <string name="full_item_description">Полное название</string>
     <string name="item_color">Цвет</string>

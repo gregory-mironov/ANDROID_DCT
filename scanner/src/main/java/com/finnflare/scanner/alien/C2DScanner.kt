@@ -3,7 +3,7 @@ package com.finnflare.scanner.alien
 import android.content.Context
 import android.view.KeyEvent
 import com.alien.barcode.BarcodeReader
-import com.alien.common.KeyCode
+import com.alien.common.KeyCode.ALR_H450
 import com.finnflare.scanner.CScannerViewModel
 import com.finnflare.scanner.ScanDecoder
 import org.koin.core.KoinComponent
@@ -20,8 +20,26 @@ object C2DScanner: KoinComponent {
             barcodeReader = BarcodeReader(context)
     }
 
+    fun uiButtonStart() {
+        barcodeReader?.let {
+            if (it.isRunning)
+                return@let
+
+            it.start { scanRes ->
+                viewModel.scanResult.value = ScanDecoder.decodeScanResult(scanRes)
+            }
+        }
+    }
+
+    fun uiButtonStop() {
+        barcodeReader?.let {
+            if (it.isRunning)
+                it.stop()
+        }
+    }
+
     fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode != KeyCode.ALR_H450.SCAN || event?.repeatCount != 0)
+        if (event?.repeatCount != 0 || keyCode != ALR_H450.SCAN)
             return false
 
         barcodeReader?.let {
@@ -37,7 +55,7 @@ object C2DScanner: KoinComponent {
     }
 
     fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode != KeyCode.ALR_H450.SCAN)
+        if (event?.repeatCount != 0 || keyCode != ALR_H450.SCAN)
             return false
 
         barcodeReader?.let {
