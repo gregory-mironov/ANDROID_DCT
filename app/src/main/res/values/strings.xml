@@ -36,9 +36,9 @@
     <string name="bottom_navigation_search">Search</string>
 
     <!-- Items Activity dummy labels -->
-    <string name="label_fragment_item_scan">Fragment item scan</string>
+    <string name="label_fragment_item_scan">Sorry, you don\'t have scanner hardware</string>
     <string name="label_fragment_item_search">Fragment item search</string>
-    <string name="label_fragment_rfid_item_scan">Fragment RFID item scan</string>
+    <string name="label_fragment_rfid_item_scan">Sorry, you don\'t have RFID scanner hardware</string>
 
     <!-- Label for popup menu -->
     <string name="label_search">Search</string>
@@ -67,5 +67,14 @@
     <string name="array_wrong_plan">Wrong plan</string>
     <string name="array_correct_fact">Correct fact</string>
     <string name="array_wrong_fact">Wrong fact</string>
+
+    <!-- Scanner's fragments labels -->
+    <string name="start_scan">Start scan</string>
+    <string name="stop_scan">Stop scan</string>
+    <string name="full_item_description">Full description</string>
+
+    <string name="item_color">Color</string>
+    <string name="item_size">Size</string>
+    <string name="item_state">State</string>
 
 </resources>

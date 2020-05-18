@@ -26,19 +26,41 @@
         android:id="@+id/barcode_scanner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_above="@+id/buttonsLayout"
         android:layout_below="@+id/appbar"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="0dp">
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp">
 
     </com.journeyapps.barcodescanner.DecoratedBarcodeView>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="196dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/buttonsLayout"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/white">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/full_description"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
     <com.getbase.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_resume_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         app:fab_title="Scan"
         tools:ignore="RelativeOverlap" />

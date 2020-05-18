@@ -1,9 +1,17 @@
 package com.finnflare.scanner
 
-import android.content.Context
+import android.view.KeyEvent
 
 interface IScanner {
-    fun startBarcodeScan(context: Context)
+    fun init()
 
-    fun startRFIDScan(context: Context)
+    fun deinit()
+
+    fun startBarcodeScan(keyCode: Int, event: KeyEvent?)
+
+    fun stopBarcodeScan(keyCode: Int, event: KeyEvent?)
+
+    fun startRFIDScan(keyCode: Int, event: KeyEvent?)
+
+    fun stopRFIDScan(keyCode: Int, event: KeyEvent?)
 }

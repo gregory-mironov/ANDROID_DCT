@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/label_fragment_rfid_item_scan"
+        android:textAlignment="center"
         android:textSize="30sp" />
 
 </RelativeLayout>

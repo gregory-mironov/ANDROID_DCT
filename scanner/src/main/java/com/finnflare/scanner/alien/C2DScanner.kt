@@ -20,38 +20,31 @@ object C2DScanner: KoinComponent {
             barcodeReader = BarcodeReader(context)
     }
 
-    private fun startScan() {
+    fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode != KeyCode.ALR_H450.SCAN || event?.repeatCount != 0)
+            return false
+
         barcodeReader?.let {
             if (it.isRunning)
-                return
+                return@let
 
             it.start { scanRes ->
                 viewModel.scanResult.value = ScanDecoder.decodeScanResult(scanRes)
             }
         }
+
+        return true
     }
 
-    private fun stopScan() {
+    fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode != KeyCode.ALR_H450.SCAN)
+            return false
+
         barcodeReader?.let {
             if (it.isRunning)
                 it.stop()
         }
 
-    }
-
-    fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode != KeyCode.ALR_H450.SCAN)
-            return false
-
-        stopScan()
-        return true
-    }
-
-    fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode != KeyCode.ALR_H450.SCAN || event.repeatCount != 0)
-            return false
-
-        startScan()
         return true
     }
 }

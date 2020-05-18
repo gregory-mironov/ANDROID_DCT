@@ -31,9 +31,9 @@
     <string name="bottom_navigation_search">Поиск</string>
 
     <!-- Items Activity dummy labels -->
-    <string name="label_fragment_item_scan">Фрагмент сканирования товаров</string>
+    <string name="label_fragment_item_scan">Устройство не имеет сканера</string>
     <string name="label_fragment_item_search">Фрагмент поиска товавор</string>
-    <string name="label_fragment_rfid_item_scan">Фрагмент сканирования по RFID</string>
+    <string name="label_fragment_rfid_item_scan">Устройство не имеет RFID-сканера</string>
 
     <!-- Label for popup menu -->
     <string name="label_search">Поиск</string>
@@ -60,5 +60,14 @@
     <string name="array_wrong_plan">Ненайденные ожидаемые</string>
     <string name="array_correct_fact">Ожидаемые полученные</string>
     <string name="array_wrong_fact">Лишние полученные</string>
+
+    <!-- Scanner's fragments labels -->
+    <string name="start_scan">Начать сканирование</string>
+    <string name="stop_scan">Начать сканирование</string>
+
+    <string name="full_item_description">Полное название</string>
+    <string name="item_color">Цвет</string>
+    <string name="item_size">Размер</string>
+    <string name="item_state">Состояние</string>
 
 </resources>

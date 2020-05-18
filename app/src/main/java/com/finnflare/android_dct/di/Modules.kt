@@ -1,5 +1,6 @@
 package com.finnflare.android_dct.di
 
+import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.dct_network.CNetworkViewModel
 import com.finnflare.scanner.CScannerViewModel
@@ -12,4 +13,5 @@ val viewModelsModule = module(override = true) {
     single { CScannerViewModel(androidApplication()) }
     single { CNetworkViewModel(androidApplication()) }
     single { CDatabaseViewModel(androidApplication()) }
+    single { CUIViewModel(androidApplication()) }
 }
