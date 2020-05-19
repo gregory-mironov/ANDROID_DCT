@@ -2,8 +2,6 @@ package com.finnflare.android_dct.ui.items
 
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,10 +14,15 @@ import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
 import com.finnflare.android_dct.ui.items.fact.FactItemsListFragment
 import com.finnflare.android_dct.ui.items.plan.PlanItemsListFragment
 import com.finnflare.scanner.CScannerViewModel
+import com.finnflare.scanner.Item
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
+@ObsoleteCoroutinesApi
 class ItemsActivity : AppCompatActivity(),
     PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener,
     FactItemsListFragment.OnListFactItemsListFragmentInteractionListener {
@@ -49,6 +52,10 @@ class ItemsActivity : AppCompatActivity(),
                 R.id.a_items_placeholder,
                 uiViewModel.fragmentsList[uiViewModel.selectedFragment]
             ).commit()
+        }
+
+        GlobalScope.launch {
+            scannerViewModel.getItemsLists()
         }
     }
 
@@ -95,22 +102,16 @@ class ItemsActivity : AppCompatActivity(),
             true
         }
 
-    override fun onListPlanItemsListFragmentInteraction(item: PlanFactListItem?) {
+    override fun onListPlanItemsListFragmentInteraction(item: Item?) {
         if (item != null) {
-            Toast.makeText(applicationContext, item.title + " clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, item.description + " clicked", Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onListFactItemsListFragmentInteraction(item: PlanFactListItem?) {
+    override fun onListFactItemsListFragmentInteraction(item: Item?) {
         if (item != null) {
-            Toast.makeText(applicationContext, item.title + " clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, item.description + " clicked", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.menu_items_list, menu)
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -146,12 +147,5 @@ class ItemsActivity : AppCompatActivity(),
             scannerViewModel.scanner.stopRFIDScan(keyCode, event!!)
 
         return super.onKeyUp(keyCode, event)
-    }
-
-    data class PlanFactListItem(
-        val title: String,
-        val subtitle: String
-    ) {
-        override fun toString(): String = "$title : $subtitle"
     }
 }

@@ -13,14 +13,13 @@ import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.location.location.LocationChooseFragment.OnListLocationChooseFragmentInteractionListener
 import kotlinx.android.synthetic.main.fragment_location_choose_item.view.*
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import org.koin.core.KoinComponent
 import java.util.*
 
 @ObsoleteCoroutinesApi
 class LocationRecyclerViewAdapter(
     private val mValues: List<Location>,
     private val mListener: OnListLocationChooseFragmentInteractionListener?
-) : RecyclerView.Adapter<LocationRecyclerViewAdapter.ViewHolder>(), Filterable, KoinComponent {
+) : RecyclerView.Adapter<LocationRecyclerViewAdapter.ViewHolder>(), Filterable{
 
     private val mOnClickListener: View.OnClickListener
 

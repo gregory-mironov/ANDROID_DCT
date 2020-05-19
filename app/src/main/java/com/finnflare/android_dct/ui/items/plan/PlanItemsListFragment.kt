@@ -6,13 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.SearchView
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.items.ItemsActivity
+import com.finnflare.scanner.CScannerViewModel
+import com.finnflare.scanner.Item
+import org.koin.android.ext.android.inject
 
 
 /**
@@ -20,13 +23,14 @@ import com.finnflare.android_dct.ui.items.ItemsActivity
  * Activities containing this fragment MUST implement the
  * [PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener] interface.
  */
-class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, SearchView.OnQueryTextListener {
+    private val scannerViewModel by inject<CScannerViewModel>()
 
     private var columnCount = 1
 
     private var listener: OnListPlanItemsListFragmentInteractionListener? = null
 
-    private var adapter: PlanRecyclerViewAdapter? = null
+    private lateinit var mAdapter: PlanRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,17 +49,18 @@ class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener {
         setSpinnerListener(view)
         setRecyclerAdapter(view)
 
+        view.findViewById<SearchView>(R.id.planSearchView).setOnQueryTextListener(this)
+
         return view
     }
 
     private fun setRecyclerAdapter(view: View){
         val recyclerView = view.findViewById<RecyclerView>(R.id.f_plan_recycler)
-        recyclerView.layoutManager = when {
-            columnCount == 1 -> LinearLayoutManager(context)
-            else -> GridLayoutManager(context, columnCount)
-        }
-        adapter = PlanRecyclerViewAdapter(DummyCorrectPlanItemsList.PLAN_ITEMS, listener)
-        recyclerView.adapter = adapter
+        recyclerView.layoutManager = if (columnCount == 1) LinearLayoutManager(context)
+        else GridLayoutManager(context, columnCount)
+
+        mAdapter = PlanRecyclerViewAdapter(scannerViewModel.planItemsList, listener)
+        recyclerView.adapter = mAdapter
     }
 
     private fun setSpinnerListener(view: View) {
@@ -65,36 +70,16 @@ class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnListPlanItemsListFragmentInteractionListener) {
+        if (context is OnListPlanItemsListFragmentInteractionListener)
             listener = context
-        } else {
+        else
             throw RuntimeException(context.toString() +
                     " must implement OnListPlanItemsListFragmentInteractionListener")
-        }
     }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
-    }
-
-    interface OnListPlanItemsListFragmentInteractionListener {
-        fun onListPlanItemsListFragmentInteraction(item: ItemsActivity.PlanFactListItem?)
-    }
-
-    companion object {
-
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
-        @JvmStatic
-        fun newInstance(columnCount: Int) =
-            PlanItemsListFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -104,10 +89,32 @@ class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         when (choose[position]) {
             getString(R.string.array_correct_plan) ->
-                adapter?.changeData(DummyCorrectPlanItemsList.PLAN_ITEMS)
+                mAdapter.changeData(scannerViewModel.planItemsListFound)
             getString(R.string.array_wrong_plan) ->
-                adapter?.changeData(DummyWrongPlanItemsList.PLAN_ITEMS)
+                mAdapter.changeData(scannerViewModel.planItemsList)
             else -> throw RuntimeException(context.toString() + " unknown spinner item")
+        }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean = false
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        mAdapter.filter.filter(newText.toString())
+        return false
+    }
+
+    interface OnListPlanItemsListFragmentInteractionListener {
+        fun onListPlanItemsListFragmentInteraction(item: Item?)
+    }
+
+    companion object {
+        const val ARG_COLUMN_COUNT = "column-count"
+
+        @JvmStatic
+        fun newInstance(columnCount: Int) = PlanItemsListFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_COLUMN_COUNT, columnCount)
+            }
         }
     }
 }

@@ -3,24 +3,27 @@ package com.finnflare.android_dct.ui.items.plan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.items.ItemsActivity
+import com.finnflare.scanner.Item
 import kotlinx.android.synthetic.main.fragment_list_item.view.*
+import java.util.*
 
 class PlanRecyclerViewAdapter(
-    private var mValues: List<ItemsActivity.PlanFactListItem>,
+    private var mValues: List<Item>,
     private val mListener: PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener?
-) : RecyclerView.Adapter<PlanRecyclerViewAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PlanRecyclerViewAdapter.ViewHolder>(), Filterable{
 
     private val mOnClickListener: View.OnClickListener
 
+    private var mValuesFiltered = mValues
+
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as ItemsActivity.PlanFactListItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
+            val item = v.tag as Item
             mListener?.onListPlanItemsListFragmentInteraction(item)
         }
     }
@@ -32,9 +35,9 @@ class PlanRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mValues.get(position)
-        holder.mTitleView.text = item.title
-        holder.mSubtitleView.text = item.subtitle
+        val item = mValuesFiltered[position]
+        holder.mTitleView.text = item.description
+        holder.mSubtitleView.text = item.content
 
         with(holder.mView) {
             tag = item
@@ -42,10 +45,11 @@ class PlanRecyclerViewAdapter(
         }
     }
 
-    override fun getItemCount(): Int = mValues.size
+    override fun getItemCount(): Int = mValuesFiltered.size
 
-    fun changeData(newValues: List<ItemsActivity.PlanFactListItem>) {
+    fun changeData(newValues: List<Item>) {
         mValues = newValues
+        mValuesFiltered = newValues
         notifyDataSetChanged()
     }
 
@@ -55,6 +59,34 @@ class PlanRecyclerViewAdapter(
 
         override fun toString(): String {
             return super.toString() + " '" + mSubtitleView.text + "'"
+        }
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(charSequence: CharSequence): FilterResults {
+                val charString = charSequence.toString()
+                mValuesFiltered = if (charString.isEmpty()) { mValues } else {
+                    val filteredList = mutableListOf<Item>()
+                    for (item in mValues) {
+                        if (item.description.toLowerCase(Locale.ROOT)
+                                .contains(charString.toLowerCase(Locale.ROOT))) {
+                            filteredList.add(item)
+                        }
+                    }
+                    filteredList
+                }
+
+                return FilterResults().apply { values = mValuesFiltered}
+            }
+
+            override fun publishResults(
+                charSequence: CharSequence,
+                filterResults: FilterResults
+            ) {
+                mValuesFiltered = filterResults.values as List<Item>
+                notifyDataSetChanged()
+            }
         }
     }
 }
