@@ -5,18 +5,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.finnflare.android_dct.CUIViewModel
+import com.finnflare.android_dct.Location
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.location.location.DummyLocationChooseFragmentContent.LocationDummyItem
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.koin.android.ext.android.inject
 
-class LocationChooseFragment : Fragment() {
+@ObsoleteCoroutinesApi
+class LocationChooseFragment : Fragment(), SearchView.OnQueryTextListener {
+    private val uiViewModel by inject<CUIViewModel>()
 
     private var columnCount = 1
 
     private var listener: OnListLocationChooseFragmentInteractionListener? = null
+
+    private lateinit var mAdapter: LocationRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,18 +40,19 @@ class LocationChooseFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_location_choose, container, false)
 
-        // Set the adapter
-        val recyclerView = view.findViewById<RecyclerView>(R.id.f_location_recycler)
-        with(recyclerView) {
-            layoutManager = when {
+        mAdapter = LocationRecyclerViewAdapter(
+            uiViewModel.locationList,
+            listener
+        )
+
+        view.findViewById<RecyclerView>(R.id.f_location_recycler).let {
+            it.layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)
                 else -> GridLayoutManager(context, columnCount)
             }
-            adapter =
-                LocationRecyclerViewAdapter(
-                    DummyLocationChooseFragmentContent.LOCATION_ITEMS,
-                    listener
-                )
+            it.adapter = mAdapter
+
+            view.findViewById<SearchView>(R.id.locationSearchView).setOnQueryTextListener(this)
         }
 
         return view
@@ -64,23 +73,27 @@ class LocationChooseFragment : Fragment() {
         listener = null
     }
 
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        mAdapter.filter.filter(newText)
+        return false
+    }
+
     interface OnListLocationChooseFragmentInteractionListener {
-        fun onListLocationChooseFragmentInteraction(item: LocationDummyItem?)
+        fun onListLocationChooseFragmentInteraction(item: Location)
     }
 
     companion object {
-
-        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int) =
-            LocationChooseFragment()
-                .apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
+        fun newInstance(columnCount: Int) = LocationChooseFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_COLUMN_COUNT, columnCount)
             }
+        }
     }
 }

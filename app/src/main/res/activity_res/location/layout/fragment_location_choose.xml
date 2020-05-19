@@ -5,12 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <SearchView
+        android:id="@+id/locationSearchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/label_location_list"
-        android:textColor="@android:color/secondary_text_light" />
+        android:ems="10"
+        android:hint="@string/hint_location"
+        android:textSize="@dimen/edit_text_text_size" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/f_location_recycler"

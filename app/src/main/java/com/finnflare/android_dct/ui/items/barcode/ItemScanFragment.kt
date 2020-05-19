@@ -1,7 +1,6 @@
 package com.finnflare.android_dct.ui.items.barcode
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,7 @@ class ItemScanFragment(private val enabled: Boolean) : Fragment() {
 
         return inflater.inflate(R.layout.fragment_barcode_camera, container, false).apply {
             this.findViewById<Button>(R.id.cameraScanButton).setOnClickListener {
-                scannerViewModel.scanner.startBarcodeScan(KeyEvent.KEYCODE_F12, null)
+                scannerViewModel.scanner.startBarcodeScanUI()
             }
         }
     }

@@ -17,7 +17,11 @@ class CCameraScanner(private val context: Context): IScanner {
 
     override fun deinit() { }
 
-    override fun startBarcodeScan(keyCode: Int, event: KeyEvent?) {
+    override fun startBarcodeScan(keyCode: Int, event: KeyEvent?) { }
+
+    override fun stopBarcodeScan(keyCode: Int, event: KeyEvent?) { }
+
+    override fun startBarcodeScanUI() {
         Dexter.withContext(context)
             .withPermission(android.Manifest.permission.CAMERA)
             .withListener(object: PermissionListener {
@@ -37,9 +41,13 @@ class CCameraScanner(private val context: Context): IScanner {
             .check()
     }
 
-    override fun stopBarcodeScan(keyCode: Int, event: KeyEvent?) { }
+    override fun stopBarcodeScanUI() { }
 
     override fun startRFIDScan(keyCode: Int, event: KeyEvent?) { }
 
     override fun stopRFIDScan(keyCode: Int, event: KeyEvent?) { }
+
+    override fun startRFIDScanUI() { }
+
+    override fun stopRFIDScanUI() { }
 }

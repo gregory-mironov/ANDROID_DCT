@@ -21,8 +21,8 @@
     <string name="label_info">Информация</string>
 
     <!-- Location Activity -->
-    <string name="label_location_list">Список локаций</string>
-    <string name="label_documents_list">Список зон сканирования</string>
+    <string name="hint_location">Локаций</string>
+    <string name="hint_documents">Документ</string>
 
     <!-- Items Activity botton navigation menu lavel -->
     <string name="bottom_navigation_barcode">Штрихкод</string>
@@ -53,7 +53,7 @@
     <string name="setting_send_errors_title">Передавать ошибки на сервер</string>
     <string name="setting_download_images_title">Загружать изображения</string>
     <string name="setting_search_unknown_title">Искать неизветсные товары</string>
-    <string name="setting_send_data_online">Передавать данные онлайн1</string>
+    <string name="setting_send_data_online">Передавать данные онлайн</string>
 
     <!-- Array data -->
     <string name="array_correct_plan">Найденные ожидаемые</string>
@@ -63,7 +63,7 @@
 
     <!-- Scanner's fragments labels -->
     <string name="start_scan">Начать сканирование</string>
-    <string name="stop_scan">Начать сканирование</string>
+    <string name="stop_scan">Завершить сканирование</string>
 
     <string name="full_item_description">Полное название</string>
     <string name="item_color">Цвет</string>

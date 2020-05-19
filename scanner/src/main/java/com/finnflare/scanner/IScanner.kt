@@ -11,7 +11,15 @@ interface IScanner {
 
     fun stopBarcodeScan(keyCode: Int, event: KeyEvent?)
 
+    fun startBarcodeScanUI()
+
+    fun stopBarcodeScanUI()
+
     fun startRFIDScan(keyCode: Int, event: KeyEvent?)
 
     fun stopRFIDScan(keyCode: Int, event: KeyEvent?)
+
+    fun startRFIDScanUI()
+
+    fun stopRFIDScanUI()
 }

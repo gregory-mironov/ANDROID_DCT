@@ -12,6 +12,11 @@
         android:layout_margin="10dp"
         android:entries="@array/f_fact_sninner_items" />
 
+    <SearchView
+        android:id="@+id/factSearchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/f_fact_recycler"
         android:layout_width="match_parent"
