@@ -5,16 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/documentSearchEditText"
+    <SearchView
+        android:id="@+id/documentSearchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/hint_location"
-        android:textSize="@dimen/edit_text_text_size"
-        android:autofillHints="false"
-        android:inputType="text"
-        android:visibility="gone"/>
+        android:hint="@string/hint_documents"
+        android:textSize="@dimen/edit_text_text_size" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/f_document_recycler"

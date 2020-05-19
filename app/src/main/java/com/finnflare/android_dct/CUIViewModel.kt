@@ -10,9 +10,11 @@ import com.finnflare.android_dct.ui.items.rfid.RFIDItemScanFragment
 import com.finnflare.android_dct.ui.items.search.ItemSearchFragment
 import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.dct_network.CNetworkViewModel
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
+@ObsoleteCoroutinesApi
 class CUIViewModel(application: Application): AndroidViewModel(application), KoinComponent {
 
     private val networkViewModel by  inject<CNetworkViewModel>()
@@ -35,10 +37,10 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
     var selectedFragment = 2
 
     val locationList = mutableListOf<Location>()
-
     val documentList = mutableListOf<Document>()
 
     fun getLocationsList() {
+        locationList.clear()
         for (i in 1..25)
             locationList.add(
                 Location("Location $i", 'A' + (i - 1) % 26 + " documents", "")
@@ -46,6 +48,7 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
     }
 
     fun getDocumentsList(locationId: String) {
+        documentList.clear()
         for (i in 1..25)
             documentList.add(
                 Document("Document $i", "User\'s comment $i"))

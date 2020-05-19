@@ -2,11 +2,7 @@ package com.finnflare.android_dct.ui.location
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -21,10 +17,12 @@ import com.finnflare.android_dct.ui.location.document.DocumentChooseFragment
 import com.finnflare.android_dct.ui.location.location.LocationChooseFragment
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 
+@ObsoleteCoroutinesApi
 class LocationActivity : AppCompatActivity(),
     LocationChooseFragment.OnListLocationChooseFragmentInteractionListener,
     DocumentChooseFragment.OnListDocumentChooseFragmentInteractionListener{
@@ -75,24 +73,10 @@ class LocationActivity : AppCompatActivity(),
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.menu_location, menu)
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> findViewById<DrawerLayout>(R.id.a_location_drawer_layout).
             openDrawer(GravityCompat.START)
-            R.id.a_location_menu_search -> {
-                findViewById<EditText>(R.id.locationSearchEditText)?.let {
-                    it.visibility = if (it.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                }
-                findViewById<EditText>(R.id.documentSearchEditText)?.let {
-                    it.visibility = if (it.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                }
-            }
         }
         return true
     }

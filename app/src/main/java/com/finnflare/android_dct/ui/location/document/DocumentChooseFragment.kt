@@ -5,8 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import androidx.core.widget.addTextChangedListener
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,14 +13,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.Document
 import com.finnflare.android_dct.R
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.android.ext.android.inject
 
-class DocumentChooseFragment : Fragment() {
+@ObsoleteCoroutinesApi
+class DocumentChooseFragment : Fragment(),  SearchView.OnQueryTextListener {
     private val uiViewModel by inject<CUIViewModel>()
 
     private var columnCount = 1
 
     private var listener: OnListDocumentChooseFragmentInteractionListener? = null
+
+    private lateinit var mAdapter: DocumentRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,20 +40,18 @@ class DocumentChooseFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_document_choose, container, false)
 
+        mAdapter = DocumentRecyclerViewAdapter(
+            uiViewModel.documentList.toList(),
+            listener
+        )
         view.findViewById<RecyclerView>(R.id.f_document_recycler)?.let {
             it.layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)
                 else -> GridLayoutManager(context, columnCount)
             }
-            it.adapter =
-                DocumentRecyclerViewAdapter(
-                    uiViewModel.documentList.toList(),
-                    listener
-                )
-        }
+            it.adapter = mAdapter
 
-        view.findViewById<EditText>(R.id.documentSearchEditText).addTextChangedListener {
-
+            view.findViewById<SearchView>(R.id.documentSearchView).setOnQueryTextListener(this)
         }
 
         return view
@@ -69,6 +70,15 @@ class DocumentChooseFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        mAdapter.filter.filter(newText)
+        return false
     }
 
     interface OnListDocumentChooseFragmentInteractionListener {
