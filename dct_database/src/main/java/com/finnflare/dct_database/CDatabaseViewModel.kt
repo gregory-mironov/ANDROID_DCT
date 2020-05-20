@@ -149,4 +149,12 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
     fun getScanResults(storageId: String, documentId: String): List<CScanResult> {
         return database.mainDao().formScanResults(storageId, documentId)
     }
+
+    fun deleteAllMyBarcodeLines() {
+        database.barcodeLeftoversDao().deleteAllMyBarcodeLines()
+    }
+
+    fun deleteAllMyRfidLines() {
+        database.barcodeLeftoversDao().deleteAllMyRfidLines()
+    }
 }
