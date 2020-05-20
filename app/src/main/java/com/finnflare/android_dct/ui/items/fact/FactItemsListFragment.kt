@@ -26,6 +26,9 @@ class FactItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
 
     private lateinit var mAdapter: FactRecyclerViewAdapter
 
+    private val factCorrectItemsList = mutableListOf<Item>()
+    private val factWrongItemsList = mutableListOf<Item>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,7 +56,7 @@ class FactItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
         recyclerView.layoutManager = if (columnCount == 1) LinearLayoutManager(context)
         else GridLayoutManager(context, columnCount)
 
-        mAdapter = FactRecyclerViewAdapter(scannerViewModel.factItemsListCorrect, listener)
+        mAdapter = FactRecyclerViewAdapter(factCorrectItemsList, listener)
         recyclerView.adapter = mAdapter
     }
 
@@ -62,6 +65,11 @@ class FactItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
         spinner.onItemSelectedListener = this
     }
 
+    override fun onStart() {
+        super.onStart()
+        factCorrectItemsList.addAll(scannerViewModel.getCorrectFactList())
+        factWrongItemsList.addAll(scannerViewModel.getWrongFactList())
+    }
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnListFactItemsListFragmentInteractionListener) {
@@ -84,9 +92,9 @@ class FactItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
 
         when (choose[position]) {
             getString(R.string.array_correct_fact) ->
-                mAdapter.changeData(scannerViewModel.factItemsListCorrect)
+                mAdapter.changeData(factCorrectItemsList)
             getString(R.string.array_wrong_fact) ->
-                mAdapter.changeData(scannerViewModel.factItemsListWrong)
+                mAdapter.changeData(factWrongItemsList)
             else -> throw RuntimeException(context.toString() + " unknown spinner item")
         }
     }

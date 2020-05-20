@@ -55,7 +55,7 @@ class ItemsActivity : AppCompatActivity(),
         }
 
         GlobalScope.launch {
-            scannerViewModel.getItemsLists()
+            scannerViewModel.updateItemsLists()
         }
     }
 
