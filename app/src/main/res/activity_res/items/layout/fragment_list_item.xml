@@ -23,6 +23,7 @@
         android:layout_marginStart="15dp"
         android:textColor="@color/item_recycled_title"
         android:textSize="24sp"
+        android:textIsSelectable="true"
         app:layout_constraintStart_toEndOf="@+id/f_items_item_image"
         app:layout_constraintTop_toTopOf="@+id/f_items_item_image"
         tools:text="Item 1" />

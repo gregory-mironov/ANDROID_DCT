@@ -92,4 +92,7 @@ dependencies {
 
     // Setting
     implementation 'androidx.preference:preference:1.1.1'
+
+    //Sound generator
+    implementation 'com.github.nisrulz:zentone:1.0.3'
 }

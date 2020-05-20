@@ -37,7 +37,7 @@
 
     <!-- Items Activity dummy labels -->
     <string name="label_fragment_item_scan">Sorry, you don\'t have scanner hardware</string>
-    <string name="label_fragment_item_search">Fragment item search</string>
+    <string name="label_fragment_item_search">Sorry, you don\'t have RFID scanner hardware</string>
     <string name="label_fragment_rfid_item_scan">Sorry, you don\'t have RFID scanner hardware</string>
 
     <!-- Label for popup menu -->

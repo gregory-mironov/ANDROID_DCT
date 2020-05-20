@@ -14,6 +14,10 @@ import org.koin.android.ext.android.inject
 class RFIDItemScanFragment(private val enabled: Boolean) : Fragment() {
     private val scannerViewModel by inject<CScannerViewModel>()
 
+    private val scanResObserver = Observer<Triple<String, String, String>> {
+
+    }
+
     private var running = false
 
     override fun onCreateView(
@@ -24,8 +28,6 @@ class RFIDItemScanFragment(private val enabled: Boolean) : Fragment() {
 
         if (!enabled)
             return inflater.inflate(R.layout.fragment_rfid_disabled, container, false)
-
-        configureObservers()
 
         return inflater.inflate(R.layout.fragment_rfid_enabled, container, false).apply {
             this.findViewById<Button>(R.id.rfidScanButton).setOnClickListener {
@@ -43,9 +45,15 @@ class RFIDItemScanFragment(private val enabled: Boolean) : Fragment() {
         }
     }
 
-    private fun configureObservers() {
-        scannerViewModel.scanResult.observe(viewLifecycleOwner, Observer {
+    override fun onStart() {
+        super.onStart()
+        if (enabled)
+            scannerViewModel.scanResult.observe(viewLifecycleOwner, scanResObserver)
+    }
 
-        })
+    override fun onStop() {
+        super.onStop()
+        if (enabled)
+            scannerViewModel.scanResult.removeObserver(scanResObserver)
     }
 }

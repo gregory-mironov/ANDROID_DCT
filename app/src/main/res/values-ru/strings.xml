@@ -32,7 +32,7 @@
 
     <!-- Items Activity dummy labels -->
     <string name="label_fragment_item_scan">Устройство не имеет сканера</string>
-    <string name="label_fragment_item_search">Фрагмент поиска товавор</string>
+    <string name="label_fragment_item_search">Устройство не имеет RFID-сканера</string>
     <string name="label_fragment_rfid_item_scan">Устройство не имеет RFID-сканера</string>
 
     <!-- Label for popup menu -->
