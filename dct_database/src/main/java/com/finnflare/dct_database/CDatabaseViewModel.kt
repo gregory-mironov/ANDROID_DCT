@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.finnflare.dct_database.entity.*
 import com.finnflare.dct_database.insertable_classes.*
+import com.finnflare.dct_database.request_result.CScanResult
 import org.koin.core.KoinComponent
 
 class CDatabaseViewModel(application: Application): AndroidViewModel(application), KoinComponent {
@@ -121,5 +122,31 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
         database.barcodeLeftoversDao().truncateTable()
         database.markingCodesDao().truncateTable()
         database.mainDao().appendItems(insertable_g, insertable_lo, insertablr_mc)
+    }
+
+    fun scanResultProcessing(gtin: String, sn: String, rfid: String) {
+        if (sn.isEmpty() && rfid.isEmpty()) {
+            // EAN-13
+            if (database.barcodeLeftoversDao().findMyLine(gtin, sn, rfid).isEmpty()) {
+                val leftover = database.barcodeLeftoversDao().findServerLine(gtin, sn, rfid)[0]
+                leftover.mQtyin = 0
+                leftover.mQtyout = 1
+                database.barcodeLeftoversDao().insert(leftover)
+            } else {
+                database.barcodeLeftoversDao().incMyQtyoutEan_13(gtin, sn, rfid)
+            }
+        } else {
+            // DM, old and new RFID
+            if (database.barcodeLeftoversDao().findMyLine(gtin, sn, rfid).isEmpty()) {
+                val leftover = database.barcodeLeftoversDao().findServerLine(gtin, sn, rfid)[0]
+                leftover.mQtyin = 0
+                leftover.mQtyout = 1
+                database.barcodeLeftoversDao().insert(leftover)
+            }
+        }
+    }
+
+    fun getScanResults(storageId: String, documentId: String): List<CScanResult> {
+        return database.mainDao().formScanResults(storageId, documentId)
     }
 }
