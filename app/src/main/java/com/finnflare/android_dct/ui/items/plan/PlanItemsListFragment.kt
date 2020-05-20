@@ -88,10 +88,10 @@ class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
         val choose = resources.getStringArray(R.array.f_plan_sninner_items)
 
         when (choose[position]) {
-            getString(R.string.array_correct_plan) ->
-                mAdapter.changeData(scannerViewModel.planItemsListFound)
-            getString(R.string.array_wrong_plan) ->
+            getString(R.string.array_plan_not_found) ->
                 mAdapter.changeData(scannerViewModel.planItemsList)
+            getString(R.string.array_plan_found) ->
+                mAdapter.changeData(scannerViewModel.planItemsListFound)
             else -> throw RuntimeException(context.toString() + " unknown spinner item")
         }
     }

@@ -63,8 +63,8 @@
     <string name="setting_send_data_online">Send data online</string>
 
     <!-- Array data -->
-    <string name="array_correct_plan">Correct plan</string>
-    <string name="array_wrong_plan">Wrong plan</string>
+    <string name="array_plan_not_found">Expected plan</string>
+    <string name="array_plan_found">Found plan</string>
     <string name="array_correct_fact">Correct fact</string>
     <string name="array_wrong_fact">Wrong fact</string>
 

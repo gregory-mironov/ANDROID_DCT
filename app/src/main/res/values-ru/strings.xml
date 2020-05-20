@@ -56,8 +56,8 @@
     <string name="setting_send_data_online">Передавать данные онлайн</string>
 
     <!-- Array data -->
-    <string name="array_correct_plan">Найденные ожидаемые</string>
-    <string name="array_wrong_plan">Ненайденные ожидаемые</string>
+    <string name="array_plan_not_found">Найденные ожидаемые</string>
+    <string name="array_plan_found">Ненайденные ожидаемые</string>
     <string name="array_correct_fact">Ожидаемые полученные</string>
     <string name="array_wrong_fact">Лишние полученные</string>
 
