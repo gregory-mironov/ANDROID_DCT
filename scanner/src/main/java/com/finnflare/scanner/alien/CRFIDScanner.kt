@@ -63,6 +63,7 @@ object CRFIDScanner: RFIDCallback, KoinComponent {
     override fun onTagRead(tag: Tag) {
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
+                viewModel.rfidRSSI = tag.rssi
                 viewModel.scanResult.value = ScanDecoder.decodeScanResult(tag.epc)
             }
         }

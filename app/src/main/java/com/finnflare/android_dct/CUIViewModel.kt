@@ -20,19 +20,17 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
     private val networkViewModel by  inject<CNetworkViewModel>()
     private val databaseViewModel by inject<CDatabaseViewModel>()
 
+    val rfidEnabled = when (Build.MANUFACTURER) {
+        "Alien" -> Build.MODEL == "ALR-H450"
+        else -> false
+    }
     //Fragments
     val fragmentsList = listOf(
-        ItemScanFragment(when (Build.MANUFACTURER) {
-            "Alien" -> Build.MODEL == "ALR-H450"
-            else -> false
-        }),
-        RFIDItemScanFragment(when (Build.MANUFACTURER) {
-            "Alien" -> Build.MODEL == "ALR-H450"
-            else -> false
-        }),
+        ItemScanFragment(rfidEnabled),
+        RFIDItemScanFragment(rfidEnabled),
         PlanItemsListFragment(),
         FactItemsListFragment(),
-        ItemSearchFragment()
+        ItemSearchFragment(rfidEnabled)
     )
     var selectedFragment = 2
 

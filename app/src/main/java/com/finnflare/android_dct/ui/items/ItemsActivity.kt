@@ -133,7 +133,7 @@ class ItemsActivity : AppCompatActivity(),
         if (uiViewModel.selectedFragment == 0)
             scannerViewModel.scanner.startBarcodeScan(keyCode, event!!)
 
-        if (uiViewModel.selectedFragment == 1)
+        if (uiViewModel.rfidEnabled && uiViewModel.selectedFragment in listOf(1, 4))
             scannerViewModel.scanner.startRFIDScan(keyCode, event!!)
 
         return super.onKeyDown(keyCode, event)
@@ -143,7 +143,7 @@ class ItemsActivity : AppCompatActivity(),
         if (uiViewModel.selectedFragment == 0)
             scannerViewModel.scanner.stopBarcodeScan(keyCode, event!!)
 
-        if (uiViewModel.selectedFragment == 1)
+        if (uiViewModel.rfidEnabled && uiViewModel.selectedFragment in listOf(1, 4))
             scannerViewModel.scanner.stopRFIDScan(keyCode, event!!)
 
         return super.onKeyUp(keyCode, event)
