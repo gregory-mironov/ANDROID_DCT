@@ -17,9 +17,10 @@ import org.koin.android.ext.android.inject
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 
-class ItemSearchFragment(private val enabled: Boolean) : Fragment(), SearchView.OnQueryTextListener {
-
+class ItemSearchFragment : Fragment(), SearchView.OnQueryTextListener {
     private val scannerViewModel by inject<CScannerViewModel>()
+
+    private var enabled = false
 
     private var lastBeepTime = 0L
 
@@ -77,4 +78,12 @@ class ItemSearchFragment(private val enabled: Boolean) : Fragment(), SearchView.
     }
 
     override fun onQueryTextChange(newText: String?): Boolean = false
+
+    companion object {
+        @JvmStatic
+        fun newInstance(enabled: Boolean) =
+            ItemSearchFragment().apply {
+                this.enabled = enabled
+            }
+    }
 }

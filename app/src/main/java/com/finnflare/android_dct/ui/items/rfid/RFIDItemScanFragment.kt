@@ -13,8 +13,10 @@ import com.finnflare.android_dct.R
 import com.finnflare.scanner.CScannerViewModel
 import org.koin.android.ext.android.inject
 
-class RFIDItemScanFragment(private val enabled: Boolean) : Fragment() {
+class RFIDItemScanFragment : Fragment() {
     private val scannerViewModel by inject<CScannerViewModel>()
+
+    private var enabled = false
 
     private val scanResObserver = Observer<Triple<String, String, String>> {
         when (scannerViewModel.increaseItemCount(it.first, it.second, it.third)) {
@@ -90,5 +92,13 @@ class RFIDItemScanFragment(private val enabled: Boolean) : Fragment() {
         super.onStop()
         if (enabled)
             scannerViewModel.scanResult.removeObserver(scanResObserver)
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(enabled: Boolean) =
+            RFIDItemScanFragment().apply {
+                this.enabled = enabled
+            }
     }
 }

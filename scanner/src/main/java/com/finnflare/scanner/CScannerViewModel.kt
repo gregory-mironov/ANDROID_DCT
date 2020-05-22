@@ -36,8 +36,6 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
                 }
                 else -> scanner = CCameraScanner(application)
             }
-
-            scanner.init()
         }
     }
 

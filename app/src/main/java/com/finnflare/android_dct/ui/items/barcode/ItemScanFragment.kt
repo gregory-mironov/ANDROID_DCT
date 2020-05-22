@@ -13,8 +13,10 @@ import com.finnflare.android_dct.R
 import com.finnflare.scanner.CScannerViewModel
 import org.koin.android.ext.android.inject
 
-class ItemScanFragment(private val enabled: Boolean) : Fragment() {
+class ItemScanFragment : Fragment() {
     private val scannerViewModel by inject<CScannerViewModel>()
+
+    private var enabled = false
 
     private lateinit var correctCount: TextView
     private lateinit var wrongCount: TextView
@@ -98,5 +100,13 @@ class ItemScanFragment(private val enabled: Boolean) : Fragment() {
             itemSize?.text = item.second.second
             itemState?.text = item.second.third
         })
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(enabled: Boolean) =
+            ItemScanFragment().apply {
+                this.enabled = enabled
+            }
     }
 }
