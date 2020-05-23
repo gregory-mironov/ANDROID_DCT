@@ -25,13 +25,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_scan"
-        app:layout_constraintBottom_toTopOf="@+id/wrong_items_count"
+        app:layout_constraintBottom_toTopOf="@+id/rfid_wrong_items_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rfidProgressBar" />
 
     <TextView
-        android:id="@+id/correct_items_count"
+        android:id="@+id/rfid_correct_items_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -43,7 +43,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/wrong_items_count"
+        android:id="@+id/rfid_wrong_items_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -51,11 +51,11 @@
         android:textColor="@android:color/holo_red_dark"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/correct_items_count"
-        app:layout_constraintEnd_toStartOf="@id/plan_items_count"/>
+        app:layout_constraintStart_toEndOf="@id/rfid_correct_items_count"
+        app:layout_constraintEnd_toStartOf="@id/rfid_plan_items_count"/>
 
     <TextView
-        android:id="@+id/plan_items_count"
+        android:id="@+id/rfid_plan_items_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"

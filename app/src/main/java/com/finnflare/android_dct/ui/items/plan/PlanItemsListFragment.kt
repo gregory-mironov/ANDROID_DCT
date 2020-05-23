@@ -32,6 +32,9 @@ class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
 
     private lateinit var mAdapter: PlanRecyclerViewAdapter
 
+    private val planItemsListNotFound = mutableListOf<Item>()
+    private val planItemsListFound = mutableListOf<Item>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,13 +62,19 @@ class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
         recyclerView.layoutManager = if (columnCount == 1) LinearLayoutManager(context)
         else GridLayoutManager(context, columnCount)
 
-        mAdapter = PlanRecyclerViewAdapter(scannerViewModel.planItemsList, listener)
+        mAdapter = PlanRecyclerViewAdapter(planItemsListNotFound, listener, this.requireContext())
         recyclerView.adapter = mAdapter
     }
 
     private fun setSpinnerListener(view: View) {
         val spinner = view.findViewById<Spinner>(R.id.f_plan_spinner)
         spinner.onItemSelectedListener = this
+    }
+
+    override fun onStart() {
+        super.onStart()
+        planItemsListFound.addAll(scannerViewModel.getPlanListFound())
+        planItemsListNotFound.addAll(scannerViewModel.getPlanListNotFound())
     }
 
     override fun onAttach(context: Context) {
@@ -88,10 +97,10 @@ class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
         val choose = resources.getStringArray(R.array.f_plan_sninner_items)
 
         when (choose[position]) {
-            getString(R.string.array_correct_plan) ->
-                mAdapter.changeData(scannerViewModel.planItemsListFound)
-            getString(R.string.array_wrong_plan) ->
-                mAdapter.changeData(scannerViewModel.planItemsList)
+            getString(R.string.array_plan_not_found) ->
+                mAdapter.changeData(planItemsListNotFound)
+            getString(R.string.array_plan_found) ->
+                mAdapter.changeData(planItemsListFound)
             else -> throw RuntimeException(context.toString() + " unknown spinner item")
         }
     }

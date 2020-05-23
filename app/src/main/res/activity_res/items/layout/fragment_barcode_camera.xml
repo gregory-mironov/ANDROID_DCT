@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_scan"
-        app:layout_constraintBottom_toTopOf="@+id/wrong_items_count"
+        app:layout_constraintBottom_toTopOf="@+id/camera_wrong_items_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cameraProgressBar" />
@@ -43,7 +43,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/wrong_items_count"
+        android:id="@+id/camera_wrong_items_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin"

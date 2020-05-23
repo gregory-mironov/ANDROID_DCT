@@ -30,9 +30,6 @@ class ItemsActivity : AppCompatActivity(),
     private val scannerViewModel by inject<CScannerViewModel>()
     private val uiViewModel by inject<CUIViewModel>()
 
-    val IS_FIRST_START_KEY = "isFirstStart"
-    var isFirstStart: Boolean = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_items)
@@ -41,27 +38,29 @@ class ItemsActivity : AppCompatActivity(),
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.a_items_bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavigationListener)
-        bottomNavigationView.selectedItemId = R.id.plan_nav
-
-        if (savedInstanceState != null)
-            isFirstStart = savedInstanceState.getBoolean(IS_FIRST_START_KEY)
-
-        if (isFirstStart) {
-            uiViewModel.selectedFragment = 2
-            supportFragmentManager.beginTransaction().replace(
-                R.id.a_items_placeholder,
-                uiViewModel.fragmentsList[uiViewModel.selectedFragment]
-            ).commit()
+        bottomNavigationView.selectedItemId = when (uiViewModel.selectedFragment) {
+            0 -> R.id.barcode_nav
+            1 -> R.id.rfid_nav
+            2 -> R.id.plan_nav
+            3 -> R.id.fact_nav
+            else -> R.id.search_nav
         }
 
+        supportFragmentManager.beginTransaction().replace(
+            R.id.a_items_placeholder,
+            uiViewModel.fragmentsList[uiViewModel.selectedFragment]
+        ).commit()
+
+
         GlobalScope.launch {
-            scannerViewModel.getItemsLists()
+            scannerViewModel.updateItemsLists()
         }
     }
 
     override fun onStart() {
         super.onStart()
         setDrawerNavigationListener()
+        scannerViewModel.scanner.init()
     }
 
     override fun onStop() {
@@ -120,13 +119,6 @@ class ItemsActivity : AppCompatActivity(),
             openDrawer(GravityCompat.START)
         }
         return true
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        isFirstStart = false
-        outState.putBoolean(IS_FIRST_START_KEY, isFirstStart)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

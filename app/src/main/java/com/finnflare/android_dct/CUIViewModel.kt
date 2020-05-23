@@ -26,11 +26,11 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
     }
     //Fragments
     val fragmentsList = listOf(
-        ItemScanFragment(rfidEnabled),
-        RFIDItemScanFragment(rfidEnabled),
+        ItemScanFragment.newInstance(rfidEnabled),
+        RFIDItemScanFragment.newInstance(rfidEnabled),
         PlanItemsListFragment(),
         FactItemsListFragment(),
-        ItemSearchFragment(rfidEnabled)
+        ItemSearchFragment.newInstance(rfidEnabled)
     )
     var selectedFragment = 2
 

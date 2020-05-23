@@ -40,6 +40,7 @@
 
     <!-- Recycler dummy labels -->
     <string name="label_some_information">Некоторая информация</string>
+    <string name="item_count_string">%1$d/%2$d</string>
 
     <!-- DialogFragmentInfo data -->
     <string name="d_f_info_title">Информация</string>
@@ -56,8 +57,8 @@
     <string name="setting_send_data_online">Передавать данные онлайн</string>
 
     <!-- Array data -->
-    <string name="array_correct_plan">Найденные ожидаемые</string>
-    <string name="array_wrong_plan">Ненайденные ожидаемые</string>
+    <string name="array_plan_not_found">Найденные ожидаемые</string>
+    <string name="array_plan_found">Ненайденные ожидаемые</string>
     <string name="array_correct_fact">Ожидаемые полученные</string>
     <string name="array_wrong_fact">Лишние полученные</string>
 

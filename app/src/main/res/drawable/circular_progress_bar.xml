@@ -6,9 +6,9 @@
             android:shape="ring"
             android:thicknessRatio="25.0" >
             <gradient
-                android:centerColor="@android:color/holo_red_light"
-                android:endColor="@android:color/holo_red_light"
-                android:startColor="@android:color/holo_red_light"
+                android:centerColor="@android:color/holo_red_dark"
+                android:endColor="@android:color/holo_red_dark"
+                android:startColor="@android:color/holo_red_dark"
                 android:type="sweep" />
         </shape>
     </item>
@@ -18,9 +18,9 @@
             android:shape="ring"
             android:thicknessRatio="25.0" >
             <gradient
-                android:centerColor="@android:color/holo_green_dark"
-                android:endColor="@android:color/holo_green_dark"
-                android:startColor="@android:color/holo_green_dark"
+                android:centerColor="@android:color/holo_green_light"
+                android:endColor="@android:color/holo_green_light"
+                android:startColor="@android:color/holo_green_light"
                 android:type="sweep" />
         </shape>
     </item>
