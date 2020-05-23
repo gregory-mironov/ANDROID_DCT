@@ -2,13 +2,30 @@ package com.finnflare.dct_database
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.finnflare.dct_database.entity.*
 import com.finnflare.dct_database.insertable_classes.*
 import com.finnflare.dct_database.request_result.CScanResult
+import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
 
+@ObsoleteCoroutinesApi
 class CDatabaseViewModel(application: Application): AndroidViewModel(application), KoinComponent {
+    private val dbDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
+
     private val database = CAppDatabase.getInstance(application)
+
+    val authSuccessful = MutableLiveData<Boolean>()
+
+    fun checkUser(login: String, password: String) {
+        CoroutineScope(dbDispatcher).launch {
+            authSuccessful.postValue(database.usersDao().checkUser(login, password))
+        }
+    }
+
+    fun updateUserLastLogin(aId: String, aLogin: String, aPassword: String) {
+        database.usersDao().updateUserLastLogin(aId, aLogin, aPassword)
+    }
 
     fun insertUsers(users:List<User>) {
         val insertable = mutableListOf<CEntityUsers>()
@@ -17,7 +34,7 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             insertable.add(
                 CEntityUsers(
                     mId = it.mId,
-                    mDescription = it.mName,
+                    mLogin = it.mName,
                     mPassword = "",
                     mLastLogin = ""
                 )

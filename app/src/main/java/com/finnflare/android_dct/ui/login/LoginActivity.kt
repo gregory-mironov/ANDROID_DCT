@@ -25,8 +25,7 @@ class LoginActivity : AppCompatActivity() {
 
         configureToolbar()
 
-        val button = findViewById<Button>(R.id.a_login_button)
-        button.setOnClickListener {
+        findViewById<Button>(R.id.a_login_button).setOnClickListener {
             network.checkAuth(a_login_login_field.text.toString(), a_login_password_field.text.toString())
         }
 
@@ -41,8 +40,12 @@ class LoginActivity : AppCompatActivity() {
 
     private fun configureObservers() {
         network.authSuccessful.observe(this, Observer {
-            val intent = Intent(this@LoginActivity, LocationActivity::class.java)
-            startActivity(intent)
+            database.checkUser(a_login_login_field.text.toString(), a_login_password_field.text.toString())
+        })
+
+        database.authSuccessful.observe(this, Observer {
+            if (it)
+                startActivity(Intent(this@LoginActivity, LocationActivity::class.java))
         })
     }
 }

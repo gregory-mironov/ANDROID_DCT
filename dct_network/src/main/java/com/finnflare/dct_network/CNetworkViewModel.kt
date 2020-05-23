@@ -78,16 +78,23 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                 val response = CNetworkService.Api.auth(request)
 
                 if (!response.isSuccessful) {
+                    authSuccessful.postValue(false)
                     return@launch
                 }
 
                 if (!response.body()!!.response.error)
                     authSuccessful.postValue(true)
-                
+
+                database.updateUserLastLogin(login, login, password)
+
+                return@launch
+
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
             }
+
+            authSuccessful.postValue(false)
         }
     }
 
