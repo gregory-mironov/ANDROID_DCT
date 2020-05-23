@@ -62,7 +62,7 @@ class PlanItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
         recyclerView.layoutManager = if (columnCount == 1) LinearLayoutManager(context)
         else GridLayoutManager(context, columnCount)
 
-        mAdapter = PlanRecyclerViewAdapter(planItemsListNotFound, listener)
+        mAdapter = PlanRecyclerViewAdapter(planItemsListNotFound, listener, this.requireContext())
         recyclerView.adapter = mAdapter
     }
 

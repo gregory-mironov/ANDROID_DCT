@@ -1,5 +1,6 @@
 package com.finnflare.android_dct.ui.items.plan
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,8 @@ import java.util.*
 
 class PlanRecyclerViewAdapter(
     private var mValues: List<Item>,
-    private val mListener: PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener?
+    private val mListener: PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener?,
+    private val mContext: Context
 ) : RecyclerView.Adapter<PlanRecyclerViewAdapter.ViewHolder>(), Filterable{
 
     private val mOnClickListener: View.OnClickListener
@@ -37,7 +39,12 @@ class PlanRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValuesFiltered[position]
         holder.mTitleView.text = item.description
-        holder.mSubtitleView.text = item.content
+        holder.mBarcodeCountView.text = mContext.resources.getString(
+            R.string.item_count_string, item.barcodeCount, item.planCount
+        )
+        holder.mRFIDCountView.text = mContext.resources.getString(
+            R.string.item_count_string, item.rfidCount, item.planCount
+        )
 
         with(holder.mView) {
             tag = item
@@ -55,11 +62,8 @@ class PlanRecyclerViewAdapter(
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mTitleView: TextView = mView.f_items_item_title
-        val mSubtitleView: TextView = mView.f_items_item_subtitle
-
-        override fun toString(): String {
-            return super.toString() + " '" + mSubtitleView.text + "'"
-        }
+        val mBarcodeCountView: TextView = mView.f_items_item_barcode_count
+        val mRFIDCountView: TextView = mView.f_items_item_rfid_count
     }
 
     override fun getFilter(): Filter {
@@ -84,9 +88,18 @@ class PlanRecyclerViewAdapter(
                 charSequence: CharSequence,
                 filterResults: FilterResults
             ) {
-                mValuesFiltered = filterResults.values as List<Item>
+                (filterResults.values as List<*>).asListOfType<Item>()?.let {
+                    mValuesFiltered = it
+                }
+
                 notifyDataSetChanged()
             }
         }
     }
+
+    inline fun <reified T> List<*>.asListOfType(): List<T>? =
+        if (all { it is T })
+            @Suppress("UNCHECKED_CAST")
+            this as List<T> else
+            null
 }

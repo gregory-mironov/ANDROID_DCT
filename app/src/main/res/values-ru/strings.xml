@@ -40,6 +40,7 @@
 
     <!-- Recycler dummy labels -->
     <string name="label_some_information">Некоторая информация</string>
+    <string name="item_count_string">%1$d/%2$d</string>
 
     <!-- DialogFragmentInfo data -->
     <string name="d_f_info_title">Информация</string>

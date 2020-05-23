@@ -56,7 +56,7 @@ class FactItemsListFragment : Fragment(), AdapterView.OnItemSelectedListener, Se
         recyclerView.layoutManager = if (columnCount == 1) LinearLayoutManager(context)
         else GridLayoutManager(context, columnCount)
 
-        mAdapter = FactRecyclerViewAdapter(factCorrectItemsList, listener)
+        mAdapter = FactRecyclerViewAdapter(factCorrectItemsList, listener, this.requireContext())
         recyclerView.adapter = mAdapter
     }
 
