@@ -14,7 +14,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/dct_database" />
             <option value="$PROJECT_DIR$/dct_network" />
-            <option value="$PROJECT_DIR$/scanner" />
+            <option value="$PROJECT_DIR$/dct_scanner" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

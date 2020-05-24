@@ -18,8 +18,10 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import kotlinx.android.synthetic.main.activity_continuous_scan.*
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.android.ext.android.inject
 
+@ObsoleteCoroutinesApi
 class CameraScanActivity: AppCompatActivity() {
     private val viewModel by inject<CScannerViewModel>()
 

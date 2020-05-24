@@ -3,14 +3,20 @@
 
     <group android:id="@+id/grp1">
         <item
+            android:id="@+id/d_nav_send_to_server"
+            android:title="@string/label_send_results_to_server"/>
+        <item
             android:id="@+id/d_nav_save_results"
             android:title="@string/label_save_results"/>
         <item
             android:id="@+id/d_nav_upload_result_from_file"
             android:title="@string/label_upload_result_from_file"/>
         <item
-            android:id="@+id/d_nav_reset_results"
-            android:title="@string/label_reset_results"/>
+            android:id="@+id/d_nav_reset_rfid_results"
+            android:title="@string/label_reset_rfid_results"/>
+        <item
+            android:id="@+id/d_nav_reset_barcode_results"
+            android:title="@string/label_reset_barcode_results"/>
     </group>
 
     <group android:id="@+id/grp2">
@@ -21,4 +27,5 @@
             android:id="@+id/d_nav_info"
             android:title="@string/label_info"/>
     </group>
+
 </menu>

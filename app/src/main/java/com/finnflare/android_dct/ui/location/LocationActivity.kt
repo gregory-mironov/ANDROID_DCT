@@ -7,16 +7,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.Document
 import com.finnflare.android_dct.Location
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
+import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationLocationListener
 import com.finnflare.android_dct.ui.items.ItemsActivity
 import com.finnflare.android_dct.ui.location.document.DocumentChooseFragment
 import com.finnflare.android_dct.ui.location.location.LocationChooseFragment
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -28,6 +28,9 @@ class LocationActivity : AppCompatActivity(),
     DocumentChooseFragment.OnListDocumentChooseFragmentInteractionListener{
 
     private val uiViewModel by inject<CUIViewModel>()
+
+    private var shopId: String = ""
+    private var docId: String = ""
 
     val IS_FIRST_START_KEY = "isFirstStart"
     var isFirstStart: Boolean = true
@@ -47,7 +50,7 @@ class LocationActivity : AppCompatActivity(),
                 this.commit()
             }
 
-        GlobalScope.launch {
+        lifecycleScope.launch {
             uiViewModel.getLocationsList()
         }
     }
@@ -58,9 +61,9 @@ class LocationActivity : AppCompatActivity(),
     }
 
     private fun setDrawerNavigationListener() {
-        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
-        DrawerNavigationListener.context = this
-        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
+        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view_location)
+        DrawerNavigationLocationListener.configure(this)
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationLocationListener)
     }
 
     private fun configureToolbar() {
@@ -88,7 +91,9 @@ class LocationActivity : AppCompatActivity(),
     }
 
     override fun onListLocationChooseFragmentInteraction(item: Location) {
-        GlobalScope.launch {
+        shopId = item.id
+
+        lifecycleScope.launch {
             uiViewModel.getDocumentsList(item.id)
         }
         supportFragmentManager.beginTransaction().apply {
@@ -99,7 +104,10 @@ class LocationActivity : AppCompatActivity(),
     }
 
     override fun onListDocumentChooseFragmentInteraction(item: Document) {
-        val intent = Intent(this, ItemsActivity::class.java)
-        startActivity(intent)
+        docId = item.id
+        startActivity(Intent(this, ItemsActivity::class.java).apply {
+            putExtra(ItemsActivity.shopArg, shopId)
+            putExtra(ItemsActivity.docArg, docId)
+        })
     }
 }

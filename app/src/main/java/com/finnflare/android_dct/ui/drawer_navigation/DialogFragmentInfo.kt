@@ -8,10 +8,6 @@ import androidx.fragment.app.DialogFragment
 import com.finnflare.android_dct.R
 
 class DialogFragmentInfo: DialogFragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

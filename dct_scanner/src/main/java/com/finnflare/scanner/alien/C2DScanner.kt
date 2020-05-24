@@ -6,9 +6,11 @@ import com.alien.barcode.BarcodeReader
 import com.alien.common.KeyCode.ALR_H450
 import com.finnflare.scanner.CScannerViewModel
 import com.finnflare.scanner.ScanDecoder
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
+@ObsoleteCoroutinesApi
 object C2DScanner: KoinComponent {
     private val viewModel by inject<CScannerViewModel>()
 

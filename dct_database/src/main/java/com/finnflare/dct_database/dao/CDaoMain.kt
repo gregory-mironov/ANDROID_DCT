@@ -46,10 +46,10 @@ abstract class CDaoMain {
         ON
             A._state = C._state
         WHERE
-            _store_id = :aStorageId AND _doc_id = :aDocumentId
+            _store_id = :aStoreId AND _doc_id = :aDocumentId
         GROUP BY
             A._guid
         ORDER BY
             B._description""")
-    internal abstract fun formScanResults(aStorageId: String, aDocumentId: String): List<CScanResult>
+    internal abstract fun formScanResults(aStoreId: String, aDocumentId: String): List<CScanResult>
 }

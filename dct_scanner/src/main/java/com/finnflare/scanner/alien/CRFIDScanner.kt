@@ -5,13 +5,11 @@ import com.alien.common.KeyCode.ALR_H450
 import com.alien.rfid.*
 import com.finnflare.scanner.CScannerViewModel
 import com.finnflare.scanner.ScanDecoder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
+@ObsoleteCoroutinesApi
 object CRFIDScanner: RFIDCallback, KoinComponent {
     private val viewModel by inject<CScannerViewModel>()
 

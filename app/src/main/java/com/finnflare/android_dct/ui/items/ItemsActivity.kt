@@ -8,16 +8,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
+import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationItemListener
 import com.finnflare.android_dct.ui.items.fact.FactItemsListFragment
 import com.finnflare.android_dct.ui.items.plan.PlanItemsListFragment
 import com.finnflare.scanner.CScannerViewModel
 import com.finnflare.scanner.Item
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -51,9 +51,10 @@ class ItemsActivity : AppCompatActivity(),
             uiViewModel.fragmentsList[uiViewModel.selectedFragment]
         ).commit()
 
-
-        GlobalScope.launch {
-            scannerViewModel.updateItemsLists()
+        intent?.let {
+            lifecycleScope.launch {
+                scannerViewModel.updateItemsLists("" + it.getStringExtra(docArg))
+            }
         }
     }
 
@@ -69,9 +70,9 @@ class ItemsActivity : AppCompatActivity(),
     }
 
     private fun setDrawerNavigationListener() {
-        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
-        DrawerNavigationListener.context = this
-        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
+        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view_items)
+        DrawerNavigationItemListener.configure(this, "")
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationItemListener)
     }
 
     private fun configureToolbar() {
@@ -139,5 +140,10 @@ class ItemsActivity : AppCompatActivity(),
             scannerViewModel.scanner.stopRFIDScan(keyCode, event!!)
 
         return super.onKeyUp(keyCode, event)
+    }
+
+    companion object {
+        val shopArg = "SHOP_ID_ARG"
+        val docArg = "DOC_ID_ARG"
     }
 }
