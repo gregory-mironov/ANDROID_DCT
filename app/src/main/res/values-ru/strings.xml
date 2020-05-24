@@ -14,9 +14,11 @@
 
 
     <!-- Drawer Navigation menu labels -->
+    <string name="label_send_results_to_server">Отправить на сервер</string>
     <string name="label_save_results">Сохранить результаты</string>
     <string name="label_upload_result_from_file">Загрузить результаты из файла</string>
-    <string name="label_reset_results">Сброс результатов</string>
+    <string name="label_reset_rfid_results">Сбросить RFID</string>
+    <string name="label_reset_barcode_results">Сбросить штрихкоды</string>
     <string name="label_setting">Настройки</string>
     <string name="label_info">Информация</string>
 

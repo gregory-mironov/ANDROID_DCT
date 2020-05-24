@@ -8,6 +8,6 @@
 
     <include layout="@layout/activity_location_content" />
 
-    <include layout="@layout/drawer_navigation" />
+    <include layout="@layout/drawer_navigation_location" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -10,7 +10,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
+import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationItemListener
 import com.finnflare.android_dct.ui.items.fact.FactItemsListFragment
 import com.finnflare.android_dct.ui.items.plan.PlanItemsListFragment
 import com.finnflare.scanner.CScannerViewModel
@@ -69,9 +69,9 @@ class ItemsActivity : AppCompatActivity(),
     }
 
     private fun setDrawerNavigationListener() {
-        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
-        DrawerNavigationListener.context = this
-        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
+        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view_items)
+        DrawerNavigationItemListener.context = this
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationItemListener)
     }
 
     private fun configureToolbar() {

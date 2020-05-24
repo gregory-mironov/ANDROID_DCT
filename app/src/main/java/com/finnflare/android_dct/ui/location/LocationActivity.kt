@@ -11,7 +11,7 @@ import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.Document
 import com.finnflare.android_dct.Location
 import com.finnflare.android_dct.R
-import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationListener
+import com.finnflare.android_dct.ui.drawer_navigation.DrawerNavigationLocationListener
 import com.finnflare.android_dct.ui.items.ItemsActivity
 import com.finnflare.android_dct.ui.location.document.DocumentChooseFragment
 import com.finnflare.android_dct.ui.location.location.LocationChooseFragment
@@ -58,9 +58,9 @@ class LocationActivity : AppCompatActivity(),
     }
 
     private fun setDrawerNavigationListener() {
-        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view)
-        DrawerNavigationListener.context = this
-        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationListener)
+        val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view_location)
+        DrawerNavigationLocationListener.context = this
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationLocationListener)
     }
 
     private fun configureToolbar() {

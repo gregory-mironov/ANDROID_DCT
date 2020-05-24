@@ -9,20 +9,20 @@ import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.SettingsActivity
 import com.google.android.material.navigation.NavigationView
 
-object DrawerNavigationListener: NavigationView.OnNavigationItemSelectedListener {
+object DrawerNavigationLocationListener: NavigationView.OnNavigationItemSelectedListener {
 
     var context: Context? = null
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.d_nav_send_to_server -> {
+                Log.w("Drawer-navigation", "Save results not implemented")
+            }
             R.id.d_nav_save_results -> {
                 Log.w("Drawer-navigation", "Save results not implemented")
             }
             R.id.d_nav_upload_result_from_file -> {
                 Log.w("Drawer-navigation", "Upload result from file not implemented")
-            }
-            R.id.d_nav_reset_results -> {
-                Log.w("Drawer-navigation", "Reset results not implemented")
             }
             R.id.d_nav_setting -> {
                 val intent = Intent(context, SettingsActivity::class.java)
@@ -34,6 +34,7 @@ object DrawerNavigationListener: NavigationView.OnNavigationItemSelectedListener
                 dialogFragment.show(fm, "dialog_fragment_info")
             }
         }
+
         return true
     }
 }
