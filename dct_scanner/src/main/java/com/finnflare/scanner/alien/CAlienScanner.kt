@@ -3,7 +3,9 @@ package com.finnflare.scanner.alien
 import android.content.Context
 import android.view.KeyEvent
 import com.finnflare.scanner.IScanner
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 
+@ObsoleteCoroutinesApi
 class CAlienScanner(private val context: Context): IScanner {
 
     override fun init() {

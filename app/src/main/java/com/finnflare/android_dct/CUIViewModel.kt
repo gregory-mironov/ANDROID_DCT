@@ -24,6 +24,7 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
         "Alien" -> Build.MODEL == "ALR-H450"
         else -> false
     }
+
     //Fragments
     val fragmentsList = listOf(
         ItemScanFragment.newInstance(rfidEnabled),
@@ -49,7 +50,7 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
         documentList.clear()
         for (i in 1..25)
             documentList.add(
-                Document("Document $i", "User\'s comment $i"))
+                Document("Document $i", "User\'s comment $i", ""))
     }
 }
 
@@ -59,4 +60,8 @@ data class Location(
     val id: String
 )
 
-data class Document(val title: String, val subtitle: String)
+data class Document(
+    val title: String,
+    val subtitle: String,
+    val id: String
+)

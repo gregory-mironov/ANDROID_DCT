@@ -4,15 +4,19 @@ import android.app.Application
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.scanner.alien.CAlienScanner
 import com.finnflare.scanner.camera.CCameraScanner
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.util.*
 
+@ObsoleteCoroutinesApi
 class CScannerViewModel(application: Application): AndroidViewModel(application), KoinComponent {
+    private val scannerDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
+    private val database by inject<CDatabaseViewModel>()
+
     val scanResult = MutableLiveData<Triple<String, String, String>>()
     val scanError = MutableLiveData<String>()
 
@@ -40,8 +44,7 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     }
     }
 
-    fun updateItemsLists() {
-        
+    fun updateItemsLists(docId: String) {
         planItemsList.clear()
 
         factItemsList.clear()

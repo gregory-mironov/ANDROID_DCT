@@ -1,5 +1,5 @@
 rootProject.name='ANDROID_DCT'
 include ':app', ':alienapi'
-include ':scanner'
+include ':dct_scanner'
 include ':dct_network'
 include ':dct_database'
