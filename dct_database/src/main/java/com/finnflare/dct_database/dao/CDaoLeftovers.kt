@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.finnflare.dct_database.entity.CEntityLeftovers
+import com.finnflare.dct_database.request_result.CBarcodeScanResult
+import com.finnflare.dct_database.request_result.CRFIDScanResult
 
 @Dao
 abstract class CDaoLeftovers:
@@ -43,6 +45,31 @@ abstract class CDaoLeftovers:
         FROM leftovers 
         WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin != 0""")
     abstract fun findServerLine(aGtin: String, aSn: String, aRfid: String): List<CEntityLeftovers>
+
+    @Query("""
+        SELECT 
+            _guid as guid,
+            _gtin as gtin,
+            _sn as sn,
+            _rfid as rfid,
+            _state as state,
+            _qtyout as qtyout
+        FROM leftovers
+        WHERE _store_id = :aStoreId AND _doc_id = :aDocumentId AND _qtyin = 0 AND _rfid != ''
+    """)
+    abstract fun getRFIDScanResults(aStoreId: String, aDocumentId: String): List<CRFIDScanResult>
+
+    @Query("""
+        SELECT
+            _guid as guid,
+            _gtin as gtin,
+            _sn as sn,
+            _state as state,
+            _qtyout as qtyout
+        FROM leftovers
+        WHERE _store_id = :aStoreId AND _doc_id = :aDocumentId AND _qtyin = 0 AND _rfid == ''
+    """)
+    abstract fun getBarcodeScanResults(aStoreId: String, aDocumentId: String): List<CBarcodeScanResult>
 
     @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid = '' ")
     abstract fun deleteAllMyBarcodeLines()

@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.dct_database.insertable_classes.*
 import com.finnflare.dct_network.classes.Header
+import com.finnflare.dct_network.classes.actual_docs.BarcodeItems
 import com.finnflare.dct_network.classes.actual_docs.CActualDocsRequest
+import com.finnflare.dct_network.classes.actual_docs.RFIDItems
 import com.finnflare.dct_network.classes.auth.CAuthRequest
 import com.finnflare.dct_network.classes.docs.CDocsRequest
 import com.finnflare.dct_network.classes.shops.CShopsRequest
@@ -287,16 +289,49 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun sendActualDocsState() {
+    fun sendActualDocState(docId: String) {
         CoroutineScope(netDispatcher).launch {
             try {
+                val storeId = database.getDocInfo(docId).mStoreId
+
                 val request = CActualDocsRequest(
                     header = Header(
                         method = "tsd.set.docs.actual",
                         token = token
                     ),
                     request = com.finnflare.dct_network.classes.actual_docs.Request(
-                        docs = listOf()
+                        docs = listOf(getDocToSend(storeId, docId))
+                    )
+                )
+
+                val response = CNetworkService.Api.uploadActualDocs(request)
+
+                if (!response.isSuccessful)
+                    return@launch
+
+            } catch (e: UnknownHostException) {
+            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
+            }
+        }
+    }
+
+    fun sendActualDocsState() {
+        CoroutineScope(netDispatcher).launch {
+            try {
+                val docs = mutableListOf<com.finnflare.dct_network.classes.actual_docs.Doc>()
+
+                database.getDocsList().forEach {
+                    docs.add(getDocToSend(it.mStoreId, it.mId))
+                }
+
+                val request = CActualDocsRequest(
+                    header = Header(
+                        method = "tsd.set.docs.actual",
+                        token = token
+                    ),
+                    request = com.finnflare.dct_network.classes.actual_docs.Request(
+                        docs = docs
                     )
                 )
 
@@ -305,10 +340,49 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                 if (!response.isSuccessful) {
                     return@launch
                 }
+
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
             }
         }
+    }
+
+    private fun getDocToSend(storeId: String, docId: String):
+            com.finnflare.dct_network.classes.actual_docs.Doc {
+
+        val rfid = mutableListOf<RFIDItems>()
+        database.getRFIDScanResults(storeId, docId).forEach {
+            rfid.add(
+                RFIDItems(
+                    guid = it.guid,
+                    gtin = it.gtin,
+                    sn = it.sn,
+                    rfid = it.rfid,
+                    state = it.state,
+                    qtyout = it.qtyout
+                )
+            )
+        }
+
+        val barcode = mutableListOf<BarcodeItems>()
+        database.getBarcodeScanResults(storeId, docId).forEach {
+            barcode.add(
+                BarcodeItems(
+                    guid = it.guid,
+                    gtin = it.gtin,
+                    sn = it.sn,
+                    state = it.state,
+                    qtyout = it.qtyout
+                )
+            )
+        }
+
+        return com.finnflare.dct_network.classes.actual_docs.Doc(
+            id = docId,
+            rfidItemsList = rfid,
+            barcodeItemsList = barcode,
+            storeId = storeId
+        )
     }
 }

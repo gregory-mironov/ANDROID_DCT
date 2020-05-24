@@ -7,16 +7,28 @@ import android.view.MenuItem
 import androidx.fragment.app.FragmentActivity
 import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.SettingsActivity
+import com.finnflare.dct_network.CNetworkViewModel
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
-object DrawerNavigationLocationListener: NavigationView.OnNavigationItemSelectedListener {
+@ObsoleteCoroutinesApi
+object DrawerNavigationLocationListener:
+    NavigationView.OnNavigationItemSelectedListener, KoinComponent {
 
-    var context: Context? = null
+    private val network by inject<CNetworkViewModel>()
+
+    private var context: Context? = null
+
+    fun configure(context: Context) {
+        this.context = context
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.d_nav_send_to_server -> {
-                Log.w("Drawer-navigation", "Save results not implemented")
+                network.sendActualDocsState()
             }
             R.id.d_nav_save_results -> {
                 Log.w("Drawer-navigation", "Save results not implemented")

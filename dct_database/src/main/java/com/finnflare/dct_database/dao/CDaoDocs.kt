@@ -20,6 +20,6 @@ abstract class CDaoDocs:
         insert(aObjList)
     }
 
-    @Query("SELECT * FROM docs WHERE _id = :aId")
-    abstract fun findByGuid(aId: String): CEntityDocs
+    @Query("SELECT * FROM docs WHERE _id = :aId LIMIT 1")
+    abstract fun findById(aId: String): CEntityDocs
 }

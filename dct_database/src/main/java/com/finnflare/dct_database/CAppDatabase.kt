@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.finnflare.dct_database.entity.*
 import com.finnflare.dct_database.dao.*
+import com.finnflare.dct_database.entity.*
 
 @Database(
     entities = [
@@ -26,7 +26,7 @@ internal abstract class CAppDatabase: RoomDatabase() {
     abstract fun storesDao(): CDaoStores
     abstract fun docsDao(): CDaoDocs
     abstract fun goodsDao(): CDaoGoods
-    abstract fun barcodeLeftoversDao(): CDaoLeftovers
+    abstract fun leftoversDao(): CDaoLeftovers
     abstract fun markingCodesDao(): CDaoMarkingCodes
     abstract fun statesDao(): CDaoStates
     abstract fun mainDao(): CDaoMain

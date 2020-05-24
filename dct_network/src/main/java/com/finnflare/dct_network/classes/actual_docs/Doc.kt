@@ -7,7 +7,8 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class Doc(
     val id: String,
-    val itemsList: List<Items>,
+    val rfidItemsList: List<RFIDItems>,
+    val barcodeItemsList: List<BarcodeItems>,
     @Json(name = "storage_id")
-    val storageId: String
+    val storeId: String
 )

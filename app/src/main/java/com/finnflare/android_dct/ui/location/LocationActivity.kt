@@ -59,7 +59,7 @@ class LocationActivity : AppCompatActivity(),
 
     private fun setDrawerNavigationListener() {
         val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view_location)
-        DrawerNavigationLocationListener.context = this
+        DrawerNavigationLocationListener.configure(this)
         drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationLocationListener)
     }
 

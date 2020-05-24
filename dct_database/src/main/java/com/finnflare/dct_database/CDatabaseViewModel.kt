@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.finnflare.dct_database.entity.*
 import com.finnflare.dct_database.insertable_classes.*
+import com.finnflare.dct_database.request_result.CBarcodeScanResult
+import com.finnflare.dct_database.request_result.CRFIDScanResult
 import com.finnflare.dct_database.request_result.CScanResult
 import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
@@ -136,7 +138,7 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             ))
         }
         database.goodsDao().truncateTable()
-        database.barcodeLeftoversDao().truncateTable()
+        database.leftoversDao().truncateTable()
         database.markingCodesDao().truncateTable()
         database.mainDao().appendItems(insertable_g, insertable_lo, insertablr_mc)
     }
@@ -144,34 +146,46 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
     fun scanResultProcessing(gtin: String, sn: String, rfid: String) {
         if (sn.isEmpty() && rfid.isEmpty()) {
             // EAN-13
-            if (database.barcodeLeftoversDao().findMyLine(gtin, sn, rfid).isEmpty()) {
-                val leftover = database.barcodeLeftoversDao().findServerLine(gtin, sn, rfid)[0]
+            if (database.leftoversDao().findMyLine(gtin, sn, rfid).isEmpty()) {
+                val leftover = database.leftoversDao().findServerLine(gtin, sn, rfid)[0]
                 leftover.mQtyin = 0
                 leftover.mQtyout = 1
-                database.barcodeLeftoversDao().insert(leftover)
+                database.leftoversDao().insert(leftover)
             } else {
-                database.barcodeLeftoversDao().incMyQtyoutEan_13(gtin, sn, rfid)
+                database.leftoversDao().incMyQtyoutEan_13(gtin, sn, rfid)
             }
         } else {
             // DM, old and new RFID
-            if (database.barcodeLeftoversDao().findMyLine(gtin, sn, rfid).isEmpty()) {
-                val leftover = database.barcodeLeftoversDao().findServerLine(gtin, sn, rfid)[0]
+            if (database.leftoversDao().findMyLine(gtin, sn, rfid).isEmpty()) {
+                val leftover = database.leftoversDao().findServerLine(gtin, sn, rfid)[0]
                 leftover.mQtyin = 0
                 leftover.mQtyout = 1
-                database.barcodeLeftoversDao().insert(leftover)
+                database.leftoversDao().insert(leftover)
             }
         }
     }
 
-    fun getScanResults(storageId: String, documentId: String): List<CScanResult> {
-        return database.mainDao().formScanResults(storageId, documentId)
+    fun getScanResults(storeId: String, documentId: String): List<CScanResult> {
+        return database.mainDao().formScanResults(storeId, documentId)
+    }
+
+    fun getDocsList() = database.docsDao().getAll()
+
+    fun getDocInfo(docId: String) = database.docsDao().findById(docId)
+
+    fun getRFIDScanResults(storeId: String, documentId: String): List<CRFIDScanResult> {
+        return database.leftoversDao().getRFIDScanResults(storeId, documentId)
+    }
+
+    fun getBarcodeScanResults(storeId: String, documentId: String): List<CBarcodeScanResult> {
+        return database.leftoversDao().getBarcodeScanResults(storeId, documentId)
     }
 
     fun deleteAllMyBarcodeLines() {
-        database.barcodeLeftoversDao().deleteAllMyBarcodeLines()
+        database.leftoversDao().deleteAllMyBarcodeLines()
     }
 
     fun deleteAllMyRfidLines() {
-        database.barcodeLeftoversDao().deleteAllMyRfidLines()
+        database.leftoversDao().deleteAllMyRfidLines()
     }
 }
