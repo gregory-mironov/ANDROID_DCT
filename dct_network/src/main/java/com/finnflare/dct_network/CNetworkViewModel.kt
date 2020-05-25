@@ -100,36 +100,34 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun getShopsList() {
-        CoroutineScope(netDispatcher).launch {
-            try {
-                val request = CShopsRequest(
-                    header = Header(
-                        method = "tsd.get.shops",
-                        token = token
-                    ),
-                    request = com.finnflare.dct_network.classes.shops.Request()
-                )
+    suspend fun getLocationsList() {
+        try {
+            val request = CShopsRequest(
+                header = Header(
+                    method = "tsd.get.shops",
+                    token = token
+                ),
+                request = com.finnflare.dct_network.classes.shops.Request()
+            )
 
-                val response = CNetworkService.Api.getShopsList(request)
+            val response = CNetworkService.Api.getShopsList(request)
 
-                if (!response.isSuccessful) {
-                    return@launch
-                }
-
-                response.body()?.response?.data?.let {
-                    val shops = mutableListOf<Shop>()
-
-                    it.forEach { shop ->
-                        shops.add(Shop(shop.id, shop.name, shop.httpRef))
-                    }
-
-                    database.insertShops(shops)
-                }
-            } catch (e: UnknownHostException) {
-            } catch (e: SocketTimeoutException) {
-            } catch (e: Exception) {
+            if (!response.isSuccessful) {
+                return
             }
+
+            response.body()?.response?.data?.let {
+                val shops = mutableListOf<Shop>()
+
+                it.forEach { shop ->
+                    shops.add(Shop(shop.id, shop.name, shop.httpRef))
+                }
+
+                database.insertShops(shops)
+            }
+        } catch (e: UnknownHostException) {
+        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
         }
     }
 
@@ -171,51 +169,49 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun getDocsList(date: String, shopId: String) {
-        CoroutineScope(netDispatcher).launch {
-            try {
-                val request = CDocsRequest(
-                    header = Header(
-                        method = "tsd.get.docs",
-                        token = token
-                    ),
-                    request = com.finnflare.dct_network.classes.docs.Request(
-                        docDate = date,
-                        shopId = shopId
-                    )
+    suspend fun getDocsList(date: String, shopId: String) {
+        try {
+            val request = CDocsRequest(
+                header = Header(
+                    method = "tsd.get.docs",
+                    token = token
+                ),
+                request = com.finnflare.dct_network.classes.docs.Request(
+                    docDate = date,
+                    shopId = shopId
                 )
+            )
 
-                val response = CNetworkService.Api.getDocsList(request)
+            val response = CNetworkService.Api.getDocsList(request)
 
-                if (!response.isSuccessful) {
-                    return@launch
-                }
-
-                response.body()?.response?.data?.let {
-                    val docs = mutableListOf<Doc>()
-
-                    it.forEach { doc ->
-                        docs.add(Doc(
-                            doc.auditor,
-                            doc.basis,
-                            doc.comment,
-                            doc.docDate,
-                            doc.docNumber,
-                            doc.docSum,
-                            doc.id,
-                            doc.priceType,
-                            doc.qty,
-                            doc.qtyFact,
-                            doc.storeId
-                        ))
-                    }
-
-                    database.insertDocs(docs)
-                }
-            } catch (e: UnknownHostException) {
-            } catch (e: SocketTimeoutException) {
-            } catch (e: Exception) {
+            if (!response.isSuccessful) {
+                return
             }
+
+            response.body()?.response?.data?.let {
+                val docs = mutableListOf<Doc>()
+
+                it.forEach { doc ->
+                    docs.add(Doc(
+                        doc.auditor,
+                        doc.basis,
+                        doc.comment,
+                        doc.docDate,
+                        doc.docNumber,
+                        doc.docSum,
+                        doc.id,
+                        doc.priceType,
+                        doc.qty,
+                        doc.qtyFact,
+                        doc.storeId
+                    ))
+                }
+
+                database.insertDocs(docs)
+            }
+        } catch (e: UnknownHostException) {
+        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
         }
     }
 

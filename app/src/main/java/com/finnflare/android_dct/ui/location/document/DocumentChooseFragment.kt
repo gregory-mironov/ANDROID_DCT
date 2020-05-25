@@ -7,19 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.Document
 import com.finnflare.android_dct.R
+import kotlinx.android.synthetic.main.fragment_document_choose.*
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 @ObsoleteCoroutinesApi
 class DocumentChooseFragment : Fragment(),  SearchView.OnQueryTextListener {
     private val uiViewModel by inject<CUIViewModel>()
 
+    private var locationId = ""
     private var columnCount = 1
 
     private var listener: OnListDocumentChooseFragmentInteractionListener? = null
@@ -31,6 +37,7 @@ class DocumentChooseFragment : Fragment(),  SearchView.OnQueryTextListener {
 
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
+            locationId = it.getString(ARG_LOCATION_ID).toString()
         }
     }
 
@@ -41,7 +48,7 @@ class DocumentChooseFragment : Fragment(),  SearchView.OnQueryTextListener {
         val view = inflater.inflate(R.layout.fragment_document_choose, container, false)
 
         mAdapter = DocumentRecyclerViewAdapter(
-            uiViewModel.documentList.toList(),
+            uiViewModel.documentList.value!!,
             listener
         )
         view.findViewById<RecyclerView>(R.id.f_document_recycler)?.let {
@@ -53,6 +60,17 @@ class DocumentChooseFragment : Fragment(),  SearchView.OnQueryTextListener {
 
             view.findViewById<SearchView>(R.id.documentSearchView).setOnQueryTextListener(this)
         }
+
+        view.findViewById<SwipeRefreshLayout>(R.id.documentSwipeRefresh).setOnRefreshListener {
+            lifecycleScope.launch {
+                uiViewModel.getDocumentsList(locationId)
+                documentSwipeRefresh.isRefreshing = false
+            }
+        }
+
+        uiViewModel.documentList.observe(viewLifecycleOwner, Observer {
+            mAdapter.notifyDataSetChanged()
+        })
 
         return view
     }
@@ -86,13 +104,15 @@ class DocumentChooseFragment : Fragment(),  SearchView.OnQueryTextListener {
     }
 
     companion object {
-        const val ARG_COLUMN_COUNT = "column-count"
+        const val ARG_COLUMN_COUNT = "column_count"
+        const val ARG_LOCATION_ID = "location_id"
 
         @JvmStatic
-        fun newInstance(columnCount: Int) =
+        fun newInstance(locationId: String, columnCount: Int = 1) =
             DocumentChooseFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
+                    putString(ARG_LOCATION_ID, locationId)
                 }
             }
     }
