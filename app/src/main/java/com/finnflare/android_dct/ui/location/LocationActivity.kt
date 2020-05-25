@@ -2,6 +2,7 @@ package com.finnflare.android_dct.ui.location
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -93,11 +94,9 @@ class LocationActivity : AppCompatActivity(),
     override fun onListLocationChooseFragmentInteraction(item: Location) {
         shopId = item.id
 
-        lifecycleScope.launch {
-            uiViewModel.getDocumentsList(item.id)
-        }
+        Log.d("FF_M_", "asdasd $shopId")
         supportFragmentManager.beginTransaction().apply {
-            this.replace(R.id.a_location_placeholder, DocumentChooseFragment())
+            this.replace(R.id.a_location_placeholder, DocumentChooseFragment.newInstance(shopId))
             this.addToBackStack("Some string")
             this.commit()
         }

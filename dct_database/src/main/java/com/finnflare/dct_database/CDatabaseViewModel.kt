@@ -13,7 +13,7 @@ import org.koin.core.KoinComponent
 
 @ObsoleteCoroutinesApi
 class CDatabaseViewModel(application: Application): AndroidViewModel(application), KoinComponent {
-    private val dbDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
+    val dbDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
 
     private val database = CAppDatabase.getInstance(application)
 
@@ -168,6 +168,8 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
     fun getScanResults(storeId: String, documentId: String): List<CScanResult> {
         return database.mainDao().formScanResults(storeId, documentId)
     }
+
+    fun getLocationsList() = database.shopsDao().getAll()
 
     fun getDocsList() = database.docsDao().getAll()
 

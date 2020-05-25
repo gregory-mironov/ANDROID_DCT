@@ -1,6 +1,7 @@
 package com.finnflare.android_dct.ui.location.document
 
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,8 @@ import java.util.*
 @ObsoleteCoroutinesApi
 class DocumentRecyclerViewAdapter(
     private val mValues: List<Document>,
-    private val mListener: OnListDocumentChooseFragmentInteractionListener?
+    private val mListener: OnListDocumentChooseFragmentInteractionListener?,
+    private val mContext: Context
 ) : RecyclerView.Adapter<DocumentRecyclerViewAdapter.ViewHolder>(), Filterable, KoinComponent {
 
     private val mOnClickListener: View.OnClickListener
@@ -41,8 +43,12 @@ class DocumentRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValuesFiltered[position]
 
-        holder.mTitleView.text = item.title
-        holder.mSubtitleView.text = item.subtitle
+        holder.mDocNumberView.text = item.title
+        holder.mBasisView.text = item.basis
+        holder.mAuditorView.text = item.auditor
+        holder.mQtyView.text = mContext.resources.getString(
+            R.string.item_count_string, item.qtyout, item.qtyin
+        )
 
         with(holder.mView) {
             tag = item
@@ -53,11 +59,13 @@ class DocumentRecyclerViewAdapter(
     override fun getItemCount(): Int = mValuesFiltered.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mTitleView: TextView = mView.f_document_item_title
-        val mSubtitleView: TextView = mView.f_document_item_subtitle
+        val mDocNumberView: TextView = mView.f_document_item_number
+        val mBasisView: TextView = mView.f_document_item_basis
+        val mAuditorView: TextView = mView.f_document_item_auditor
+        val mQtyView: TextView = mView.f_document_item_qty
 
         override fun toString(): String {
-            return super.toString() + mTitleView.text + " : " + mSubtitleView.text
+            return super.toString() + mDocNumberView.text + " : " + mBasisView.text
         }
     }
 
@@ -83,9 +91,17 @@ class DocumentRecyclerViewAdapter(
                 charSequence: CharSequence,
                 filterResults: FilterResults
             ) {
-                mValuesFiltered = filterResults.values as List<Document>
+                (filterResults.values as List<*>).asListOfType<Document>()?.let {
+                    mValuesFiltered = it
+                }
                 notifyDataSetChanged()
             }
         }
     }
+
+    inline fun <reified T> List<*>.asListOfType(): List<T>? =
+        if (all { it is T })
+            @Suppress("UNCHECKED_CAST")
+            this as List<T> else
+            null
 }
