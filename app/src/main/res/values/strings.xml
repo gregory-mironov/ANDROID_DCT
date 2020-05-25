@@ -18,6 +18,7 @@
     <string name="label_finn_flare" translatable="false">Finn Flare</string>
 
     <!-- Drawer Navigation menu labels -->
+    <string name="label_change_docs_date">Change docs date</string>
     <string name="label_send_results_to_server">Send to server</string>
     <string name="label_save_results">Save results</string>
     <string name="label_upload_result_from_file">Upload result from file</string>

@@ -1,10 +1,12 @@
 package com.finnflare.android_dct.ui.drawer_navigation
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.FragmentActivity
+import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.SettingsActivity
 import com.finnflare.dct_network.CNetworkViewModel
@@ -14,19 +16,27 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 @ObsoleteCoroutinesApi
-object DrawerNavigationLocationListener:
+class DrawerNavigationLocationListener(private val mContext: Context):
     NavigationView.OnNavigationItemSelectedListener, KoinComponent {
 
     private val network by inject<CNetworkViewModel>()
+    private val uiViewModel by inject<CUIViewModel>()
 
     private var context: Context? = null
 
-    fun configure(context: Context) {
-        this.context = context
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.d_nav_change_docs_date -> {
+
+                DatePickerDialog(
+                    mContext,
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        uiViewModel.year = year
+                        uiViewModel.month = monthOfYear
+                        uiViewModel.day = dayOfMonth
+                    }, uiViewModel.year, uiViewModel.month, uiViewModel.day)
+                .show()
+            }
             R.id.d_nav_send_to_server -> {
                 network.sendActualDocsState()
             }

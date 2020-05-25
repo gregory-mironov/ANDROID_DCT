@@ -2,7 +2,6 @@ package com.finnflare.android_dct.ui.location
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -63,8 +62,7 @@ class LocationActivity : AppCompatActivity(),
 
     private fun setDrawerNavigationListener() {
         val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view_location)
-        DrawerNavigationLocationListener.configure(this)
-        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationLocationListener)
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationLocationListener(this))
     }
 
     private fun configureToolbar() {
@@ -94,7 +92,6 @@ class LocationActivity : AppCompatActivity(),
     override fun onListLocationChooseFragmentInteraction(item: Location) {
         shopId = item.id
 
-        Log.d("FF_M_", "asdasd $shopId")
         supportFragmentManager.beginTransaction().apply {
             this.replace(R.id.a_location_placeholder, DocumentChooseFragment.newInstance(shopId))
             this.addToBackStack("Some string")

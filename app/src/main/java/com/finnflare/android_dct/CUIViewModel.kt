@@ -26,6 +26,17 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
     private val networkViewModel by  inject<CNetworkViewModel>()
     private val databaseViewModel by inject<CDatabaseViewModel>()
 
+    init {
+        Calendar.getInstance().apply {
+            year = this.get(Calendar.YEAR)
+            month = this.get(Calendar.MONTH)
+            day = this.get(Calendar.DAY_OF_MONTH)
+        }
+    }
+    var year: Int
+    var month: Int
+    var day: Int
+
     val rfidEnabled = when (Build.MANUFACTURER) {
         "Alien" -> Build.MODEL == "ALR-H450"
         else -> false
@@ -61,11 +72,12 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
 
     fun getDocumentsList(locationId: String) {
         CoroutineScope(databaseViewModel.dbDispatcher).launch {
-            networkViewModel.getDocsList(dateISOFormatter.format(Date()), locationId)
+            val date = "$year-${month + 1}-${day}T00:00:00"
+            networkViewModel.getDocsList(date, locationId)
 
             documentList.value?.let { list ->
                 list.clear()
-                databaseViewModel.getDocsList().forEach {
+                databaseViewModel.getDatedDocsList(date).forEach {
                     list.add(
                         Document(
                             it.mNumber,

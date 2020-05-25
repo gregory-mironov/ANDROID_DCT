@@ -173,6 +173,8 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
 
     fun getDocsList() = database.docsDao().getAll()
 
+    fun getDatedDocsList(date: String) = database.docsDao().getDocsByDate(date)
+
     fun getDocInfo(docId: String) = database.docsDao().findById(docId)
 
     fun getRFIDScanResults(storeId: String, documentId: String): List<CRFIDScanResult> {
