@@ -16,12 +16,10 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import java.text.SimpleDateFormat
 import java.util.*
 
 @ObsoleteCoroutinesApi
 class CUIViewModel(application: Application): AndroidViewModel(application), KoinComponent {
-    private val dateISOFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale("ru"))
 
     private val networkViewModel by  inject<CNetworkViewModel>()
     private val databaseViewModel by inject<CDatabaseViewModel>()
@@ -46,8 +44,8 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
     val fragmentsList = listOf(
         ItemScanFragment.newInstance(rfidEnabled),
         RFIDItemScanFragment.newInstance(rfidEnabled),
-        PlanItemsListFragment(),
-        FactItemsListFragment(),
+        PlanItemsListFragment.newInstance(),
+        FactItemsListFragment.newInstance(),
         ItemSearchFragment.newInstance(rfidEnabled)
     )
     var selectedFragment = 2

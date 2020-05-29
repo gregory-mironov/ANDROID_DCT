@@ -52,9 +52,8 @@ class ItemsActivity : AppCompatActivity(),
         ).commit()
 
         intent?.let {
-            lifecycleScope.launch {
-                scannerViewModel.updateItemsLists("" + it.getStringExtra(docArg))
-            }
+            scannerViewModel.docId = "" + it.getStringExtra(docArg)
+            lifecycleScope.launch { scannerViewModel.getItemsList() }
         }
     }
 

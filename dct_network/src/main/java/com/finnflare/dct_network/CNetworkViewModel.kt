@@ -215,45 +215,45 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun getStocksList(docId: String) {
-        CoroutineScope(netDispatcher).launch {
-            try {
-                val request = CStocksRequest(
-                    header = Header(
-                        method = "tsd.get.stocks",
-                        token = token
-                    ),
-                    request = com.finnflare.dct_network.classes.stocks.Request(
-                        docID = docId
-                    )
+    suspend fun getStocksList(docId: String) {
+        try {
+            val request = CStocksRequest(
+                header = Header(
+                    method = "tsd.get.stocks",
+                    token = token
+                ),
+                request = com.finnflare.dct_network.classes.stocks.Request(
+                    docID = docId
                 )
+            )
 
-                val response = CNetworkService.Api.getStocksList(request)
+            val response = CNetworkService.Api.getStocksList(request)
 
-                if (!response.isSuccessful) {
-                    return@launch
-                }
+            if (!response.isSuccessful) {
+                return
+            }
 
-                response.body()?.response?.let {
-                    val goods = mutableListOf<Good>()
-                    it.goods.Goods.forEach {good ->
-                        goods.add(
-                            Good(
+            response.body()?.response?.let {
+                val goods = mutableListOf<Good>()
+                it.goods.Goods.forEach { good ->
+                    goods.add(
+                        Good(
                             good.color,
                             good.guid,
                             good.model,
                             good.name,
                             good.size
                         )
-                        )
-                    }
+                    )
+                }
 
-                    val leftovers = mutableListOf<Leftover>()
-                    it.leftovers.leftovers.forEach {lo ->
-                        leftovers.add(
-                            Leftover(
+                val leftovers = mutableListOf<Leftover>()
+                it.leftovers.leftovers.forEach { lo ->
+                    leftovers.add(
+                        Leftover(
                             lo.docGuid,
-                            lo.docNumber,lo.gtin,
+                            lo.docNumber,
+                            lo.gtin,
                             lo.guid,
                             lo.qtyin,
                             lo.rfid.toString(),
@@ -261,27 +261,27 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                             lo.state,
                             lo.storeGuid
                         )
-                        )
-                    }
+                    )
+                }
 
-                    val markingCodes = mutableListOf<MarkingCode>()
-                    it.markingCodes.markingCodes.forEach {mc ->
-                        markingCodes.add(
-                            MarkingCode(
+                val markingCodes = mutableListOf<MarkingCode>()
+                it.markingCodes.markingCodes.forEach { mc ->
+                    markingCodes.add(
+                        MarkingCode(
                             mc.gtin,
                             mc.guid,
                             mc.rfid.toString(),
                             mc.sn.toString(),
                             mc.state
-                        ))
-                    }
-
-                    database.insertStocks(goods, leftovers, markingCodes)
+                        )
+                    )
                 }
-            } catch (e: UnknownHostException) {
-            } catch (e: SocketTimeoutException) {
-            } catch (e: Exception) {
+
+                database.insertStocks(goods, leftovers, markingCodes)
             }
+        } catch (e: UnknownHostException) {
+        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
         }
     }
 

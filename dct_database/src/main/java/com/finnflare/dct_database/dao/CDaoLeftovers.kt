@@ -13,6 +13,9 @@ abstract class CDaoLeftovers:
     @Query("SELECT * FROM leftovers")
     abstract fun getAll(): List<CEntityLeftovers>
 
+    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId")
+    abstract fun getAllByDocId(docId: String): List<CEntityLeftovers>
+
     @Query("DELETE FROM leftovers")
     abstract fun truncateTable()
 

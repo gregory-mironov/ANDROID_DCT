@@ -143,6 +143,8 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
         database.mainDao().appendItems(insertable_g, insertable_lo, insertablr_mc)
     }
 
+    fun getLeftovers(documentId: String) = database.mainDao().getScanResultsForLists(documentId)
+
     fun scanResultProcessing(gtin: String, sn: String, rfid: String) {
         if (sn.isEmpty() && rfid.isEmpty()) {
             // EAN-13

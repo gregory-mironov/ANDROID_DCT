@@ -60,6 +60,7 @@
     <string name="setting_send_data_online">Передавать данные онлайн</string>
 
     <!-- Array data -->
+    <string name="array_not_selected_list">Не выбрано</string>
     <string name="array_plan_not_found">Найденные ожидаемые</string>
     <string name="array_plan_found">Ненайденные ожидаемые</string>
     <string name="array_correct_fact">Ожидаемые полученные</string>
