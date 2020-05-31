@@ -14,12 +14,12 @@ data class Data(
     @Json(name = "DocNumber")
     val docNumber: String,
     @Json(name = "DocSum")
-    val docSum: Double,
+    val docSum: Double?,
     val id: String,
     @Json(name = "PriceType")
     val priceType: String,
     val qty: Int,
-    val qtyFact: Int,
+    val qtyFact: Int?,
     @Json(name = "StoreId")
     val storeId: String
 )

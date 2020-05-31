@@ -13,7 +13,7 @@ import org.koin.core.KoinComponent
 
 @ObsoleteCoroutinesApi
 class CDatabaseViewModel(application: Application): AndroidViewModel(application), KoinComponent {
-    private val dbDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
+    val dbDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
 
     private val database = CAppDatabase.getInstance(application)
 
@@ -99,10 +99,33 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
         }
     }
 
-    fun insertStocks(goods: List<Good>, leftovers: List<Leftover>, mc: List<MarkingCode>) {
-        val insertable_g = mutableListOf<CEntityGoods>()
+    fun clearMarkingCodes() {
+        database.markingCodesDao().truncateTable()
+    }
+
+    fun insertMarkingCodes(mc: List<MarkingCode>) {
+        val list = mutableListOf<CEntityMarkingCodes>()
+        mc.forEach {
+            list.add(CEntityMarkingCodes(
+                mGuid = it.guid,
+                mGtin = it.gtin,
+                mRfid = it.rfid,
+                mState = it.state,
+                mSn = it.sn
+            ))
+        }
+
+        database.markingCodesDao().insert(list)
+    }
+
+    fun clearGoods() {
+        database.goodsDao().truncateTable()
+    }
+
+    fun insertGoods(goods: List<Good>) {
+        val list = mutableListOf<CEntityGoods>()
         goods.forEach {
-            insertable_g.add(CEntityGoods(
+            list.add(CEntityGoods(
                 mGuid = it.mGuid,
                 mDescription = it.mName,
                 mModel = it.mModel,
@@ -111,9 +134,33 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             ))
         }
 
-        val insertable_lo = mutableListOf<CEntityLeftovers>()
+        database.goodsDao().insert(list)
+    }
+
+    fun clearStates() {
+        database.goodsDao().truncateTable()
+    }
+
+    fun insertStates(goods: List<State>) {
+        val list = mutableListOf<CEntityStates>()
+        goods.forEach {
+            list.add(CEntityStates(
+                mState = it.stateGuid,
+                mStateName = it.stateName
+            ))
+        }
+
+        database.statesDao().insert(list)
+    }
+
+    fun clearLeftovers() {
+        database.leftoversDao().truncateTable()
+    }
+
+    fun insertLeftovers(leftovers: List<Leftover>) {
+        val list = mutableListOf<CEntityLeftovers>()
         leftovers.forEach {
-            insertable_lo.add(CEntityLeftovers(
+            list.add(CEntityLeftovers(
                 mDocGuid = it.mDocGuid,
                 mDocNumber = it.mDocNumber,
                 mGuid = it.mGuid,
@@ -127,21 +174,10 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             ))
         }
 
-        val insertablr_mc = mutableListOf<CEntityMarkingCodes>()
-        mc.forEach {
-            insertablr_mc.add(CEntityMarkingCodes(
-                mGuid = it.guid,
-                mGtin = it.gtin,
-                mRfid = it.rfid,
-                mState = it.state,
-                mSn = it.sn
-            ))
-        }
-        database.goodsDao().truncateTable()
-        database.leftoversDao().truncateTable()
-        database.markingCodesDao().truncateTable()
-        database.mainDao().appendItems(insertable_g, insertable_lo, insertablr_mc)
+        database.leftoversDao().refillTable(list)
     }
+
+    fun getLeftovers(documentId: String) = database.mainDao().getScanResultsForLists(documentId)
 
     fun scanResultProcessing(gtin: String, sn: String, rfid: String) {
         if (sn.isEmpty() && rfid.isEmpty()) {
@@ -169,7 +205,11 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
         return database.mainDao().formScanResults(storeId, documentId)
     }
 
+    fun getLocationsList() = database.shopsDao().getAll()
+
     fun getDocsList() = database.docsDao().getAll()
+
+    fun getDatedDocsList(date: String) = database.docsDao().getDocsByDate(date)
 
     fun getDocInfo(docId: String) = database.docsDao().findById(docId)
 

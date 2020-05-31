@@ -1,4 +1,4 @@
-package com.finnflare.dct_network.classes.stocks
+package com.finnflare.dct_network.classes.leftovers
 
 
 import com.squareup.moshi.Json
@@ -7,5 +7,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class Request(
     @Json(name = "DocID")
-    val docID: String
+    val docId: String
 )

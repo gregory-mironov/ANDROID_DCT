@@ -11,8 +11,11 @@ import com.finnflare.dct_network.classes.actual_docs.CActualDocsRequest
 import com.finnflare.dct_network.classes.actual_docs.RFIDItems
 import com.finnflare.dct_network.classes.auth.CAuthRequest
 import com.finnflare.dct_network.classes.docs.CDocsRequest
+import com.finnflare.dct_network.classes.goods.CGoodsRequest
+import com.finnflare.dct_network.classes.goods.Request
+import com.finnflare.dct_network.classes.leftovers.CLeftoversRequest
+import com.finnflare.dct_network.classes.marking_codes.CMarkingCodeRequest
 import com.finnflare.dct_network.classes.shops.CShopsRequest
-import com.finnflare.dct_network.classes.stocks.CStocksRequest
 import com.finnflare.dct_network.classes.stores.CStoresRequest
 import com.finnflare.dct_network.classes.users.CUsersRequest
 import kotlinx.coroutines.*
@@ -100,36 +103,34 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun getShopsList() {
-        CoroutineScope(netDispatcher).launch {
-            try {
-                val request = CShopsRequest(
-                    header = Header(
-                        method = "tsd.get.shops",
-                        token = token
-                    ),
-                    request = com.finnflare.dct_network.classes.shops.Request()
-                )
+    suspend fun getLocationsList() {
+        try {
+            val request = CShopsRequest(
+                header = Header(
+                    method = "tsd.get.shops",
+                    token = token
+                ),
+                request = com.finnflare.dct_network.classes.shops.Request()
+            )
 
-                val response = CNetworkService.Api.getShopsList(request)
+            val response = CNetworkService.Api.getShopsList(request)
 
-                if (!response.isSuccessful) {
-                    return@launch
-                }
-
-                response.body()?.response?.data?.let {
-                    val shops = mutableListOf<Shop>()
-
-                    it.forEach { shop ->
-                        shops.add(Shop(shop.id, shop.name, shop.httpRef))
-                    }
-
-                    database.insertShops(shops)
-                }
-            } catch (e: UnknownHostException) {
-            } catch (e: SocketTimeoutException) {
-            } catch (e: Exception) {
+            if (!response.isSuccessful) {
+                return
             }
+
+            response.body()?.response?.data?.let {
+                val shops = mutableListOf<Shop>()
+
+                it.forEach { shop ->
+                    shops.add(Shop(shop.id, shop.name, shop.httpRef))
+                }
+
+                database.insertShops(shops)
+            }
+        } catch (e: UnknownHostException) {
+        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
         }
     }
 
@@ -171,121 +172,217 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun getDocsList(date: String, shopId: String) {
-        CoroutineScope(netDispatcher).launch {
-            try {
-                val request = CDocsRequest(
+    suspend fun getDocsList(date: String, shopId: String) {
+        try {
+            val docsRequest = CDocsRequest(
+                header = Header(
+                    method = "tsd.get.docs",
+                    token = token
+                ),
+                request = com.finnflare.dct_network.classes.docs.Request(
+                    docDate = date,
+                    shopId = shopId
+                )
+            )
+
+            val docsResponse = CNetworkService.Api.getDocsList(docsRequest)
+
+            if (!docsResponse.isSuccessful) {
+                return
+            }
+
+            docsResponse.body()?.response?.data?.let {
+                val docs = mutableListOf<Doc>()
+
+                it.forEach { doc ->
+                    docs.add(Doc(
+                        doc.auditor,
+                        doc.basis,
+                        doc.comment,
+                        doc.docDate,
+                        doc.docNumber,
+                        doc.docSum ?: 0.0,
+                        doc.id,
+                        doc.priceType,
+                        doc.qty,
+                        doc.qtyFact ?: 0,
+                        doc.storeId
+                    ))
+                }
+
+                database.insertDocs(docs)
+            }
+
+            getMCList(shopId)
+            getGoodsList(shopId)
+
+        } catch (e: UnknownHostException) {
+        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
+        }
+    }
+
+    private suspend fun getMCList(shopId: String, limit: Int = 2000) {
+        try {
+            database.clearMarkingCodes()
+
+            var page = 1
+            while (true) {
+
+                val mcRequest = CMarkingCodeRequest(
                     header = Header(
-                        method = "tsd.get.docs",
+                        method = "tsd.get.marking_codes",
                         token = token
                     ),
-                    request = com.finnflare.dct_network.classes.docs.Request(
-                        docDate = date,
+                    request = com.finnflare.dct_network.classes.marking_codes.Request(
+                        limit = limit,
+                        page = page,
                         shopId = shopId
                     )
                 )
 
-                val response = CNetworkService.Api.getDocsList(request)
+                val mcResponse = CNetworkService.Api.getMarkingCodesList(mcRequest)
 
-                if (!response.isSuccessful) {
-                    return@launch
-                }
+                if (!mcResponse.isSuccessful)
+                    break
 
-                response.body()?.response?.data?.let {
-                    val docs = mutableListOf<Doc>()
+                if (mcResponse.body()?.response?.error != false)
+                    break
 
-                    it.forEach { doc ->
-                        docs.add(Doc(
-                            doc.auditor,
-                            doc.basis,
-                            doc.comment,
-                            doc.docDate,
-                            doc.docNumber,
-                            doc.docSum,
-                            doc.id,
-                            doc.priceType,
-                            doc.qty,
-                            doc.qtyFact,
-                            doc.storeId
-                        ))
+                database.insertMarkingCodes(mutableListOf<MarkingCode>().apply {
+                    mcResponse.body()?.response?.markingCodes!!.markingCodes.forEach { mc ->
+                        this.add(
+                            MarkingCode(
+                                mc.gtin,
+                                mc.guid,
+                                mc.rfid.toString(),
+                                mc.sn.toString(),
+                                mc.state
+                            )
+                        )
                     }
+                })
 
-                    database.insertDocs(docs)
-                }
-            } catch (e: UnknownHostException) {
-            } catch (e: SocketTimeoutException) {
-            } catch (e: Exception) {
+                if (mcResponse.body()?.response?.markingCodes!!.markingCodes.size < limit)
+                    break
+
+                page += 1
             }
+        } catch (e: UnknownHostException) {
+        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
         }
     }
 
-    fun getStocksList(docId: String) {
-        CoroutineScope(netDispatcher).launch {
-            try {
-                val request = CStocksRequest(
+    private suspend fun getGoodsList(shopId: String, limit: Int = 2000) {
+        try {
+            database.clearGoods()
+            database
+
+            var page = 1
+            while (true) {
+
+                val mcRequest = CGoodsRequest(
                     header = Header(
-                        method = "tsd.get.stocks",
+                        method = "tsd.get.goods",
                         token = token
                     ),
-                    request = com.finnflare.dct_network.classes.stocks.Request(
-                        docID = docId
+                    request = Request(
+                        limit = limit,
+                        page = page,
+                        shopId = shopId
                     )
                 )
 
-                val response = CNetworkService.Api.getStocksList(request)
+                val goodsResponse = CNetworkService.Api.getGoodsList(mcRequest)
 
-                if (!response.isSuccessful) {
-                    return@launch
-                }
+                if (!goodsResponse.isSuccessful)
+                    break
 
-                response.body()?.response?.let {
-                    val goods = mutableListOf<Good>()
-                    it.goods.Goods.forEach {good ->
-                        goods.add(
+                if (goodsResponse.body()?.response?.error != false)
+                    break
+
+                database.insertGoods(mutableListOf<Good>().apply {
+                    goodsResponse.body()?.response!!.goods!!.goods.forEach {
+                        this.add(
                             Good(
-                            good.color,
-                            good.guid,
-                            good.model,
-                            good.name,
-                            good.size
-                        )
-                        )
-                    }
-
-                    val leftovers = mutableListOf<Leftover>()
-                    it.leftovers.leftovers.forEach {lo ->
-                        leftovers.add(
-                            Leftover(
-                            lo.docGuid,
-                            lo.docNumber,lo.gtin,
-                            lo.guid,
-                            lo.qtyin,
-                            lo.rfid.toString(),
-                            lo.sn.toString(),
-                            lo.state,
-                            lo.storeGuid
-                        )
+                                it.color.toString(),
+                                it.guid,
+                                it.model.toString(),
+                                it.name.toString(),
+                                it.size.toString()
+                            )
                         )
                     }
+                })
 
-                    val markingCodes = mutableListOf<MarkingCode>()
-                    it.markingCodes.markingCodes.forEach {mc ->
-                        markingCodes.add(
-                            MarkingCode(
-                            mc.gtin,
-                            mc.guid,
-                            mc.rfid.toString(),
-                            mc.sn.toString(),
-                            mc.state
-                        ))
+                database.insertStates(mutableListOf<State>().apply {
+                    goodsResponse.body()?.response!!.states.states.forEach {
+                        this.add(
+                            State(
+                                it.state,
+                                it.stateName
+                            )
+                        )
                     }
+                })
 
-                    database.insertStocks(goods, leftovers, markingCodes)
-                }
-            } catch (e: UnknownHostException) {
-            } catch (e: SocketTimeoutException) {
-            } catch (e: Exception) {
+                if (goodsResponse.body()?.response!!.goods!!.goods.size < limit)
+                    break
+
+                page += 1
             }
+        } catch (e: UnknownHostException) {
+        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
+        }
+    }
+
+    suspend fun getLeftoversList(docId: String) {
+        try {
+            database.clearLeftovers()
+
+            val request = CLeftoversRequest(
+                header = Header(
+                    method = "tsd.get.leftovers",
+                    token = token
+                ),
+                request = com.finnflare.dct_network.classes.leftovers.Request(
+                    docId = docId
+                )
+            )
+
+            val response = CNetworkService.Api.getLeftoversList(request)
+
+            if (!response.isSuccessful) {
+                return
+            }
+
+            if (response.body()?.response?.error != false)
+                return
+
+            val leftovers = mutableListOf<Leftover>()
+            response.body()?.response?.leftovers!!.leftovers.forEach { lo ->
+                leftovers.add(
+                    Leftover(
+                        lo.docGuid,
+                        lo.docNumber,
+                        lo.gtin,
+                        lo.guid,
+                        lo.qtyin,
+                        lo.rfid.toString(),
+                        lo.sn.toString(),
+                        lo.state,
+                        lo.storeGuid
+                    )
+                )
+            }
+
+            database.insertLeftovers(leftovers)
+
+        } catch (e: UnknownHostException) {
+        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
         }
     }
 

@@ -82,9 +82,17 @@ class LocationRecyclerViewAdapter(
                 charSequence: CharSequence,
                 filterResults: FilterResults
             ) {
-                mValuesFiltered = filterResults.values as List<Location>
+                (filterResults.values as List<*>).asListOfType<Location>()?.let {
+                    mValuesFiltered = it
+                }
                 notifyDataSetChanged()
             }
         }
     }
+
+    inline fun <reified T> List<*>.asListOfType(): List<T>? =
+        if (all { it is T })
+            @Suppress("UNCHECKED_CAST")
+            this as List<T> else
+            null
 }

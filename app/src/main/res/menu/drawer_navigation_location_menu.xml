@@ -3,6 +3,9 @@
 
     <group android:id="@+id/grp1">
         <item
+            android:id="@+id/d_nav_change_docs_date"
+            android:title="@string/label_change_docs_date"/>
+        <item
             android:id="@+id/d_nav_send_to_server"
             android:title="@string/label_send_results_to_server"/>
         <item

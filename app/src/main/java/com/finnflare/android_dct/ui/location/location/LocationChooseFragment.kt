@@ -7,13 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.Location
 import com.finnflare.android_dct.R
+import kotlinx.android.synthetic.main.fragment_location_choose.*
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 @ObsoleteCoroutinesApi
@@ -41,7 +46,7 @@ class LocationChooseFragment : Fragment(), SearchView.OnQueryTextListener {
         val view = inflater.inflate(R.layout.fragment_location_choose, container, false)
 
         mAdapter = LocationRecyclerViewAdapter(
-            uiViewModel.locationList,
+            uiViewModel.locationList.value!!,
             listener
         )
 
@@ -54,6 +59,17 @@ class LocationChooseFragment : Fragment(), SearchView.OnQueryTextListener {
 
             view.findViewById<SearchView>(R.id.locationSearchView).setOnQueryTextListener(this)
         }
+
+        view.findViewById<SwipeRefreshLayout>(R.id.locationSwipeRefresh).setOnRefreshListener {
+            lifecycleScope.launch {
+                uiViewModel.getLocationsList()
+                locationSwipeRefresh.isRefreshing = false
+            }
+        }
+
+        uiViewModel.locationList.observe(viewLifecycleOwner, Observer {
+            mAdapter.notifyDataSetChanged()
+        })
 
         return view
     }

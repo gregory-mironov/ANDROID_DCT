@@ -62,8 +62,7 @@ class LocationActivity : AppCompatActivity(),
 
     private fun setDrawerNavigationListener() {
         val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view_location)
-        DrawerNavigationLocationListener.configure(this)
-        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationLocationListener)
+        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationLocationListener(this))
     }
 
     private fun configureToolbar() {
@@ -93,11 +92,8 @@ class LocationActivity : AppCompatActivity(),
     override fun onListLocationChooseFragmentInteraction(item: Location) {
         shopId = item.id
 
-        lifecycleScope.launch {
-            uiViewModel.getDocumentsList(item.id)
-        }
         supportFragmentManager.beginTransaction().apply {
-            this.replace(R.id.a_location_placeholder, DocumentChooseFragment())
+            this.replace(R.id.a_location_placeholder, DocumentChooseFragment.newInstance(shopId))
             this.addToBackStack("Some string")
             this.commit()
         }
