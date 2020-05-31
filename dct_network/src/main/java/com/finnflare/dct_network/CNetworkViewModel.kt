@@ -278,9 +278,6 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
 
     private suspend fun getGoodsList(shopId: String, limit: Int = 2000) {
         try {
-            database.clearGoods()
-            database
-
             var page = 1
             while (true) {
 
@@ -303,6 +300,11 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
 
                 if (goodsResponse.body()?.response?.error != false)
                     break
+
+                if (page == 1) {
+                    database.clearGoods()
+                    database.clearStates()
+                }
 
                 database.insertGoods(mutableListOf<Good>().apply {
                     goodsResponse.body()?.response!!.goods!!.goods.forEach {
