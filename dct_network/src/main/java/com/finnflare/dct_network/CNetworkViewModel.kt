@@ -216,6 +216,8 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
             getMCList(shopId)
             getGoodsList(shopId)
 
+            database.clearOldLeftovers()
+
         } catch (e: UnknownHostException) {
         } catch (e: SocketTimeoutException) {
         } catch (e: Exception) {
@@ -340,8 +342,6 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
 
     suspend fun getLeftoversList(docId: String) {
         try {
-            database.clearLeftovers()
-
             val request = CLeftoversRequest(
                 header = Header(
                     method = "tsd.get.leftovers",
@@ -360,6 +360,8 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
 
             if (response.body()?.response?.error != false)
                 return
+
+            database.clearPlanLeftovers(docId)
 
             val leftovers = mutableListOf<Leftover>()
             response.body()?.response?.leftovers!!.leftovers.forEach { lo ->

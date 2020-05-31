@@ -153,8 +153,12 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
         database.statesDao().insert(list)
     }
 
-    fun clearLeftovers() {
-        database.leftoversDao().truncateTable()
+    fun clearPlanLeftovers(docId: String) {
+        database.leftoversDao().clearPlanLeftovers(docId)
+    }
+
+    fun clearOldLeftovers() {
+        database.leftoversDao().clearOldLeftovers()
     }
 
     fun insertLeftovers(leftovers: List<Leftover>) {

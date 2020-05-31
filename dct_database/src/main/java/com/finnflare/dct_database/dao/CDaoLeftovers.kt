@@ -19,6 +19,18 @@ abstract class CDaoLeftovers:
     @Query("DELETE FROM leftovers")
     abstract fun truncateTable()
 
+    @Query("""
+        DELETE FROM leftovers
+        WHERE _doc_id = :docId AND _qtyout = 0
+    """)
+    abstract fun clearPlanLeftovers(docId: String)
+
+    @Query("""
+        DELETE FROM leftovers
+        WHERE _doc_id NOT IN (SELECT _id FROM docs)
+    """)
+    abstract fun clearOldLeftovers()
+
     @Transaction
     open fun refillTable(aObjList: List<CEntityLeftovers>) {
         truncateTable()
