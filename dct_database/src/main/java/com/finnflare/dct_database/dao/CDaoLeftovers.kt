@@ -86,9 +86,15 @@ abstract class CDaoLeftovers:
     """)
     abstract fun getBarcodeScanResults(aStoreId: String, aDocumentId: String): List<CBarcodeScanResult>
 
-    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid = '' ")
-    abstract fun deleteAllMyBarcodeLines()
+    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid = ''")
+    abstract fun deleteAllBarcodeResults()
 
-    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid != '' ")
-    abstract fun deleteAllMyRfidLines()
+    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid != ''")
+    abstract fun deleteAllRfidResults()
+
+    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid = '' AND _doc_id = :docId")
+    abstract fun deleteBarcodeResults(docId: String)
+
+    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid != '' AND _doc_id = :docId")
+    abstract fun deleteRfidResults(docId: String)
 }

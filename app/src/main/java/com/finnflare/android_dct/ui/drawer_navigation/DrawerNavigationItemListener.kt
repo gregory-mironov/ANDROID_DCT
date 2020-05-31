@@ -7,9 +7,12 @@ import android.view.MenuItem
 import androidx.fragment.app.FragmentActivity
 import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.SettingsActivity
+import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.dct_network.CNetworkViewModel
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -18,6 +21,7 @@ object DrawerNavigationItemListener:
     NavigationView.OnNavigationItemSelectedListener, KoinComponent {
 
     private val network by inject<CNetworkViewModel>()
+    private val database by inject<CDatabaseViewModel>()
 
     private var context: Context? = null
     private var docId: String = ""
@@ -39,10 +43,14 @@ object DrawerNavigationItemListener:
                 Log.w("Drawer-navigation", "Upload result from file not implemented")
             }
             R.id.d_nav_reset_rfid_results -> {
-                Log.w("Drawer-navigation", "Reset results not implemented")
+                CoroutineScope(database.dbDispatcher).launch {
+                    database.deleteRfidResults(docId)
+                }
             }
             R.id.d_nav_reset_barcode_results -> {
-                Log.w("Drawer-navigation", "Reset results not implemented")
+                CoroutineScope(database.dbDispatcher).launch {
+                    database.deleteBarcodeResults(docId)
+                }
             }
             R.id.d_nav_setting -> {
                 val intent = Intent(context, SettingsActivity::class.java)

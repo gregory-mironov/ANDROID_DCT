@@ -9,9 +9,12 @@ import androidx.fragment.app.FragmentActivity
 import com.finnflare.android_dct.CUIViewModel
 import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.SettingsActivity
+import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.dct_network.CNetworkViewModel
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -20,6 +23,8 @@ class DrawerNavigationLocationListener(private val mContext: Context):
     NavigationView.OnNavigationItemSelectedListener, KoinComponent {
 
     private val network by inject<CNetworkViewModel>()
+    private val database by inject<CDatabaseViewModel>()
+
     private val uiViewModel by inject<CUIViewModel>()
 
     private var context: Context? = null
@@ -45,6 +50,16 @@ class DrawerNavigationLocationListener(private val mContext: Context):
             }
             R.id.d_nav_upload_result_from_file -> {
                 Log.w("Drawer-navigation", "Upload result from file not implemented")
+            }
+            R.id.d_nav_reset_rfid_results -> {
+                CoroutineScope(database.dbDispatcher).launch {
+                    database.deleteAllRfidResults()
+                }
+            }
+            R.id.d_nav_reset_barcode_results -> {
+                CoroutineScope(database.dbDispatcher).launch {
+                    database.deleteAllBarcodeResults()
+                }
             }
             R.id.d_nav_setting -> {
                 val intent = Intent(context, SettingsActivity::class.java)
