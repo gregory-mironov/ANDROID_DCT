@@ -32,7 +32,13 @@ class FactItemsListFragment : Fragment() {
     private lateinit var mAdapter: FactRecyclerViewAdapter
 
     private val observer = Observer<MutableList<Item>> {
-//        mAdapter.changeData()
+        when (view?.findViewById<Spinner>(R.id.f_fact_spinner)?.selectedItem.toString()) {
+            getString(R.string.array_correct_fact) ->
+                mAdapter.changeData(scannerViewModel.getCorrectFactList())
+            getString(R.string.array_wrong_fact) ->
+                mAdapter.changeData(scannerViewModel.getWrongFactList())
+            else -> mAdapter.changeData(listOf())
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

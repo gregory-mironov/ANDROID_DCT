@@ -25,7 +25,6 @@ import org.koin.android.ext.android.inject
 class PlanItemsListFragment : Fragment() {
     private val scannerViewModel by inject<CScannerViewModel>()
 
-    private var docId = ""
     private var columnCount = 1
 
     private var listener: OnListPlanItemsListFragmentInteractionListener? = null
@@ -33,7 +32,14 @@ class PlanItemsListFragment : Fragment() {
     private lateinit var mAdapter: PlanRecyclerViewAdapter
 
     private val observer = Observer<MutableList<Item>> {
-//        mAdapter.changeData()
+        when (view?.findViewById<Spinner>(R.id.f_plan_spinner)?.selectedItem.toString())
+        {
+            getString(R.string.array_plan_not_found) ->
+                mAdapter.changeData(scannerViewModel.getPlanListNotFound())
+            getString(R.string.array_plan_found) ->
+                mAdapter.changeData(scannerViewModel.getPlanListFound())
+            else -> mAdapter.changeData(listOf())
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
