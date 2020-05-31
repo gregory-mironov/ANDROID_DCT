@@ -54,8 +54,8 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
             factItemsList.value?.clear()
 
             database.getLeftovers(docId).forEach {
-                val item = Item(it.guid, it.description, it.model, it.color,
-                    it.size, it.qtyoutBarcode, it.qtyoutRfid, it.qtyin)
+                val item = Item(it.guid, it.description, it.model.toString(), it.color.toString(),
+                    it.size.toString(), it.qtyoutBarcode, it.qtyoutRfid, it.qtyin)
 
                 factItemsList.value?.add(item)
                 if (it.qtyin != 0)
@@ -63,49 +63,14 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
             }
             planItemsList.postValue(planItemsList.value)
             factItemsList.postValue(factItemsList.value)
-
-//            planItemsList.value?.let {
-//                for (i in 1..25) {
-//                    it.add(
-//                        Item(
-//                            " ", "Plan item $i", "","Some color",
-//                            "Some size", 0, 0, 10
-//                        )
-//                    )
-//                    it.add(
-//                        Item(
-//                            " ", "Found plan item $i", "", "Some color",
-//                            "Some size", 10, 0, 10
-//                        )
-//                    )
-//                }
-//            }
-//            planItemsList.postValue(planItemsList.value)
-//
-//            factItemsList.value?.let {
-//                it.clear()
-//                for (i in 1..25) {
-//                    it.add(
-//                        Item(
-//                            " ", "Correct fact item $i", "", "Some color",
-//                            "Some size", 0, 9, 10
-//                        )
-//                    )
-//                    it.add(
-//                        Item(
-//                            " ", "Wrong fact item $i", "", "Some color",
-//                            "Some size", 11, 0, 10
-//                        )
-//                    )
-//                }
-//            }
-//            factItemsList.postValue(factItemsList.value)
         }.join()
     }
 
     suspend fun refreshItemsList() {
-        network.getStocksList(docId)
-        getItemsList()
+        CoroutineScope(database.dbDispatcher).launch {
+            network.getLeftoversList(docId)
+            getItemsList()
+        }.join()
     }
 
     fun getPlanListNotFound() = planItemsList.value!!.filter {

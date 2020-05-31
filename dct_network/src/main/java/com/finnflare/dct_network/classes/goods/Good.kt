@@ -1,4 +1,4 @@
-package com.finnflare.dct_network.classes.stocks
+package com.finnflare.dct_network.classes.goods
 
 
 import com.squareup.moshi.Json
@@ -7,13 +7,13 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class Good(
     @Json(name = "_COLOR")
-    val color: String,
+    val color: String?,
     @Json(name = "_GUID")
     val guid: String,
     @Json(name = "_MODEL")
-    val model: String,
+    val model: String?,
     @Json(name = "_NAME")
-    val name: String,
+    val name: String?,
     @Json(name = "_SIZE")
-    val size: String
+    val size: String?
 )

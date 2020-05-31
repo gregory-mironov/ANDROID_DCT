@@ -68,9 +68,11 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
         }
     }
 
-    fun getDocumentsList(locationId: String) {
+    suspend fun getDocumentsList(locationId: String) {
         CoroutineScope(databaseViewModel.dbDispatcher).launch {
-            val date = "$year-${month + 1}-${day}T00:00:00"
+            val date = if (month < 9) "$year-0${month + 1}-${day}T00:00:00"
+            else "$year-${month + 1}-${day}T00:00:00"
+
             networkViewModel.getDocsList(date, locationId)
 
             documentList.value?.let { list ->
@@ -90,7 +92,7 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
             }
 
             documentList.postValue(documentList.value)
-        }
+        }.join()
     }
 }
 

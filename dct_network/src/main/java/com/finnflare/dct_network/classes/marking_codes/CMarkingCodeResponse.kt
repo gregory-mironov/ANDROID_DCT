@@ -1,0 +1,12 @@
+package com.finnflare.dct_network.classes.marking_codes
+
+
+import com.finnflare.dct_network.classes.Header
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+data class CMarkingCodeResponse(
+    val header: Header,
+    val request: Request,
+    val response: Response
+)
