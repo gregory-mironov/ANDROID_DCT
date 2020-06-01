@@ -186,21 +186,24 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
     fun getMCByGtin(gtin: String) = database.markingCodesDao().findByGtin(gtin)
 
     fun scanResultProcessing(docId: String, gtin: String, sn: String, rfid: String): Int {
+
         if (sn.isEmpty() && rfid.isEmpty()) {
             // EAN-13
             database.leftoversDao().findMyLine(gtin, sn, rfid)?.let {
-                database.leftoversDao().incMyQtyoutEan_13(gtin, sn, rfid)
+                database.leftoversDao().incMyQtyoutEan_13(gtin)
                 return 1
             }
 
             database.leftoversDao().findServerLine(gtin, sn, rfid)?.let{
-                it.mQtyin = 0
-                it.mQtyout = 1
-                database.leftoversDao().insert(it)
+                database.leftoversDao().insert(it.apply {
+                    this.mQtyin = 0
+                    this.mQtyout = 1
+                })
                 return 2
             }
 
             val mc = database.markingCodesDao().findByGtin(gtin)
+
             if (mc != null) {
                 database.leftoversDao().insert(CEntityLeftovers(
                     mGuid = mc.mGuid,

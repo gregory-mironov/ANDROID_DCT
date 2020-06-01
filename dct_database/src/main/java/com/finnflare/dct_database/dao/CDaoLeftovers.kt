@@ -49,8 +49,8 @@ abstract class CDaoLeftovers:
     @Query("""
         UPDATE leftovers 
         SET _qtyout = _qtyout + 1 
-        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin = 0""")
-    abstract fun incMyQtyoutEan_13(aGtin: String, aSn: String, aRfid: String)
+        WHERE _gtin = :aGtin AND _sn = '' AND _rfid = '' AND _qtyin = 0""")
+    abstract fun incMyQtyoutEan_13(aGtin: String)
 
     @Query("""
         SELECT * 

@@ -257,8 +257,8 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                             MarkingCode(
                                 mc.gtin,
                                 mc.guid,
-                                mc.rfid.toString(),
-                                mc.sn.toString(),
+                                mc.rfid ?: "",
+                                mc.sn ?: "",
                                 mc.state
                             )
                         )
@@ -374,8 +374,8 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
                         lo.gtin,
                         lo.guid,
                         lo.qtyin,
-                        lo.rfid.toString(),
-                        lo.sn.toString(),
+                        lo.rfid ?: "",
+                        lo.sn ?: "",
                         lo.state,
                         lo.storeGuid
                     )

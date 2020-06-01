@@ -28,8 +28,6 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
 
     var docId = ""
 
-    private val markingCodeList = mutableListOf<MarkingCode>()
-
     private val stateList = mutableListOf<State>()
 
     private val searchList = mutableListOf<Item>()
@@ -37,15 +35,16 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     val planItemsList = MutableLiveData<MutableList<Item>>(mutableListOf())
     val factItemsList = MutableLiveData<MutableList<Item>>(mutableListOf())
 
-    init { CoroutineScope(Dispatchers.Default).launch {
-        when (Build.MANUFACTURER) {
-            "Alien" -> {
-                if (Build.MODEL == "ALR-H450")
-                    scanner = CAlienScanner(application)
+    init {
+        CoroutineScope(Dispatchers.Default).launch {
+            when (Build.MANUFACTURER) {
+                "Alien" -> {
+                    if (Build.MODEL == "ALR-H450")
+                        scanner = CAlienScanner(application)
+                }
+                else -> scanner = CCameraScanner(application)
             }
-            else -> scanner = CCameraScanner(application)
         }
-    }
     }
 
     suspend fun getItemsList() {
@@ -61,9 +60,13 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
                 if (it.qtyin != 0)
                     planItemsList.value?.add(item)
             }
-            planItemsList.postValue(planItemsList.value)
-            factItemsList.postValue(factItemsList.value)
         }.join()
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                planItemsList.value = planItemsList.value
+                factItemsList.value = factItemsList.value
+            }
+        }
     }
 
     suspend fun refreshItemsList() {
@@ -91,83 +94,98 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     }
 
     fun increaseItemCount(gtin: String, sn: String, rfid: String): Int {
-        if (gtin.isNotEmpty() && sn.isNotEmpty() && rfid.isEmpty())
-            return 0
-
         val guid = database.getMCByGtin(gtin)?.mGuid.toString()
 
         return when (database.scanResultProcessing(docId, gtin, sn, rfid)) {
             -4 -> {
-                factItemsList.value!!.add(
-                    Item(
-                        guid = guid,
-                        description = "",
-                        model = "",
-                        color = "",
-                        size = "",
-                        rfidCount = 1
+                    factItemsList.value!!.add(
+                        Item(
+                            guid = guid,
+                            description = "",
+                            model = "",
+                            color = "",
+                            size = "",
+                            rfidCount = 1
+                        )
                     )
-                )
-                -3
-            }
+                    -3
+                }
             -3 -> {
-                factItemsList.value!!.add(
-                    Item(
-                        guid = guid,
-                        description = "",
-                        model = "",
-                        color = "",
-                        size = "",
-                        rfidCount = 1
+                    factItemsList.value!!.add(
+                        Item(
+                            guid = guid,
+                            description = "",
+                            model = "",
+                            color = "",
+                            size = "",
+                            rfidCount = 1
+                        )
                     )
-                )
-                -3
-            }
+                    -3
+                }
             -2 -> {
-                planItemsList.value!!.find { it.guid == guid }!!.let {
-                    factItemsList.value!!.add(it.apply {
-                        this.rfidCount = 1
-                    })
+                    planItemsList.value!!.find { it.guid == guid }!!.let {
+                        factItemsList.value!!.add(
+                            Item(
+                                guid = it.guid,
+                                description = it.description,
+                                model = it.model,
+                                color = it.color,
+                                size = it.size,
+                                rfidCount = 1,
+                                planCount = it.planCount
+                            )
+                        )
+                    }
+                    -2
                 }
-                -2
-            }
             1 -> {
-                planItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
-                factItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
-                1
-            }
-            2 -> {
-                planItemsList.value!!.find { it.guid == guid }!!.let {
-                    factItemsList.value!!.add(it.apply {
-                        this.barcodeCount = 1
-                    })
+                    planItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
+                    factItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
+                    1
                 }
-                2
-            }
+            2 -> {
+                    planItemsList.value!!.find { it.guid == guid }!!.let {
+                        factItemsList.value!!.add(
+                            Item(
+                                guid = it.guid,
+                                description = it.description,
+                                model = it.model,
+                                color = it.color,
+                                size = it.size,
+                                barcodeCount = 1,
+                                planCount = it.planCount
+                            )
+                        )
+                    }
+                    2
+                }
             3 -> {
-                factItemsList.value!!.add(
-                    Item(
-                        guid = guid,
-                        description = "",
-                        model = "",
-                        color = "",
-                        size = "",
-                        barcodeCount = 1
+                    factItemsList.value!!.add(
+                        Item(
+                            guid = guid,
+                            description = "",
+                            model = "",
+                            color = "",
+                            size = "",
+                            barcodeCount = 1
+                        )
                     )
-                )
-                3
-            }
+                    3
+                }
             4 -> {
-                Item(
-                    guid = guid,
-                    description = "",
-                    model = "",
-                    color = "",
-                    size = "",
-                    barcodeCount = 1
-                )
-                3
-            }
+                    factItemsList.value!!.add(
+                        Item(
+                            guid = guid,
+                            description = "",
+                            model = "",
+                            color = "",
+                            size = "",
+                            barcodeCount = 1
+                        )
+                    )
+                    3
+                }
             else -> 0
         }
     }
@@ -238,7 +256,26 @@ data class Item(
     var barcodeCount: Int = 0,
     var rfidCount: Int = 0,
     val planCount: Int = 0
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is  Item)
+            return false
+
+        return description == other.description || guid == other.guid
+    }
+
+    override fun hashCode(): Int {
+        var result = guid.hashCode()
+        result = 31 * result + description.hashCode()
+        result = 31 * result + model.hashCode()
+        result = 31 * result + color.hashCode()
+        result = 31 * result + size.hashCode()
+        result = 31 * result + barcodeCount
+        result = 31 * result + rfidCount
+        result = 31 * result + planCount
+        return result
+    }
+}
 
 data class State(
     val state_id: String,

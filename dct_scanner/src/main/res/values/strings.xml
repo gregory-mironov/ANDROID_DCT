@@ -2,4 +2,6 @@
 <resources>
     <string name="title_activity_scan">Scan</string>
     <string name="full_description">Full description</string>
+
+    <string name="items_empty_name_corrector">Unknown item</string>
 </resources>
