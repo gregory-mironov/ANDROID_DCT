@@ -46,20 +46,26 @@ abstract class CDaoLeftovers:
     @Query("SELECT * FROM leftovers WHERE _rfid = :aRfid")
     abstract fun findByRfid(aRfid: String): CEntityLeftovers
 
-    @Query("""UPDATE leftovers 
+    @Query("""
+        UPDATE leftovers 
         SET _qtyout = _qtyout + 1 
         WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin = 0""")
     abstract fun incMyQtyoutEan_13(aGtin: String, aSn: String, aRfid: String)
 
-    @Query("""SELECT * 
+    @Query("""
+        SELECT * 
         FROM leftovers 
-        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin = 0""")
-    abstract fun findMyLine(aGtin: String, aSn: String, aRfid: String): List<CEntityLeftovers>
+        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin = 0
+        LIMIT 1
+        """)
+    abstract fun findMyLine(aGtin: String, aSn: String, aRfid: String): CEntityLeftovers?
 
-    @Query("""SELECT * 
+    @Query("""
+        SELECT * 
         FROM leftovers 
-        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin != 0""")
-    abstract fun findServerLine(aGtin: String, aSn: String, aRfid: String): List<CEntityLeftovers>
+        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin != 0 
+        LIMIT 1""")
+    abstract fun findServerLine(aGtin: String, aSn: String, aRfid: String): CEntityLeftovers?
 
     @Query("""
         SELECT 

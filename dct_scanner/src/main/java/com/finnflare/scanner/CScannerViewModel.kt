@@ -91,37 +91,96 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     }
 
     fun increaseItemCount(gtin: String, sn: String, rfid: String): Int {
+        val guid = database.getMCByGtin(gtin)?.mGuid.toString()
 
-        //add DB action and remote check
-
-        val mc = markingCodeList.find { it.gtin == gtin } ?: return -1
-
-        val item = factItemsList.value!!.find { it.guid == mc.guid } ?: return -1
-
-        if (rfid.isNotEmpty()) {
-            item.rfidCount++
-            return if (item.rfidCount > item.planCount) 1 else 0
+        return when (database.scanResultProcessing(docId, gtin, sn, rfid)) {
+            -4 -> {
+                factItemsList.value!!.add(
+                    Item(
+                        guid = guid,
+                        description = "Неизвестный товар",
+                        model = "",
+                        color = "",
+                        size = "",
+                        rfidCount = 1
+                    )
+                )
+                -3
+            }
+            -3 -> {
+                factItemsList.value!!.add(
+                    Item(
+                        guid = guid,
+                        description = "Неизвестный товар",
+                        model = "",
+                        color = "",
+                        size = "",
+                        rfidCount = 1
+                    )
+                )
+                -3
+            }
+            -2 -> {
+                planItemsList.value!!.find { it.guid == guid }!!.let {
+                    factItemsList.value!!.add(it.apply {
+                        this.rfidCount = 1
+                    })
+                }
+                -2
+            }
+            1 -> {
+                planItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
+                factItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
+                1
+            }
+            2 -> {
+                planItemsList.value!!.find { it.guid == guid }!!.let {
+                    factItemsList.value!!.add(it.apply {
+                        this.barcodeCount = 1
+                    })
+                }
+                2
+            }
+            3 -> {
+                factItemsList.value!!.add(
+                    Item(
+                        guid = guid,
+                        description = "Неизвестный товар",
+                        model = "",
+                        color = "",
+                        size = "",
+                        barcodeCount = 1
+                    )
+                )
+                3
+            }
+            4 -> {
+                Item(
+                    guid = guid,
+                    description = "Неизвестный товар",
+                    model = "",
+                    color = "",
+                    size = "",
+                    barcodeCount = 1
+                )
+                3
+            }
+            else -> 0
         }
-
-        item.barcodeCount++
-        return if (item.barcodeCount > item.planCount) 1 else 0
     }
 
     fun getItemData(gtin: String, sn: String = "", rfid: String = ""):
             Pair<String, Triple<String, String, String>> {
 
-        val mc = markingCodeList.filter { it.gtin == gtin }
+        val mc = database.getMCByGtin(gtin) ?: return findItemDataFromRemote()
 
-        if (mc.isEmpty())
-            return findItemDataFromRemote()
-
-        val items = planItemsList.value!!.filter { it.guid == mc[0].guid}
+        val items = planItemsList.value!!.filter { it.guid == mc.mGuid}
 
         if (items.isEmpty())
             return findItemDataFromRemote()
 
         items[0].let { item ->
-            stateList.filter { it.state_id == mc[0].state }
+            stateList.filter { it.state_id == mc.mState }
 
             return Pair(item.description, Triple(
                 item.color,
@@ -153,12 +212,9 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
         if (rfid.isEmpty())
             return false
 
-        val mc = markingCodeList.filter { it.gtin == gtin }
+        val mc = database.getMCByGtin(gtin) ?: return false
 
-        if (mc.isEmpty())
-            return false
-
-        return searchList.any { e -> mc.any { it.guid == e.guid } }
+        return searchList.any { e -> mc.mGuid == e.guid }
     }
 }
 

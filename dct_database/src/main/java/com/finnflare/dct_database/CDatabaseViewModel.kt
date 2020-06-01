@@ -183,26 +183,100 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
 
     fun getLeftovers(documentId: String) = database.mainDao().getScanResultsForLists(documentId)
 
-    fun scanResultProcessing(gtin: String, sn: String, rfid: String) {
+    fun getMCByGtin(gtin: String) = database.markingCodesDao().findByGtin(gtin)
+
+    fun scanResultProcessing(docId: String, gtin: String, sn: String, rfid: String): Int {
         if (sn.isEmpty() && rfid.isEmpty()) {
             // EAN-13
-            if (database.leftoversDao().findMyLine(gtin, sn, rfid).isEmpty()) {
-                val leftover = database.leftoversDao().findServerLine(gtin, sn, rfid)[0]
-                leftover.mQtyin = 0
-                leftover.mQtyout = 1
-                database.leftoversDao().insert(leftover)
-            } else {
+            database.leftoversDao().findMyLine(gtin, sn, rfid)?.let {
                 database.leftoversDao().incMyQtyoutEan_13(gtin, sn, rfid)
+                return 1
             }
-        } else {
-            // DM, old and new RFID
-            if (database.leftoversDao().findMyLine(gtin, sn, rfid).isEmpty()) {
-                val leftover = database.leftoversDao().findServerLine(gtin, sn, rfid)[0]
-                leftover.mQtyin = 0
-                leftover.mQtyout = 1
-                database.leftoversDao().insert(leftover)
+
+            database.leftoversDao().findServerLine(gtin, sn, rfid)?.let{
+                it.mQtyin = 0
+                it.mQtyout = 1
+                database.leftoversDao().insert(it)
+                return 2
             }
+
+            val mc = database.markingCodesDao().findByGtin(gtin)
+            if (mc != null) {
+                database.leftoversDao().insert(CEntityLeftovers(
+                    mGuid = mc.mGuid,
+                    mGtin = gtin,
+                    mRfid = "",
+                    mSn = "",
+                    mState = mc.mState,
+                    mQtyin = 0,
+                    mQtyout = 1,
+                    mDocGuid = docId,
+                    mDocNumber = "",
+                    mStoreId = ""
+                ))
+
+                return 3
+            }
+
+            database.leftoversDao().insert(CEntityLeftovers(
+                mGuid = "",
+                mGtin = gtin,
+                mRfid = "",
+                mSn = "",
+                mState = "",
+                mQtyin = 0,
+                mQtyout = 1,
+                mDocGuid = docId,
+                mDocNumber = "",
+                mStoreId = ""
+            ))
+
+            return 4
         }
+
+        // DM, old and new RFID
+        database.leftoversDao().findMyLine(gtin, sn, rfid)?.let { return -1 }
+
+        database.leftoversDao().findServerLine(gtin, sn, rfid)?.let {
+            database.leftoversDao().insert(it.apply {
+                this.mQtyin = 0
+                this.mQtyout = 1
+            })
+            return -2
+        }
+
+        val mc = database.markingCodesDao().findByGtin(gtin)
+        if (mc != null) {
+            database.leftoversDao().insert(CEntityLeftovers(
+                mGuid = mc.mGuid,
+                mGtin = gtin,
+                mRfid = rfid,
+                mSn = sn,
+                mState = mc.mState,
+                mQtyin = 0,
+                mQtyout = 1,
+                mDocGuid = docId,
+                mDocNumber = "",
+                mStoreId = ""
+            ))
+
+            return -3
+        }
+
+        database.leftoversDao().insert(CEntityLeftovers(
+            mGuid = "",
+            mGtin = gtin,
+            mRfid = rfid,
+            mSn = sn,
+            mState = "",
+            mQtyin = 0,
+            mQtyout = 1,
+            mDocGuid = docId,
+            mDocNumber = "",
+            mStoreId = ""
+        ))
+
+        return -4
     }
 
     fun getScanResults(storeId: String, documentId: String): List<CScanResult> {

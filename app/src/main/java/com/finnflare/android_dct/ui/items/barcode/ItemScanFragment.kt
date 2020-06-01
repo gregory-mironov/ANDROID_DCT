@@ -75,14 +75,19 @@ class ItemScanFragment : Fragment() {
     private fun configureObservers() {
         scannerViewModel.scanResult.observe(viewLifecycleOwner, Observer {
             when (scannerViewModel.increaseItemCount(it.first, it.second, it.third)) {
-                -1 -> {}
-                0 -> {
+                1 -> {
                     correctCount.text = (correctCount.text.toString().toInt() + 1).toString()
 
                     if (!enabled)
                         progressBar?.secondaryProgress = correctCount.text.toString().toInt()
                 }
-                1 -> {
+                2 -> {
+                    correctCount.text = (correctCount.text.toString().toInt() + 1).toString()
+
+                    if (!enabled)
+                        progressBar?.secondaryProgress = correctCount.text.toString().toInt()
+                }
+                3 -> {
                     wrongCount.text = (wrongCount.text.toString().toInt() + 1).toString()
 
                     if (!enabled)
