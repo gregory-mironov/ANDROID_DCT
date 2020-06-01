@@ -38,6 +38,8 @@
     <string name="label_fragment_item_search">Устройство не имеет RFID-сканера</string>
     <string name="label_fragment_rfid_item_scan">Устройство не имеет RFID-сканера</string>
 
+    <string name="items_empty_name_corrector">Неизвестный товар</string>
+
     <!-- Label for popup menu -->
     <string name="label_search">Поиск</string>
 

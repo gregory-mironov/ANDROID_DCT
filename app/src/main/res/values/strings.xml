@@ -43,6 +43,8 @@
     <string name="label_fragment_item_search">Sorry, you don\'t have RFID scanner hardware</string>
     <string name="label_fragment_rfid_item_scan">Sorry, you don\'t have RFID scanner hardware</string>
 
+    <string name="items_empty_name_corrector">Unknown item</string>
+
     <!-- Label for popup menu -->
     <string name="label_search">Search</string>
 

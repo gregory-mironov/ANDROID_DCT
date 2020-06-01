@@ -38,7 +38,10 @@ class FactRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValuesFiltered[position]
-        holder.mTitleView.text = item.description
+
+        holder.mTitleView.text = if (item.description.isNotEmpty()) item.description
+        else mContext.resources.getString(R.string.items_empty_name_corrector)
+
         holder.mBarcodeCountView.text = mContext.resources.getString(
             R.string.item_count_string, item.barcodeCount, item.planCount
         )

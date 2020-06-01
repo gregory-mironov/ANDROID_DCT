@@ -91,6 +91,9 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     }
 
     fun increaseItemCount(gtin: String, sn: String, rfid: String): Int {
+        if (gtin.isNotEmpty() && sn.isNotEmpty() && rfid.isEmpty())
+            return 0
+
         val guid = database.getMCByGtin(gtin)?.mGuid.toString()
 
         return when (database.scanResultProcessing(docId, gtin, sn, rfid)) {
@@ -98,7 +101,7 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
                 factItemsList.value!!.add(
                     Item(
                         guid = guid,
-                        description = "Неизвестный товар",
+                        description = "",
                         model = "",
                         color = "",
                         size = "",
@@ -111,7 +114,7 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
                 factItemsList.value!!.add(
                     Item(
                         guid = guid,
-                        description = "Неизвестный товар",
+                        description = "",
                         model = "",
                         color = "",
                         size = "",
@@ -145,7 +148,7 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
                 factItemsList.value!!.add(
                     Item(
                         guid = guid,
-                        description = "Неизвестный товар",
+                        description = "",
                         model = "",
                         color = "",
                         size = "",
@@ -157,7 +160,7 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
             4 -> {
                 Item(
                     guid = guid,
-                    description = "Неизвестный товар",
+                    description = "",
                     model = "",
                     color = "",
                     size = "",

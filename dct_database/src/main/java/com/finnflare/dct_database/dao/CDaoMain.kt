@@ -31,11 +31,11 @@ abstract class CDaoMain {
     @Query("""
         SELECT
             lo._guid as guid,
-            g._description as description,
+            IFNULL(g._description, '') as description,
             g._model as model,
             g._color as color,
             g._size as size,
-            st._state_name as stateName,
+            IFNULL(st._state_name, '') as stateName,
             SUM(lo._qtyin) as qtyin,
             SUM(CASE WHEN lo._rfid = "" THEN lo._qtyout ELSE 0 END) as qtyoutBarcode,
             SUM(CASE WHEN lo._rfid != "" THEN lo._qtyout ELSE 0 END) as qtyoutRfid
