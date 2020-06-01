@@ -3,7 +3,6 @@ package com.finnflare.android_dct.ui.drawer_navigation
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.FragmentActivity
 import com.finnflare.android_dct.CUIViewModel
@@ -44,12 +43,6 @@ class DrawerNavigationLocationListener(private val mContext: Context):
             }
             R.id.d_nav_send_to_server -> {
                 network.sendActualDocsState()
-            }
-            R.id.d_nav_save_results -> {
-                Log.w("Drawer-navigation", "Save results not implemented")
-            }
-            R.id.d_nav_upload_result_from_file -> {
-                Log.w("Drawer-navigation", "Upload result from file not implemented")
             }
             R.id.d_nav_reset_rfid_results -> {
                 CoroutineScope(database.dbDispatcher).launch {
