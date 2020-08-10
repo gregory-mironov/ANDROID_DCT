@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.finnflare.dct_database.CDatabaseViewModel
+import com.finnflare.dct_network.CNetworkViewModel
 import com.finnflare.scanner.alien.CAlienScanner
 import com.finnflare.scanner.camera.CCameraScanner
 import kotlinx.coroutines.*
@@ -14,8 +15,9 @@ import java.util.*
 
 @ObsoleteCoroutinesApi
 class CScannerViewModel(application: Application): AndroidViewModel(application), KoinComponent {
-    private val scannerDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
+    val scannerDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
     private val database by inject<CDatabaseViewModel>()
+    private val network by inject<CNetworkViewModel>()
 
     val scanResult = MutableLiveData<Triple<String, String, String>>()
     val scanError = MutableLiveData<String>()
@@ -24,97 +26,182 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
 
     lateinit var scanner: IScanner
 
-    private val markingCodeList = mutableListOf<MarkingCode>()
+    var docId = ""
 
     private val stateList = mutableListOf<State>()
 
     private val searchList = mutableListOf<Item>()
 
-    private val planItemsList = mutableListOf<Item>()
-    private val factItemsList = mutableListOf<Item>()
+    val planItemsList = MutableLiveData<MutableList<Item>>(mutableListOf())
+    val factItemsList = MutableLiveData<MutableList<Item>>(mutableListOf())
 
-    init { CoroutineScope(Dispatchers.Default).launch {
-        when (Build.MANUFACTURER) {
-            "Alien" -> {
-                if (Build.MODEL == "ALR-H450")
-                    scanner = CAlienScanner(application)
+    init {
+        CoroutineScope(Dispatchers.Default).launch {
+            when (Build.MANUFACTURER) {
+                "Alien" -> {
+                    if (Build.MODEL == "ALR-H450")
+                        scanner = CAlienScanner(application)
+                }
+                else -> scanner = CCameraScanner(application)
             }
-            else -> scanner = CCameraScanner(application)
-        }
-    }
-    }
-
-    fun updateItemsLists(docId: String) {
-        planItemsList.clear()
-
-        factItemsList.clear()
-
-        for (i in 1..25) {
-            planItemsList.add(Item(" ", "Plan item $i", "Some color",
-                "Some size", 0, 0, 10)
-            )
-            planItemsList.add(Item(" ", "Found plan item $i", "Some color",
-                "Some size", 10, 0, 10)
-            )
-
-            factItemsList.add(Item(" ", "Correct fact item $i", "Some color",
-                "Some size", 0, 9, 10)
-            )
-            factItemsList.add(Item(
-                " ", "Wrong fact item $i", "Some color",
-                "Some size", 11, 0, 10)
-            )
         }
     }
 
-    fun getPlanListNotFound() = planItemsList.filter {
-        it.description.contains("Plan item")
+    suspend fun getItemsList() {
+        CoroutineScope(database.dbDispatcher).launch {
+            planItemsList.value?.clear()
+            factItemsList.value?.clear()
+
+            database.getLeftovers(docId).forEach {
+                val item = Item(it.guid, it.description, it.model.toString(), it.color.toString(),
+                    it.size.toString(), it.qtyoutBarcode, it.qtyoutRfid, it.qtyin)
+
+                factItemsList.value?.add(item)
+                if (it.qtyin != 0)
+                    planItemsList.value?.add(item)
+            }
+        }.join()
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                planItemsList.value = planItemsList.value
+                factItemsList.value = factItemsList.value
+            }
+        }
     }
 
-    fun getPlanListFound() = planItemsList.filter {
-        it.description.contains("Found plan item")
+    suspend fun refreshItemsList() {
+        CoroutineScope(database.dbDispatcher).launch {
+            network.getLeftoversList(docId)
+            getItemsList()
+        }.join()
     }
 
-    fun getCorrectFactList() = factItemsList.filter {
-        it.description.contains("Correct fact item")
+    fun getPlanListNotFound() = planItemsList.value!!.filter {
+        it.planCount > 0 && it.barcodeCount == 0 && it.rfidCount == 0
     }
 
-    fun getWrongFactList() = factItemsList.filter {
-        it.description.contains("Wrong fact item")
+    fun getPlanListFound() = planItemsList.value!!.filter {
+        it.planCount > 0 && (it.barcodeCount > 0 || it.rfidCount > 0)
+    }
+
+    fun getCorrectFactList() = factItemsList.value!!.filter {
+        (it.barcodeCount <= it.planCount && it.barcodeCount > 0) ||
+                (it.rfidCount <= it.planCount && it.rfidCount > 0)
+    }
+
+    fun getWrongFactList() = factItemsList.value!!.filter {
+        it.barcodeCount > it.planCount || it.rfidCount > it.planCount
     }
 
     fun increaseItemCount(gtin: String, sn: String, rfid: String): Int {
+        val guid = database.getMCByGtin(gtin)?.mGuid.toString()
 
-        //add DB action and remote check
-
-        val mc = markingCodeList.find { it.gtin == gtin } ?: return -1
-
-        val item = factItemsList.find { it.guid == mc.guid } ?: return -1
-
-        if (rfid.isNotEmpty()) {
-            item.rfidCount++
-            return if (item.rfidCount > item.planCount) 1 else 0
+        return when (database.scanResultProcessing(docId, gtin, sn, rfid)) {
+            -4 -> {
+                    factItemsList.value!!.add(
+                        Item(
+                            guid = guid,
+                            description = "",
+                            model = "",
+                            color = "",
+                            size = "",
+                            rfidCount = 1
+                        )
+                    )
+                    -3
+                }
+            -3 -> {
+                    factItemsList.value!!.add(
+                        Item(
+                            guid = guid,
+                            description = "",
+                            model = "",
+                            color = "",
+                            size = "",
+                            rfidCount = 1
+                        )
+                    )
+                    -3
+                }
+            -2 -> {
+                    planItemsList.value!!.find { it.guid == guid }!!.let {
+                        factItemsList.value!!.add(
+                            Item(
+                                guid = it.guid,
+                                description = it.description,
+                                model = it.model,
+                                color = it.color,
+                                size = it.size,
+                                rfidCount = 1,
+                                planCount = it.planCount
+                            )
+                        )
+                    }
+                    -2
+                }
+            1 -> {
+                    planItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
+                    factItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
+                    1
+                }
+            2 -> {
+                    planItemsList.value!!.find { it.guid == guid }!!.let {
+                        factItemsList.value!!.add(
+                            Item(
+                                guid = it.guid,
+                                description = it.description,
+                                model = it.model,
+                                color = it.color,
+                                size = it.size,
+                                barcodeCount = 1,
+                                planCount = it.planCount
+                            )
+                        )
+                    }
+                    2
+                }
+            3 -> {
+                    factItemsList.value!!.add(
+                        Item(
+                            guid = guid,
+                            description = "",
+                            model = "",
+                            color = "",
+                            size = "",
+                            barcodeCount = 1
+                        )
+                    )
+                    3
+                }
+            4 -> {
+                    factItemsList.value!!.add(
+                        Item(
+                            guid = guid,
+                            description = "",
+                            model = "",
+                            color = "",
+                            size = "",
+                            barcodeCount = 1
+                        )
+                    )
+                    3
+                }
+            else -> 0
         }
-
-        item.barcodeCount++
-        return if (item.barcodeCount > item.planCount) 1 else 0
     }
 
     fun getItemData(gtin: String, sn: String = "", rfid: String = ""):
             Pair<String, Triple<String, String, String>> {
 
-        val mc = markingCodeList.filter { it.gtin == gtin }
+        val mc = database.getMCByGtin(gtin) ?: return findItemDataFromRemote()
 
-        if (mc.isEmpty())
-            return findItemDataFromRemote()
-
-        val items = planItemsList.filter { it.guid == mc[0].guid}
+        val items = planItemsList.value!!.filter { it.guid == mc.mGuid}
 
         if (items.isEmpty())
             return findItemDataFromRemote()
 
         items[0].let { item ->
-            stateList.filter { it.state_id == mc[0].state }
+            stateList.filter { it.state_id == mc.mState }
 
             return Pair(item.description, Triple(
                 item.color,
@@ -131,12 +218,12 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     fun updateSearchList(mask: String) {
         searchList.clear()
         searchList.addAll(
-            planItemsList.filter { e -> e.description
+            planItemsList.value!!.filter { e -> e.description
                 .toLowerCase(Locale.getDefault())
                 .contains(mask.toLowerCase(Locale.getDefault()))}
         )
         searchList.addAll(
-            factItemsList.filter { e -> e.description
+            factItemsList.value!!.filter { e -> e.description
                 .toLowerCase(Locale.getDefault())
                 .contains(mask.toLowerCase(Locale.getDefault()))}
         )
@@ -146,12 +233,9 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
         if (rfid.isEmpty())
             return false
 
-        val mc = markingCodeList.filter { it.gtin == gtin }
+        val mc = database.getMCByGtin(gtin) ?: return false
 
-        if (mc.isEmpty())
-            return false
-
-        return searchList.any { e -> mc.any { it.guid == e.guid } }
+        return searchList.any { e -> mc.mGuid == e.guid }
     }
 }
 
@@ -166,12 +250,32 @@ data class MarkingCode (
 data class Item(
     val guid: String,
     val description: String,
+    val model: String,
     val color: String,
     val size: String,
     var barcodeCount: Int = 0,
     var rfidCount: Int = 0,
     val planCount: Int = 0
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is  Item)
+            return false
+
+        return description == other.description || guid == other.guid
+    }
+
+    override fun hashCode(): Int {
+        var result = guid.hashCode()
+        result = 31 * result + description.hashCode()
+        result = 31 * result + model.hashCode()
+        result = 31 * result + color.hashCode()
+        result = 31 * result + size.hashCode()
+        result = 31 * result + barcodeCount
+        result = 31 * result + rfidCount
+        result = 31 * result + planCount
+        return result
+    }
+}
 
 data class State(
     val state_id: String,

@@ -1,10 +1,12 @@
 <resources>
     <!-- Item spinners data -->
     <string-array name="f_plan_sninner_items">
+        <item>@string/array_not_selected_list</item>
         <item>@string/array_plan_not_found</item>
         <item>@string/array_plan_found</item>
     </string-array>
     <string-array name="f_fact_sninner_items">
+        <item>@string/array_not_selected_list</item>
         <item>@string/array_correct_fact</item>
         <item>@string/array_wrong_fact</item>
     </string-array>

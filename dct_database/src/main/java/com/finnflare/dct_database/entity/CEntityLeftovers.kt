@@ -6,7 +6,7 @@ import androidx.room.Entity
 
 @Entity(
     tableName = "leftovers",
-    primaryKeys = ["_guid", "_gtin", "_sn", "_rfid", "_state", "_doc_id"]
+    primaryKeys = ["_guid", "_gtin", "_sn", "_rfid", "_state", "_doc_id", "_qtyin"]
 )
 data class CEntityLeftovers (
     @ColumnInfo(name = "_guid")   @NonNull  var mGuid: String,

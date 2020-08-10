@@ -4,6 +4,7 @@ import androidx.room.*
 import com.finnflare.dct_database.entity.CEntityGoods
 import com.finnflare.dct_database.entity.CEntityLeftovers
 import com.finnflare.dct_database.entity.CEntityMarkingCodes
+import com.finnflare.dct_database.request_result.CLeftoverForList
 import com.finnflare.dct_database.request_result.CScanResult
 
 @Dao
@@ -26,6 +27,33 @@ abstract class CDaoMain {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun insertMarkingCodes(aMarkingCode: List<CEntityMarkingCodes>)
+
+    @Query("""
+        SELECT
+            lo._guid as guid,
+            IFNULL(g._description, '') as description,
+            g._model as model,
+            g._color as color,
+            g._size as size,
+            IFNULL(st._state_name, '') as stateName,
+            SUM(lo._qtyin) as qtyin,
+            SUM(CASE WHEN lo._rfid = "" THEN lo._qtyout ELSE 0 END) as qtyoutBarcode,
+            SUM(CASE WHEN lo._rfid != "" THEN lo._qtyout ELSE 0 END) as qtyoutRfid
+        FROM
+            leftovers lo
+        LEFT JOIN
+            goods g
+        ON
+            lo._guid = g._guid
+        LEFT JOIN
+            states st
+        ON
+            lo._state = st._state
+        WHERE
+            _doc_id = :aDocumentId
+        GROUP BY
+            lo._guid""")
+    internal abstract fun getScanResultsForLists(aDocumentId: String): List<CLeftoverForList>
 
     @Query("""
         SELECT

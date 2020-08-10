@@ -23,9 +23,6 @@ abstract class CDaoMarkingCodes:
     @Query("SELECT * FROM marking_codes WHERE _guid = :aGuid")
     abstract fun findByGuid(aGuid: String): List<CEntityMarkingCodes>
 
-    @Query("SELECT * FROM marking_codes WHERE _rfid = :aRfid")
-    abstract fun findByRfid(aRfid: String): List<CEntityMarkingCodes>
-
-    @Query("SELECT * FROM marking_codes WHERE _sn = :aSn")
-    abstract fun findBySn(aSn: String): List<CEntityMarkingCodes>
+    @Query("SELECT * FROM marking_codes WHERE _gtin = :aGtin LIMIT 1")
+    abstract fun findByGtin(aGtin: String): CEntityMarkingCodes?
 }

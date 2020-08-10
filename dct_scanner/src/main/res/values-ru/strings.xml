@@ -2,4 +2,6 @@
 <resources>
     <string name="title_activity_scan">Сканировать</string>
     <string name="full_description">Полное название</string>
+
+    <string name="items_empty_name_corrector">Неизвестный товар</string>
 </resources>

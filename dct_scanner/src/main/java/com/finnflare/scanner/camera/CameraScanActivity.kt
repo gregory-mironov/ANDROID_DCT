@@ -8,6 +8,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.finnflare.scanner.CScannerViewModel
 import com.finnflare.scanner.R
 import com.finnflare.scanner.ScanDecoder
@@ -18,7 +20,7 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import kotlinx.android.synthetic.main.activity_continuous_scan.*
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 @ObsoleteCoroutinesApi
@@ -34,6 +36,27 @@ class CameraScanActivity: AppCompatActivity() {
     private var mFlash = false
 
     private var lastScanTime = 0L
+
+    private val scanObserver = Observer<Triple<String, String, String>> {
+        if (it.first.isEmpty() && it.second.isEmpty() && it.third.isEmpty())
+            return@Observer
+
+        CoroutineScope(viewModel.scannerDispatcher).launch {
+            viewModel.increaseItemCount(it.first, it.second, it.third)
+
+            val data = viewModel.getItemData(it.first, it.second, it.third)
+            lifecycleScope.launch {
+                full_description_of_item?.text = if (data.first.isNotEmpty()) data.first
+                else resources.getString(R.string.items_empty_name_corrector)
+            }
+
+            GlobalScope.launch {
+                withContext(Dispatchers.Main) {
+                    viewModel.scanResult.value = Triple("", "", "")
+                }
+            }
+        }
+    }
 
     private val callback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
@@ -76,11 +99,13 @@ class CameraScanActivity: AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         barcode_scanner!!.resume()
+        viewModel.scanResult.observe(this, scanObserver)
     }
 
     override fun onPause() {
         super.onPause()
         barcode_scanner!!.pause()
+        viewModel.scanResult.removeObserver(scanObserver)
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {

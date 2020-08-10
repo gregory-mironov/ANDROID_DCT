@@ -13,8 +13,23 @@ abstract class CDaoLeftovers:
     @Query("SELECT * FROM leftovers")
     abstract fun getAll(): List<CEntityLeftovers>
 
+    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId")
+    abstract fun getAllByDocId(docId: String): List<CEntityLeftovers>
+
     @Query("DELETE FROM leftovers")
     abstract fun truncateTable()
+
+    @Query("""
+        DELETE FROM leftovers
+        WHERE _doc_id = :docId AND _qtyout = 0
+    """)
+    abstract fun clearPlanLeftovers(docId: String)
+
+    @Query("""
+        DELETE FROM leftovers
+        WHERE _doc_id NOT IN (SELECT _id FROM docs)
+    """)
+    abstract fun clearOldLeftovers()
 
     @Transaction
     open fun refillTable(aObjList: List<CEntityLeftovers>) {
@@ -31,20 +46,26 @@ abstract class CDaoLeftovers:
     @Query("SELECT * FROM leftovers WHERE _rfid = :aRfid")
     abstract fun findByRfid(aRfid: String): CEntityLeftovers
 
-    @Query("""UPDATE leftovers 
+    @Query("""
+        UPDATE leftovers 
         SET _qtyout = _qtyout + 1 
-        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin = 0""")
-    abstract fun incMyQtyoutEan_13(aGtin: String, aSn: String, aRfid: String)
+        WHERE _gtin = :aGtin AND _sn = '' AND _rfid = '' AND _qtyin = 0""")
+    abstract fun incMyQtyoutEan_13(aGtin: String)
 
-    @Query("""SELECT * 
+    @Query("""
+        SELECT * 
         FROM leftovers 
-        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin = 0""")
-    abstract fun findMyLine(aGtin: String, aSn: String, aRfid: String): List<CEntityLeftovers>
+        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin = 0
+        LIMIT 1
+        """)
+    abstract fun findMyLine(aGtin: String, aSn: String, aRfid: String): CEntityLeftovers?
 
-    @Query("""SELECT * 
+    @Query("""
+        SELECT * 
         FROM leftovers 
-        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin != 0""")
-    abstract fun findServerLine(aGtin: String, aSn: String, aRfid: String): List<CEntityLeftovers>
+        WHERE _gtin = :aGtin AND _sn = :aSn AND _rfid = :aRfid AND _qtyin != 0 
+        LIMIT 1""")
+    abstract fun findServerLine(aGtin: String, aSn: String, aRfid: String): CEntityLeftovers?
 
     @Query("""
         SELECT 
@@ -71,9 +92,15 @@ abstract class CDaoLeftovers:
     """)
     abstract fun getBarcodeScanResults(aStoreId: String, aDocumentId: String): List<CBarcodeScanResult>
 
-    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid = '' ")
-    abstract fun deleteAllMyBarcodeLines()
+    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid = ''")
+    abstract fun deleteAllBarcodeResults()
 
-    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid != '' ")
-    abstract fun deleteAllMyRfidLines()
+    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid != ''")
+    abstract fun deleteAllRfidResults()
+
+    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid = '' AND _doc_id = :docId")
+    abstract fun deleteBarcodeResults(docId: String)
+
+    @Query("DELETE FROM leftovers WHERE _qtyin = 0 AND _rfid != '' AND _doc_id = :docId")
+    abstract fun deleteRfidResults(docId: String)
 }

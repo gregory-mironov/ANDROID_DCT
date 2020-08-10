@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal object CNetworkService {
-    private const val baseURL = "https://api.finnflare.com:48014/rest/hs/im/api/"
+    private const val baseURL = "https://api.finnflare.com:48014/tsd/hs/im/api/"
 
     val Api: IFinnFlareApiService
 

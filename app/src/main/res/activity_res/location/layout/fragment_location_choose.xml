@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,15 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/hint_location"
+        android:hint="@string/hint_documents"
         android:textSize="@dimen/edit_text_text_size" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/f_location_recycler"
-        android:name="com.finnflare.android_dct.ui.location.LocationChooseFragment"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/locationSwipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.location.location.LocationChooseFragment"
-        tools:listitem="@layout/fragment_location_choose_item" />
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/f_location_recycler"
+            android:name="com.finnflare.android_dct.ui.location.LocationChooseFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.location.location.LocationChooseFragment"
+            tools:listitem="@layout/fragment_location_choose_item" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

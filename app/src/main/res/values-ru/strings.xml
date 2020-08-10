@@ -14,6 +14,7 @@
 
 
     <!-- Drawer Navigation menu labels -->
+    <string name="label_change_docs_date">Изменить дату документов</string>
     <string name="label_send_results_to_server">Отправить на сервер</string>
     <string name="label_save_results">Сохранить результаты</string>
     <string name="label_upload_result_from_file">Загрузить результаты из файла</string>
@@ -37,6 +38,8 @@
     <string name="label_fragment_item_search">Устройство не имеет RFID-сканера</string>
     <string name="label_fragment_rfid_item_scan">Устройство не имеет RFID-сканера</string>
 
+    <string name="items_empty_name_corrector">Неизвестный товар</string>
+
     <!-- Label for popup menu -->
     <string name="label_search">Поиск</string>
 
@@ -59,6 +62,7 @@
     <string name="setting_send_data_online">Передавать данные онлайн</string>
 
     <!-- Array data -->
+    <string name="array_not_selected_list">Не выбрано</string>
     <string name="array_plan_not_found">Найденные ожидаемые</string>
     <string name="array_plan_found">Ненайденные ожидаемые</string>
     <string name="array_correct_fact">Ожидаемые полученные</string>
