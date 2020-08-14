@@ -302,16 +302,12 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
         return database.leftoversDao().getBarcodeScanResults(storeId, documentId)
     }
 
-    fun deleteAllBarcodeResults() {
-        database.leftoversDao().deleteAllBarcodeResults()
+    fun deleteAllResults() {
+        database.leftoversDao().deleteAllResults()
     }
 
     fun deleteBarcodeResults(docId: String) {
         database.leftoversDao().deleteBarcodeResults(docId)
-    }
-
-    fun deleteAllRfidResults() {
-        database.leftoversDao().deleteAllRfidResults()
     }
 
     fun deleteRfidResults(docId: String) {

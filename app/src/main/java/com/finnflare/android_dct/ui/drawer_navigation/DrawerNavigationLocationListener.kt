@@ -26,7 +26,7 @@ class DrawerNavigationLocationListener(private val mContext: Context):
 
     private val uiViewModel by inject<CUIViewModel>()
 
-    private var context: Context? = null
+    private var context = mContext
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -44,14 +44,13 @@ class DrawerNavigationLocationListener(private val mContext: Context):
             R.id.d_nav_send_to_server -> {
                 network.sendActualDocsState()
             }
-            R.id.d_nav_reset_rfid_results -> {
-                CoroutineScope(database.dbDispatcher).launch {
-                    database.deleteAllRfidResults()
-                }
+            R.id.d_nav_save_results -> {
             }
-            R.id.d_nav_reset_barcode_results -> {
+            R.id.d_nav_upload_result_from_file -> {
+            }
+            R.id.d_nav_reset_results -> {
                 CoroutineScope(database.dbDispatcher).launch {
-                    database.deleteAllBarcodeResults()
+                    database.deleteAllResults()
                 }
             }
             R.id.d_nav_setting -> {
