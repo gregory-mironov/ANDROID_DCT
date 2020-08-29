@@ -19,11 +19,12 @@
 
     <!-- Drawer Navigation menu labels -->
     <string name="label_change_docs_date">Change docs date</string>
-    <string name="label_send_results_to_server">Send to server</string>
-    <string name="label_save_results">Save results</string>
+    <string name="label_send_results_to_server">Send results to server</string>
+    <string name="label_save_results">Save results to file</string>
     <string name="label_upload_result_from_file">Upload result from file</string>
     <string name="label_reset_rfid_results">Reset rfid results</string>
     <string name="label_reset_barcode_results">Reset barcode results</string>
+    <string name="label_reset_results">Reset results</string>
     <string name="label_setting">Setting</string>
     <string name="label_info">Info</string>
 

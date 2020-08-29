@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.finnflare.android_dct">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-sdk tools:overrideLibrary="ir.androidexception.filepicker"/>
     <application
         android:name=".CApplicationDelegate"
         android:allowBackup="false"
@@ -11,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
+        android:requestLegacyExternalStorage="true"
+        tools:replace="android:allowBackup"
+        tools:targetApi="q">
         <activity android:name=".ui.SettingsActivity" />
         <activity android:name=".ui.items.ItemsActivity" />
         <activity android:name=".ui.location.LocationActivity" />

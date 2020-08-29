@@ -453,28 +453,28 @@ class CNetworkViewModel(application: Application): AndroidViewModel(application)
             com.finnflare.dct_network.classes.actual_docs.Doc {
 
         val rfid = mutableListOf<RFIDItems>()
-        database.getRFIDScanResults(storeId, docId).forEach {
+        database.getRFIDScanResults(docId).forEach {
             rfid.add(
                 RFIDItems(
-                    guid = it.guid,
-                    gtin = it.gtin,
-                    sn = it.sn,
-                    rfid = it.rfid,
-                    state = it.state,
-                    qtyout = it.qtyout
+                    guid = it.mGuid,
+                    gtin = it.mGtin,
+                    sn = it.mSn,
+                    rfid = it.mRfid,
+                    state = it.mState,
+                    qtyout = it.mQtyout
                 )
             )
         }
 
         val barcode = mutableListOf<BarcodeItems>()
-        database.getBarcodeScanResults(storeId, docId).forEach {
+        database.getBarcodeScanResults(docId).forEach {
             barcode.add(
                 BarcodeItems(
-                    guid = it.guid,
-                    gtin = it.gtin,
-                    sn = it.sn,
-                    state = it.state,
-                    qtyout = it.qtyout
+                    guid = it.mGuid,
+                    gtin = it.mGtin,
+                    sn = it.mSn,
+                    state = it.mState,
+                    qtyout = it.mQtyout
                 )
             )
         }

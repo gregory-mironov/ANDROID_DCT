@@ -1,21 +1,29 @@
 package com.finnflare.dct_database
 
 import android.app.Application
+import android.content.Context
+import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.finnflare.dct_database.entity.*
+import com.finnflare.dct_database.files_format.actual_docs_state.DocsList
+import com.finnflare.dct_database.files_format.actual_docs_state.Document
 import com.finnflare.dct_database.insertable_classes.*
-import com.finnflare.dct_database.request_result.CBarcodeScanResult
-import com.finnflare.dct_database.request_result.CRFIDScanResult
 import com.finnflare.dct_database.request_result.CScanResult
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 @ObsoleteCoroutinesApi
 class CDatabaseViewModel(application: Application): AndroidViewModel(application), KoinComponent {
     val dbDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
 
     private val database = CAppDatabase.getInstance(application)
+
+    private val dateFormat = SimpleDateFormat("HH-mm-ss_dd-MM-yyyy", Locale("RU"))
 
     val authSuccessful = MutableLiveData<Boolean>()
 
@@ -294,24 +302,80 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
 
     fun getDocInfo(docId: String) = database.docsDao().findById(docId)
 
-    fun getRFIDScanResults(storeId: String, documentId: String): List<CRFIDScanResult> {
-        return database.leftoversDao().getRFIDScanResults(storeId, documentId)
+    fun getRFIDScanResults(documentId: String): List<CEntityLeftovers> {
+        return database.leftoversDao().getRFIDByDocId(documentId)
     }
 
-    fun getBarcodeScanResults(storeId: String, documentId: String): List<CBarcodeScanResult> {
-        return database.leftoversDao().getBarcodeScanResults(storeId, documentId)
+    fun getBarcodeScanResults(documentId: String): List<CEntityLeftovers> {
+        return database.leftoversDao().getBarcodeByDocId(documentId)
     }
 
-    fun deleteAllBarcodeResults() {
-        database.leftoversDao().deleteAllBarcodeResults()
+    fun saveToFile(context: Context, docId: String = "") {
+        val docs = mutableListOf<Document>()
+
+        if (docId.isEmpty())
+            getDocsList().forEach {
+                docs.add(
+                    Document(
+                        doc = it,
+                        rfidItemsList = getRFIDScanResults(it.mId),
+                        barcodeItemsList = getBarcodeScanResults(it.mId)
+                    )
+                )
+            }
+        else
+            docs.add(database.docsDao().findById(docId).let {
+                Document(
+                    doc = it,
+                    rfidItemsList = getRFIDScanResults(it.mId),
+                    barcodeItemsList = getBarcodeScanResults(it.mId)
+                )
+            })
+
+
+        val result = Moshi.Builder().build().adapter(DocsList::class.java).toJson(
+            DocsList(
+                docs = docs
+            )
+        )
+
+        val fileName = dateFormat.format(Date()) + if (docId.isEmpty()) ".json" else "_$docId.json"
+        val path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath
+            ?: return
+
+        val file = File(path + File.separator + fileName)
+
+        if (!file.createNewFile())
+            return
+
+        file.writeText(result)
+    }
+
+    fun uploadFromFile(file: File, docId: String = "") {
+        if (!file.name.endsWith(".json"))
+            return
+
+        if (docId.isNotEmpty() and !file.name.endsWith("$docId.json"))
+            return
+
+        try {
+            val result = Moshi.Builder().build()
+                .adapter(DocsList::class.java)
+                .fromJson(file.readText())
+
+            result!!.docs.forEach {
+                database.mainDao().insertScanRes(it.doc, it.barcodeItemsList, it.rfidItemsList)
+            }
+        } catch (e: Exception) {
+        }
+    }
+
+    fun deleteAllResults() {
+        database.leftoversDao().deleteAllResults()
     }
 
     fun deleteBarcodeResults(docId: String) {
         database.leftoversDao().deleteBarcodeResults(docId)
-    }
-
-    fun deleteAllRfidResults() {
-        database.leftoversDao().deleteAllRfidResults()
     }
 
     fun deleteRfidResults(docId: String) {

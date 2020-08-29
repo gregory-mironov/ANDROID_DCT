@@ -70,8 +70,9 @@ class ItemsActivity : AppCompatActivity(),
 
     private fun setDrawerNavigationListener() {
         val drawerNavigationView = findViewById<NavigationView>(R.id.drawer_navigation_view_items)
-        DrawerNavigationItemListener.configure(this, "")
-        drawerNavigationView.setNavigationItemSelectedListener(DrawerNavigationItemListener)
+        drawerNavigationView.setNavigationItemSelectedListener(
+            DrawerNavigationItemListener(this, scannerViewModel.docId)
+        )
     }
 
     private fun configureToolbar() {

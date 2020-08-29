@@ -1,6 +1,7 @@
 package com.finnflare.dct_database.dao
 
 import androidx.room.*
+import com.finnflare.dct_database.entity.CEntityDocs
 import com.finnflare.dct_database.entity.CEntityGoods
 import com.finnflare.dct_database.entity.CEntityLeftovers
 import com.finnflare.dct_database.entity.CEntityMarkingCodes
@@ -18,6 +19,19 @@ abstract class CDaoMain {
         insertLeftovers(leftovers)
         insertMarkingCodes(marking_codes)
     }
+
+    @Transaction
+    open fun insertScanRes(
+        aDoc: CEntityDocs,
+        aBarcodeRes: List<CEntityLeftovers>,
+        aRfidRes: List<CEntityLeftovers>) {
+        insertDoc(aDoc)
+        insertLeftovers(aBarcodeRes)
+        insertLeftovers(aRfidRes)
+    }
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    abstract fun insertDoc(aDoc: CEntityDocs)
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun insertGoods(aGood: List<CEntityGoods>)

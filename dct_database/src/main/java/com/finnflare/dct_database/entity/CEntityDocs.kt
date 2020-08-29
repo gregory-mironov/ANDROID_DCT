@@ -3,7 +3,9 @@ package com.finnflare.dct_database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 @Entity(tableName = "docs")
 data class CEntityDocs (
     @ColumnInfo(name = "_id")         @PrimaryKey   var mId: String,
