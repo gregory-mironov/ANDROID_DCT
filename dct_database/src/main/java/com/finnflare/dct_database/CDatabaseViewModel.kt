@@ -339,7 +339,7 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             )
         )
 
-        val fileName = dateFormat.format(Date()) + ".json"
+        val fileName = dateFormat.format(Date()) + if (docId.isEmpty()) ".json" else "_$docId.json"
         val path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath
             ?: return
 
@@ -351,8 +351,11 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
         file.writeText(result)
     }
 
-    fun uploadFromFile(file: File) {
+    fun uploadFromFile(file: File, docId: String = "") {
         if (!file.name.endsWith(".json"))
+            return
+
+        if (docId.isNotEmpty() and !file.name.endsWith("$docId.json"))
             return
 
         try {

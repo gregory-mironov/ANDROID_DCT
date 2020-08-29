@@ -2,7 +2,7 @@ package com.finnflare.android_dct.ui.drawer_navigation
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.os.Environment
 import android.view.MenuItem
 import androidx.fragment.app.FragmentActivity
 import com.finnflare.android_dct.R
@@ -10,26 +10,22 @@ import com.finnflare.android_dct.ui.SettingsActivity
 import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.dct_network.CNetworkViewModel
 import com.google.android.material.navigation.NavigationView
+import com.obsez.android.lib.filechooser.ChooserDialog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 @ObsoleteCoroutinesApi
-object DrawerNavigationItemListener:
+class DrawerNavigationItemListener(
+    private val context: Context,
+    private val docId: String):
     NavigationView.OnNavigationItemSelectedListener, KoinComponent {
 
     private val network by inject<CNetworkViewModel>()
     private val database by inject<CDatabaseViewModel>()
-
-    private var context: Context? = null
-    private var docId: String = ""
-
-    fun configure(context: Context, docId: String) {
-        this.context = context
-        this.docId = docId
-    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -37,10 +33,28 @@ object DrawerNavigationItemListener:
                 network.sendActualDocState(docId)
             }
             R.id.d_nav_save_results -> {
-                Log.w("Drawer-navigation", "Save results not implemented")
+                CoroutineScope(Dispatchers.IO).launch {
+                    database.saveToFile(context, docId)
+                }
             }
             R.id.d_nav_upload_result_from_file -> {
-                Log.w("Drawer-navigation", "Upload result from file not implemented")
+                ChooserDialog(context)
+                    .withFilter(false, false, "json")
+                    .displayPath(true)
+                    .withStartFile(
+                        context.getExternalFilesDir(
+                            Environment.DIRECTORY_DOWNLOADS
+                        )?.absolutePath
+                    )
+                    .enableOptions(true)
+                    .withChosenListener { _, pathFile ->
+                        CoroutineScope(Dispatchers.IO).launch {
+                            database.uploadFromFile(pathFile)
+                        }
+                    }
+                    .cancelOnTouchOutside(true)
+                    .build()
+                    .show()
             }
             R.id.d_nav_reset_rfid_results -> {
                 CoroutineScope(database.dbDispatcher).launch {
