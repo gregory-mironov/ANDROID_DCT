@@ -52,6 +52,10 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
+    //Moshi
+    implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
+    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.9.2'
+
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
 }

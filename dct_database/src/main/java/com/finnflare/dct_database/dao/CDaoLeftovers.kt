@@ -16,6 +16,12 @@ abstract class CDaoLeftovers:
     @Query("SELECT * FROM leftovers WHERE _doc_id = :docId")
     abstract fun getAllByDocId(docId: String): List<CEntityLeftovers>
 
+    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId")
+    abstract fun getBarcodeByDocId(docId: String): List<CEntityLeftovers>
+
+    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId")
+    abstract fun getRFIDByDocId(docId: String): List<CEntityLeftovers>
+
     @Query("DELETE FROM leftovers")
     abstract fun truncateTable()
 

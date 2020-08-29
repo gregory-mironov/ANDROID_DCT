@@ -3,7 +3,9 @@ package com.finnflare.dct_database.entity
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 @Entity(
     tableName = "leftovers",
     primaryKeys = ["_guid", "_gtin", "_sn", "_rfid", "_state", "_doc_id", "_qtyin"]
