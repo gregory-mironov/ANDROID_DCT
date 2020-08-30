@@ -9,7 +9,6 @@ import com.finnflare.dct_database.entity.*
 import com.finnflare.dct_database.files_format.actual_docs_state.DocsList
 import com.finnflare.dct_database.files_format.actual_docs_state.Document
 import com.finnflare.dct_database.insertable_classes.*
-import com.finnflare.dct_database.request_result.CScanResult
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
@@ -18,7 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @ObsoleteCoroutinesApi
-class CDatabaseViewModel(application: Application): AndroidViewModel(application), KoinComponent {
+class CDatabaseViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
     val dbDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
 
     private val database = CAppDatabase.getInstance(application)
@@ -37,7 +36,7 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
         database.usersDao().updateUserLastLogin(aId, aLogin, aPassword)
     }
 
-    fun insertUsers(users:List<User>) {
+    fun insertUsers(users: List<User>) {
         val insertable = mutableListOf<CEntityUsers>()
 
         users.forEach {
@@ -51,44 +50,34 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             )
         }
 
-        database.usersDao().truncateTable()
-        database.usersDao().insert(insertable)
+        database.usersDao().refillTable(insertable)
     }
 
     fun insertShops(shops: List<Shop>) {
         val insertable = mutableListOf<CEntityShops>()
 
         shops.forEach {
-            insertable.add(CEntityShops(
-                mId = it.mId,
-                mDescription = it.mName,
-                mHttpRed = it.mHttpRef
-            ))
+            insertable.add(
+                CEntityShops(
+                    mId = it.mId,
+                    mDescription = it.mName,
+                    mHttpRed = it.mHttpRef
+                )
+            )
         }
 
         database.shopsDao().truncateTable()
         database.shopsDao().insert(insertable)
     }
 
-    fun insertStores(stores: List<Store>) {
-        val insertable = mutableListOf<CEntityStores>()
-
-        stores.forEach {
-            insertable.add(CEntityStores(
-                mId = it.mId,
-                mDescription = it.mName
-            ))
-        }
-
-        database.storesDao().truncateTable()
-        database.storesDao().insert(insertable)
-    }
-
-    fun insertDocs(docs: List<Doc>) {
-        val insertable = mutableListOf<CEntityDocs>()
-
-        docs.forEach {
-            insertable.add(CEntityDocs(
+    fun insertNewShopInfo(
+        docs: List<Doc>,
+        mc: List<MarkingCode>,
+        goods: List<Good>,
+        states: List<State>
+    ) {
+        val insDoc = docs.map {
+            CEntityDocs(
                 mId = it.mId,
                 mNumber = it.mDocNumber,
                 mDate = it.mDocDate,
@@ -100,79 +89,62 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
                 mPriceType = it.mPriceType,
                 mBasis = it.mBasis,
                 mComment = it.mComment
-            ))
-
-            database.docsDao().truncateTable()
-            database.docsDao().insert(insertable)
+            )
         }
-    }
 
-    fun clearMarkingCodes() {
-        database.markingCodesDao().truncateTable()
-    }
-
-    fun insertMarkingCodes(mc: List<MarkingCode>) {
-        val list = mutableListOf<CEntityMarkingCodes>()
-        mc.forEach {
-            list.add(CEntityMarkingCodes(
+        val insMC = mc.map {
+            CEntityMarkingCodes(
                 mGuid = it.guid,
                 mGtin = it.gtin,
                 mRfid = it.rfid,
                 mState = it.state,
                 mSn = it.sn
-            ))
+            )
         }
 
-        database.markingCodesDao().insert(list)
-    }
-
-    fun clearGoods() {
-        database.goodsDao().truncateTable()
-    }
-
-    fun insertGoods(goods: List<Good>) {
-        val list = mutableListOf<CEntityGoods>()
-        goods.forEach {
-            list.add(CEntityGoods(
+        val insGoods = goods.map {
+            CEntityGoods(
                 mGuid = it.mGuid,
                 mDescription = it.mName,
                 mModel = it.mModel,
                 mColor = it.mColor,
                 mSize = it.mSize
-            ))
+            )
         }
 
-        database.goodsDao().insert(list)
-    }
-
-    fun clearStates() {
-        database.goodsDao().truncateTable()
-    }
-
-    fun insertStates(goods: List<State>) {
-        val list = mutableListOf<CEntityStates>()
-        goods.forEach {
-            list.add(CEntityStates(
+        val insStates = states.map {
+            CEntityStates(
                 mState = it.stateGuid,
                 mStateName = it.stateName
-            ))
+            )
         }
 
-        database.statesDao().insert(list)
+        database.mainDao().insertNewShopInfo(
+            insDoc,
+            insMC,
+            insGoods,
+            insStates
+        )
     }
 
-    fun clearPlanLeftovers(docId: String) {
-        database.leftoversDao().clearPlanLeftovers(docId)
+    fun insertStores(stores: List<Store>) {
+        val insertable = mutableListOf<CEntityStores>()
+
+        stores.forEach {
+            insertable.add(
+                CEntityStores(
+                    mId = it.mId,
+                    mDescription = it.mName
+                )
+            )
+        }
+
+        database.storesDao().refillTable(insertable)
     }
 
-    fun clearOldLeftovers() {
-        database.leftoversDao().clearOldLeftovers()
-    }
-
-    fun insertLeftovers(leftovers: List<Leftover>) {
-        val list = mutableListOf<CEntityLeftovers>()
-        leftovers.forEach {
-            list.add(CEntityLeftovers(
+    fun insertNewPlanLeftovers(docId: String, leftovers: List<Leftover>) {
+        database.leftoversDao().insertNewPlanLeftovers(docId, leftovers.map {
+            CEntityLeftovers(
                 mDocGuid = it.mDocGuid,
                 mDocNumber = it.mDocNumber,
                 mGuid = it.mGuid,
@@ -183,10 +155,8 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
                 mState = it.mState,
                 mQtyin = it.mQtyin,
                 mQtyout = 0
-            ))
-        }
-
-        database.leftoversDao().refillTable(list)
+            )
+        })
     }
 
     fun getLeftovers(documentId: String) = database.mainDao().getScanResultsForLists(documentId)
@@ -202,7 +172,7 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
                 return 1
             }
 
-            database.leftoversDao().findServerLine(gtin, sn, rfid)?.let{
+            database.leftoversDao().findServerLine(gtin, sn, rfid)?.let {
                 database.leftoversDao().insert(it.apply {
                     this.mQtyin = 0
                     this.mQtyout = 1
@@ -213,34 +183,38 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             val mc = database.markingCodesDao().findByGtin(gtin)
 
             if (mc != null) {
-                database.leftoversDao().insert(CEntityLeftovers(
-                    mGuid = mc.mGuid,
+                database.leftoversDao().insert(
+                    CEntityLeftovers(
+                        mGuid = mc.mGuid,
+                        mGtin = gtin,
+                        mRfid = "",
+                        mSn = "",
+                        mState = mc.mState,
+                        mQtyin = 0,
+                        mQtyout = 1,
+                        mDocGuid = docId,
+                        mDocNumber = "",
+                        mStoreId = ""
+                    )
+                )
+
+                return 3
+            }
+
+            database.leftoversDao().insert(
+                CEntityLeftovers(
+                    mGuid = "",
                     mGtin = gtin,
                     mRfid = "",
                     mSn = "",
-                    mState = mc.mState,
+                    mState = "",
                     mQtyin = 0,
                     mQtyout = 1,
                     mDocGuid = docId,
                     mDocNumber = "",
                     mStoreId = ""
-                ))
-
-                return 3
-            }
-
-            database.leftoversDao().insert(CEntityLeftovers(
-                mGuid = "",
-                mGtin = gtin,
-                mRfid = "",
-                mSn = "",
-                mState = "",
-                mQtyin = 0,
-                mQtyout = 1,
-                mDocGuid = docId,
-                mDocNumber = "",
-                mStoreId = ""
-            ))
+                )
+            )
 
             return 4
         }
@@ -258,40 +232,40 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
 
         val mc = database.markingCodesDao().findByGtin(gtin)
         if (mc != null) {
-            database.leftoversDao().insert(CEntityLeftovers(
-                mGuid = mc.mGuid,
+            database.leftoversDao().insert(
+                CEntityLeftovers(
+                    mGuid = mc.mGuid,
+                    mGtin = gtin,
+                    mRfid = rfid,
+                    mSn = sn,
+                    mState = mc.mState,
+                    mQtyin = 0,
+                    mQtyout = 1,
+                    mDocGuid = docId,
+                    mDocNumber = "",
+                    mStoreId = ""
+                )
+            )
+
+            return -3
+        }
+
+        database.leftoversDao().insert(
+            CEntityLeftovers(
+                mGuid = "",
                 mGtin = gtin,
                 mRfid = rfid,
                 mSn = sn,
-                mState = mc.mState,
+                mState = "",
                 mQtyin = 0,
                 mQtyout = 1,
                 mDocGuid = docId,
                 mDocNumber = "",
                 mStoreId = ""
-            ))
-
-            return -3
-        }
-
-        database.leftoversDao().insert(CEntityLeftovers(
-            mGuid = "",
-            mGtin = gtin,
-            mRfid = rfid,
-            mSn = sn,
-            mState = "",
-            mQtyin = 0,
-            mQtyout = 1,
-            mDocGuid = docId,
-            mDocNumber = "",
-            mStoreId = ""
-        ))
+            )
+        )
 
         return -4
-    }
-
-    fun getScanResults(storeId: String, documentId: String): List<CScanResult> {
-        return database.mainDao().formScanResults(storeId, documentId)
     }
 
     fun getLocationsList() = database.shopsDao().getAll()
@@ -302,13 +276,11 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
 
     fun getDocInfo(docId: String) = database.docsDao().findById(docId)
 
-    fun getRFIDScanResults(documentId: String): List<CEntityLeftovers> {
-        return database.leftoversDao().getRFIDByDocId(documentId)
-    }
+    fun getRFIDScanResults(documentId: String) =
+        database.leftoversDao().getRFIDScanResults(documentId)
 
-    fun getBarcodeScanResults(documentId: String): List<CEntityLeftovers> {
-        return database.leftoversDao().getBarcodeByDocId(documentId)
-    }
+    fun getBarcodeScanResults(documentId: String) =
+        database.leftoversDao().getBarcodeScanResults(documentId)
 
     fun saveToFile(context: Context, docId: String = "") {
         val docs = mutableListOf<Document>()
@@ -318,8 +290,8 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
                 docs.add(
                     Document(
                         doc = it,
-                        rfidItemsList = getRFIDScanResults(it.mId),
-                        barcodeItemsList = getBarcodeScanResults(it.mId)
+                        rfidItemsList = database.leftoversDao().getRFIDByDocId(it.mId),
+                        barcodeItemsList = database.leftoversDao().getBarcodeByDocId(it.mId)
                     )
                 )
             }
@@ -327,8 +299,8 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             docs.add(database.docsDao().findById(docId).let {
                 Document(
                     doc = it,
-                    rfidItemsList = getRFIDScanResults(it.mId),
-                    barcodeItemsList = getBarcodeScanResults(it.mId)
+                    rfidItemsList = database.leftoversDao().getRFIDByDocId(it.mId),
+                    barcodeItemsList = database.leftoversDao().getBarcodeByDocId(it.mId)
                 )
             })
 
@@ -339,7 +311,8 @@ class CDatabaseViewModel(application: Application): AndroidViewModel(application
             )
         )
 
-        val fileName = dateFormat.format(Date()) + if (docId.isEmpty()) ".json" else "_$docId.json"
+        val fileName =
+            dateFormat.format(Date()) + if (docId.isEmpty()) ".json" else "_$docId.json"
         val path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath
             ?: return
 

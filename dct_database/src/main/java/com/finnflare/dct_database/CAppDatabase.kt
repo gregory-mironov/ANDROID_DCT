@@ -28,7 +28,6 @@ internal abstract class CAppDatabase: RoomDatabase() {
     abstract fun goodsDao(): CDaoGoods
     abstract fun leftoversDao(): CDaoLeftovers
     abstract fun markingCodesDao(): CDaoMarkingCodes
-    abstract fun statesDao(): CDaoStates
     abstract fun mainDao(): CDaoMain
 
     companion object {

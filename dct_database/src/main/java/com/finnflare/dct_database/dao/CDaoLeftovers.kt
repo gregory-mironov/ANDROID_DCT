@@ -10,47 +10,18 @@ import com.finnflare.dct_database.request_result.CRFIDScanResult
 @Dao
 abstract class CDaoLeftovers:
     IBaseDao<CEntityLeftovers> {
-    @Query("SELECT * FROM leftovers")
-    abstract fun getAll(): List<CEntityLeftovers>
 
-    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId")
-    abstract fun getAllByDocId(docId: String): List<CEntityLeftovers>
-
-    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId AND _rfid = '' AND _qtyout > 0")
-    abstract fun getBarcodeByDocId(docId: String): List<CEntityLeftovers>
-
-    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId AND _rfid != '' AND _qtyout > 0")
-    abstract fun getRFIDByDocId(docId: String): List<CEntityLeftovers>
-
-    @Query("DELETE FROM leftovers")
-    abstract fun truncateTable()
+    @Transaction
+    open fun insertNewPlanLeftovers(docId: String, leftovers: List<CEntityLeftovers>) {
+        clearPlanLeftovers(docId)
+        insert(leftovers)
+    }
 
     @Query("""
         DELETE FROM leftovers
         WHERE _doc_id = :docId AND _qtyout = 0
     """)
     abstract fun clearPlanLeftovers(docId: String)
-
-    @Query("""
-        DELETE FROM leftovers
-        WHERE _doc_id NOT IN (SELECT _id FROM docs)
-    """)
-    abstract fun clearOldLeftovers()
-
-    @Transaction
-    open fun refillTable(aObjList: List<CEntityLeftovers>) {
-        truncateTable()
-        insert(aObjList)
-    }
-
-    @Query("SELECT * FROM leftovers WHERE _sn = :aSn")
-    abstract fun findBySn(aSn: String): CEntityLeftovers
-
-    @Query("SELECT * FROM leftovers WHERE _guid = :aGuid")
-    abstract fun findByGuid(aGuid: String): List<CEntityLeftovers>
-
-    @Query("SELECT * FROM leftovers WHERE _rfid = :aRfid")
-    abstract fun findByRfid(aRfid: String): CEntityLeftovers
 
     @Query("""
         UPDATE leftovers 
@@ -82,9 +53,9 @@ abstract class CDaoLeftovers:
             _state as state,
             _qtyout as qtyout
         FROM leftovers
-        WHERE _store_id = :aStoreId AND _doc_id = :aDocumentId AND _qtyin = 0 AND _rfid != ''
+        WHERE _doc_id = :aDocumentId AND _qtyin = 0 AND _rfid != ''
     """)
-    abstract fun getRFIDScanResults(aStoreId: String, aDocumentId: String): List<CRFIDScanResult>
+    abstract fun getRFIDScanResults(aDocumentId: String): List<CRFIDScanResult>
 
     @Query("""
         SELECT
@@ -94,9 +65,15 @@ abstract class CDaoLeftovers:
             _state as state,
             _qtyout as qtyout
         FROM leftovers
-        WHERE _store_id = :aStoreId AND _doc_id = :aDocumentId AND _qtyin = 0 AND _rfid == ''
+        WHERE _doc_id = :aDocumentId AND _qtyin = 0 AND _rfid == ''
     """)
-    abstract fun getBarcodeScanResults(aStoreId: String, aDocumentId: String): List<CBarcodeScanResult>
+    abstract fun getBarcodeScanResults(aDocumentId: String): List<CBarcodeScanResult>
+
+    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId AND _rfid = '' AND _qtyout > 0")
+    abstract fun getBarcodeByDocId(docId: String): List<CEntityLeftovers>
+
+    @Query("SELECT * FROM leftovers WHERE _doc_id = :docId AND _rfid != '' AND _qtyout > 0")
+    abstract fun getRFIDByDocId(docId: String): List<CEntityLeftovers>
 
     @Query("DELETE FROM leftovers WHERE _qtyin = 0")
     abstract fun deleteAllResults()

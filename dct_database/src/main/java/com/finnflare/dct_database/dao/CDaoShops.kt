@@ -6,8 +6,7 @@ import androidx.room.Transaction
 import com.finnflare.dct_database.entity.CEntityShops
 
 @Dao
-abstract class CDaoShops:
-    IBaseDao<CEntityShops> {
+abstract class CDaoShops : IBaseDao<CEntityShops> {
     @Query("SELECT * FROM shops")
     abstract fun getAll(): List<CEntityShops>
 
@@ -19,7 +18,4 @@ abstract class CDaoShops:
         truncateTable()
         insert(aObjList)
     }
-
-    @Query("SELECT * FROM shops WHERE _id = :aId")
-    abstract fun findById(aId: String): CEntityShops
 }

@@ -73,7 +73,7 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
             val date = if (month < 9) "$year-0${month + 1}-${day}T00:00:00"
             else "$year-${month + 1}-${day}T00:00:00"
 
-            networkViewModel.getDocsList(date, locationId)
+            networkViewModel.getShopDocs(date, locationId)
 
             documentList.value?.let { list ->
                 list.clear()

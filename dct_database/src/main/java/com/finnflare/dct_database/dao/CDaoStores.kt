@@ -8,8 +8,6 @@ import com.finnflare.dct_database.entity.CEntityStores
 @Dao
 abstract class CDaoStores:
     IBaseDao<CEntityStores> {
-    @Query("SELECT * FROM storages")
-    abstract fun getAll(): List<CEntityStores>
 
     @Query("DELETE FROM storages")
     abstract fun truncateTable()
@@ -19,7 +17,4 @@ abstract class CDaoStores:
         truncateTable()
         insert(aObjList)
     }
-
-    @Query("SELECT * FROM storages WHERE _id = :aId")
-    abstract fun findById(aId: String): CEntityStores
 }
