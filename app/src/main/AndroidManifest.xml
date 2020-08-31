@@ -21,7 +21,8 @@
         <activity android:name=".ui.items.ItemsActivity" />
         <activity android:name=".ui.location.LocationActivity" />
         <activity android:name=".ui.login.LoginActivity" />
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.MainActivity"
+            android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
