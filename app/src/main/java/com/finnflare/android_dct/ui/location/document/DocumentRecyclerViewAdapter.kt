@@ -73,15 +73,13 @@ class DocumentRecyclerViewAdapter(
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                mValuesFiltered = if (charString.isEmpty()) { mValues } else {
-                    val filteredList = mutableListOf<Document>()
-                    for (location in mValues) {
-                        if (location.title.toLowerCase(Locale.ROOT)
-                                .contains(charString.toLowerCase(Locale.ROOT))) {
-                            filteredList.add(location)
-                        }
+                mValuesFiltered = if (charString.isEmpty()) {
+                    mValues
+                } else {
+                    mValues.filter {
+                        it.title.toLowerCase(Locale.ROOT)
+                            .contains(charString.toLowerCase(Locale.ROOT))
                     }
-                    filteredList
                 }
 
                 return FilterResults().apply { values = mValuesFiltered}

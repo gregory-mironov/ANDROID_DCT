@@ -17,7 +17,7 @@ class PlanRecyclerViewAdapter(
     private var mValues: List<Item>,
     private val mListener: PlanItemsListFragment.OnListPlanItemsListFragmentInteractionListener?,
     private val mContext: Context
-) : RecyclerView.Adapter<PlanRecyclerViewAdapter.ViewHolder>(), Filterable{
+) : RecyclerView.Adapter<PlanRecyclerViewAdapter.ViewHolder>(), Filterable {
 
     private val mOnClickListener: View.OnClickListener
 
@@ -70,18 +70,16 @@ class PlanRecyclerViewAdapter(
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                mValuesFiltered = if (charString.isEmpty()) { mValues } else {
-                    val filteredList = mutableListOf<Item>()
-                    for (item in mValues) {
-                        if (item.description.toLowerCase(Locale.ROOT)
-                                .contains(charString.toLowerCase(Locale.ROOT))) {
-                            filteredList.add(item)
-                        }
+                mValuesFiltered = if (charString.isEmpty()) {
+                    mValues
+                } else {
+                    mValues.filter {
+                        it.description.toLowerCase(Locale.ROOT)
+                            .contains(charString.toLowerCase(Locale.ROOT))
                     }
-                    filteredList
                 }
 
-                return FilterResults().apply { values = mValuesFiltered}
+                return FilterResults().apply { values = mValuesFiltered }
             }
 
             override fun publishResults(
