@@ -19,9 +19,9 @@ import org.koin.core.inject
 import java.util.*
 
 @ObsoleteCoroutinesApi
-class CUIViewModel(application: Application): AndroidViewModel(application), KoinComponent {
+class CUIViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
 
-    private val networkViewModel by  inject<CNetworkViewModel>()
+    private val networkViewModel by inject<CNetworkViewModel>()
     private val databaseViewModel by inject<CDatabaseViewModel>()
 
     init {
@@ -31,6 +31,7 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
             day = this.get(Calendar.DAY_OF_MONTH)
         }
     }
+
     var year: Int
     var month: Int
     var day: Int
@@ -60,7 +61,7 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
             locationList.value?.let { list ->
                 list.clear()
                 databaseViewModel.getLocationsList().forEach {
-                   list.add(Location(it.mDescription, "", it.mId))
+                    list.add(Location(it.mDescription, "", it.mId))
                 }
             }
 
@@ -77,18 +78,16 @@ class CUIViewModel(application: Application): AndroidViewModel(application), Koi
 
             documentList.value?.let { list ->
                 list.clear()
-                databaseViewModel.getDatedDocsList(date).forEach {
-                    list.add(
-                        Document(
-                            it.mNumber,
-                            it.mBasis,
-                            it.mAuditor,
-                            it.mQty,
-                            it.mQtyFact,
-                            it.mId
-                        )
+                list.addAll(databaseViewModel.getDatedDocsList(date).map {
+                    Document(
+                        it.mNumber,
+                        it.mBasis,
+                        it.mAuditor,
+                        it.mQty,
+                        it.mQtyFact,
+                        it.mId
                     )
-                }
+                })
             }
 
             documentList.postValue(documentList.value)

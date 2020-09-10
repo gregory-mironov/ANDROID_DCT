@@ -24,7 +24,7 @@ import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 @ObsoleteCoroutinesApi
-class CameraScanActivity: AppCompatActivity() {
+class CameraScanActivity : AppCompatActivity() {
     private val viewModel by inject<CScannerViewModel>()
 
     private val ARG_FLASH = "flash_arg"
@@ -63,8 +63,6 @@ class CameraScanActivity: AppCompatActivity() {
             if (System.currentTimeMillis() - lastScanTime < 750)
                 return
 
-            beepManager!!.playBeepSoundAndVibrate()
-
             viewModel.scanResult.value = ScanDecoder.decodeScanResult(result.text)
 
             lastScanTime = System.currentTimeMillis()
@@ -78,6 +76,8 @@ class CameraScanActivity: AppCompatActivity() {
         setContentView(R.layout.activity_continuous_scan)
         configureToolbar()
 
+        viewModel.scanResult.observe(this, scanObserver)
+
         val formats = listOf(BarcodeFormat.QR_CODE, BarcodeFormat.EAN_13)
 
         barcode_scanner.barcodeView.decoderFactory = DefaultDecoderFactory(formats)
@@ -90,7 +90,7 @@ class CameraScanActivity: AppCompatActivity() {
         fab_resume_pause.setIcon(R.drawable.ic_resume)
         fab_resume_pause.setOnClickListener { onResumePauseClick() }
 
-        savedInstanceState?.let{
+        savedInstanceState?.let {
             mScan = savedInstanceState.getBoolean(ARG_SCAN)
             mFlash = savedInstanceState.getBoolean(ARG_FLASH)
         }
@@ -99,13 +99,11 @@ class CameraScanActivity: AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         barcode_scanner!!.resume()
-        viewModel.scanResult.observe(this, scanObserver)
     }
 
     override fun onPause() {
         super.onPause()
         barcode_scanner!!.pause()
-        viewModel.scanResult.removeObserver(scanObserver)
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
@@ -125,14 +123,14 @@ class CameraScanActivity: AppCompatActivity() {
             fab_resume_pause.setIcon(R.drawable.ic_pause)
             barcode_scanner!!.pause()
             false
-        } else{
+        } else {
             fab_resume_pause.setIcon(R.drawable.ic_resume)
             barcode_scanner!!.resume()
             true
         }
     }
 
-    private fun configureToolbar(){
+    private fun configureToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.scan_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = resources.getString(R.string.title_activity_scan)
@@ -152,11 +150,11 @@ class CameraScanActivity: AppCompatActivity() {
                 finish()
                 true
             }
-            R.id.scanner_flash_button ->{
+            R.id.scanner_flash_button -> {
                 mFlash = if (mFlash) {
                     barcode_scanner.setTorchOff()
                     false
-                } else{
+                } else {
                     barcode_scanner.setTorchOn()
                     true
                 }

@@ -14,7 +14,7 @@ import org.koin.core.inject
 import java.util.*
 
 @ObsoleteCoroutinesApi
-class CScannerViewModel(application: Application): AndroidViewModel(application), KoinComponent {
+class CScannerViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
     val scannerDispatcher: CoroutineDispatcher = newSingleThreadContext("DBCoroutine")
     private val database by inject<CDatabaseViewModel>()
     private val network by inject<CNetworkViewModel>()
@@ -35,6 +35,14 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     val planItemsList = MutableLiveData<MutableList<Item>>(mutableListOf())
     val factItemsList = MutableLiveData<MutableList<Item>>(mutableListOf())
 
+    val correctBarcodeItemsCount = MutableLiveData(0)
+    val wrongBarcodeItemsCount = MutableLiveData(0)
+
+    val correctRfidItemsCount = MutableLiveData(0)
+    val wrongRfidItemsCount = MutableLiveData(0)
+
+    val planItemsCount = MutableLiveData(0)
+
     init {
         CoroutineScope(Dispatchers.Default).launch {
             when (Build.MANUFACTURER) {
@@ -52,20 +60,50 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
             planItemsList.value?.clear()
             factItemsList.value?.clear()
 
-            database.getLeftovers(docId).forEach {
-                val item = Item(it.guid, it.description, it.model.toString(), it.color.toString(),
-                    it.size.toString(), it.qtyoutBarcode, it.qtyoutRfid, it.qtyin)
+            var plan = 0
+            var corr_f_b = 0
+            var wrong_f_b = 0
+            var corr_f_r = 0
+            var wrong_f_r = 0
+
+            for (lo in database.getLeftovers(docId)) {
+                val item = Item(
+                    lo.guid, lo.description, lo.model.toString(), lo.color.toString(),
+                    lo.size.toString(), lo.qtyoutBarcode, lo.qtyoutRfid, lo.qtyin
+                )
+
+                if (item.planCount != 0) {
+                    planItemsList.value?.add(item)
+                    plan += item.planCount
+                }
+
+                if (item.rfidCount == 0 && item.barcodeCount == 0)
+                    continue
 
                 factItemsList.value?.add(item)
-                if (it.qtyin != 0)
-                    planItemsList.value?.add(item)
+
+                if (item.planCount < item.barcodeCount)
+                    wrong_f_b += item.barcodeCount - item.planCount
+                else
+                    corr_f_b += item.barcodeCount
+
+                if (item.planCount < item.rfidCount)
+                    wrong_f_r += item.rfidCount - item.planCount
+                else
+                    corr_f_r += item.rfidCount
             }
+            wrongBarcodeItemsCount.postValue(wrong_f_b)
+            correctBarcodeItemsCount.postValue(corr_f_b)
+
+            wrongRfidItemsCount.postValue(wrong_f_r)
+            correctRfidItemsCount.postValue(corr_f_r)
+
+            planItemsCount.postValue(plan)
+
         }.join()
-        GlobalScope.launch {
-            withContext(Dispatchers.Main) {
-                planItemsList.value = planItemsList.value
-                factItemsList.value = factItemsList.value
-            }
+        CoroutineScope(Dispatchers.Main).launch {
+            planItemsList.value = planItemsList.value
+            factItemsList.value = factItemsList.value
         }
     }
 
@@ -74,6 +112,43 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
             network.getLeftoversList(docId)
             getItemsList()
         }.join()
+    }
+
+    fun cleanRfidLeftovers() {
+        CoroutineScope(database.dbDispatcher).launch {
+            database.deleteRfidResults(docId)
+        }
+
+        correctRfidItemsCount.value = 0
+        wrongRfidItemsCount.value = 0
+
+        // Т.к. внутри ссылки на одни и те же объекты,
+        // достаточно обработать лишь один
+        factItemsList.value?.apply {
+            this.forEach { it.rfidCount = 0 }
+            this.removeAll { it.barcodeCount == 0 && it.rfidCount == 0 }
+        }
+        factItemsList.value = factItemsList.value
+        planItemsList.value = planItemsList.value
+    }
+
+    fun cleanBarcodeLeftovers() {
+        CoroutineScope(database.dbDispatcher).launch {
+            database.deleteBarcodeResults(docId)
+        }
+
+        correctBarcodeItemsCount.value = 0
+        wrongBarcodeItemsCount.value = 0
+
+        // Т.к. внутри ссылки на одни и те же объекты,
+        // достаточно обработать лишь один
+        factItemsList.value?.apply {
+            this.forEach { it.barcodeCount = 0 }
+            this.removeAll { it.barcodeCount == 0 && it.rfidCount == 0 }
+        }
+
+        factItemsList.value = factItemsList.value
+        planItemsList.value = planItemsList.value
     }
 
     fun getPlanListNotFound() = planItemsList.value!!.filter {
@@ -97,95 +172,74 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
         val guid = database.getMCByGtin(gtin)?.mGuid.toString()
 
         return when (database.scanResultProcessing(docId, gtin, sn, rfid)) {
-            -4 -> {
-                    factItemsList.value!!.add(
-                        Item(
-                            guid = guid,
-                            description = "",
-                            model = "",
-                            color = "",
-                            size = "",
-                            rfidCount = 1
-                        )
+            -4, -3 -> {
+                factItemsList.value!!.add(
+                    Item(
+                        guid = guid,
+                        description = "",
+                        model = "",
+                        color = "",
+                        size = "",
+                        rfidCount = 1
                     )
-                    -3
-                }
-            -3 -> {
-                    factItemsList.value!!.add(
-                        Item(
-                            guid = guid,
-                            description = "",
-                            model = "",
-                            color = "",
-                            size = "",
-                            rfidCount = 1
-                        )
-                    )
-                    -3
-                }
+                )
+
+                wrongRfidItemsCount.postValue(wrongRfidItemsCount.value!!.plus(1))
+
+                -3
+            }
             -2 -> {
-                    planItemsList.value!!.find { it.guid == guid }!!.let {
-                        factItemsList.value!!.add(
-                            Item(
-                                guid = it.guid,
-                                description = it.description,
-                                model = it.model,
-                                color = it.color,
-                                size = it.size,
-                                rfidCount = 1,
-                                planCount = it.planCount
-                            )
-                        )
-                    }
-                    -2
+                planItemsList.value!!.find { it.guid == guid }!!.let {
+                    it.rfidCount = 1
+
+                    factItemsList.value!!.add(it)
                 }
+
+                correctRfidItemsCount.postValue(correctRfidItemsCount.value!!.plus(1))
+
+                -2
+            }
             1 -> {
-                    planItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
-                    factItemsList.value!!.find { it.guid == guid }!!.let { it.barcodeCount++ }
-                    1
+                // planitemsList не нужно инкрементировать, т.к.
+                // внутри ссылки на одни и те же объекты
+                factItemsList.value!!.find { it.guid == guid }!!.let {
+                    it.barcodeCount++
+
+                    if (it.planCount < it.barcodeCount)
+                        wrongBarcodeItemsCount.postValue(wrongBarcodeItemsCount.value!!.plus(1))
+                    else
+                        correctBarcodeItemsCount.postValue(correctBarcodeItemsCount.value!!.plus(1))
                 }
+
+                1
+            }
             2 -> {
-                    planItemsList.value!!.find { it.guid == guid }!!.let {
-                        factItemsList.value!!.add(
-                            Item(
-                                guid = it.guid,
-                                description = it.description,
-                                model = it.model,
-                                color = it.color,
-                                size = it.size,
-                                barcodeCount = 1,
-                                planCount = it.planCount
-                            )
-                        )
-                    }
-                    2
+                planItemsList.value!!.find { it.guid == guid }!!.let {
+                    it.barcodeCount = 1
+
+                    factItemsList.value!!.add(it)
                 }
-            3 -> {
-                    factItemsList.value!!.add(
-                        Item(
-                            guid = guid,
-                            description = "",
-                            model = "",
-                            color = "",
-                            size = "",
-                            barcodeCount = 1
-                        )
+
+                correctBarcodeItemsCount.postValue(correctBarcodeItemsCount.value!!.plus(1))
+
+                2
+            }
+            3, 4 -> {
+                factItemsList.value!!.add(
+                    Item(
+                        guid = guid,
+                        description = "",
+                        model = "",
+                        color = "",
+                        size = "",
+                        barcodeCount = 1
                     )
-                    3
-                }
-            4 -> {
-                    factItemsList.value!!.add(
-                        Item(
-                            guid = guid,
-                            description = "",
-                            model = "",
-                            color = "",
-                            size = "",
-                            barcodeCount = 1
-                        )
-                    )
-                    3
-                }
+                )
+
+                wrongBarcodeItemsCount.postValue(wrongBarcodeItemsCount.value!!.plus(1))
+
+                3
+            }
             else -> 0
         }
     }
@@ -195,7 +249,7 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
 
         val mc = database.getMCByGtin(gtin) ?: return findItemDataFromRemote()
 
-        val items = planItemsList.value!!.filter { it.guid == mc.mGuid}
+        val items = planItemsList.value!!.filter { it.guid == mc.mGuid }
 
         if (items.isEmpty())
             return findItemDataFromRemote()
@@ -203,10 +257,12 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
         items[0].let { item ->
             stateList.filter { it.state_id == mc.mState }
 
-            return Pair(item.description, Triple(
-                item.color,
-                item.size,
-                if (stateList.isNotEmpty()) stateList[0].state_name else "" )
+            return Pair(
+                item.description, Triple(
+                    item.color,
+                    item.size,
+                    if (stateList.isNotEmpty()) stateList[0].state_name else ""
+                )
             )
         }
     }
@@ -218,14 +274,18 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     fun updateSearchList(mask: String) {
         searchList.clear()
         searchList.addAll(
-            planItemsList.value!!.filter { e -> e.description
-                .toLowerCase(Locale.getDefault())
-                .contains(mask.toLowerCase(Locale.getDefault()))}
+            planItemsList.value!!.filter { e ->
+                e.description
+                    .toLowerCase(Locale.getDefault())
+                    .contains(mask.toLowerCase(Locale.getDefault()))
+            }
         )
         searchList.addAll(
-            factItemsList.value!!.filter { e -> e.description
-                .toLowerCase(Locale.getDefault())
-                .contains(mask.toLowerCase(Locale.getDefault()))}
+            factItemsList.value!!.filter { e ->
+                e.description
+                    .toLowerCase(Locale.getDefault())
+                    .contains(mask.toLowerCase(Locale.getDefault()))
+            }
         )
     }
 
@@ -239,7 +299,7 @@ class CScannerViewModel(application: Application): AndroidViewModel(application)
     }
 }
 
-data class MarkingCode (
+data class MarkingCode(
     val guid: String,
     val gtin: String,
     val sn: String,
@@ -258,7 +318,7 @@ data class Item(
     val planCount: Int = 0
 ) {
     override fun equals(other: Any?): Boolean {
-        if (other !is  Item)
+        if (other !is Item)
             return false
 
         return description == other.description || guid == other.guid

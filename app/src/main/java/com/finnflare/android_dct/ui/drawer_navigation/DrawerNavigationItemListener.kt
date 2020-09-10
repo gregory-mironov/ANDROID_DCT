@@ -9,6 +9,7 @@ import com.finnflare.android_dct.R
 import com.finnflare.android_dct.ui.SettingsActivity
 import com.finnflare.dct_database.CDatabaseViewModel
 import com.finnflare.dct_network.CNetworkViewModel
+import com.finnflare.scanner.CScannerViewModel
 import com.google.android.material.navigation.NavigationView
 import com.obsez.android.lib.filechooser.ChooserDialog
 import kotlinx.coroutines.CoroutineScope
@@ -21,23 +22,23 @@ import org.koin.core.inject
 @ObsoleteCoroutinesApi
 class DrawerNavigationItemListener(
     private val context: Context,
-    private val docId: String):
+    private val docId: String
+) :
     NavigationView.OnNavigationItemSelectedListener, KoinComponent {
 
     private val network by inject<CNetworkViewModel>()
     private val database by inject<CDatabaseViewModel>()
+    private val scannerViewModel by inject<CScannerViewModel>()
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.d_nav_send_to_server -> {
-                network.sendActualDocState(docId)
-            }
-            R.id.d_nav_save_results -> {
+            R.id.d_nav_send_to_server -> network.sendActualDocState(docId)
+            R.id.d_nav_save_results ->
                 CoroutineScope(Dispatchers.IO).launch {
                     database.saveToFile(context, docId)
                 }
-            }
-            R.id.d_nav_upload_result_from_file -> {
+
+            R.id.d_nav_upload_result_from_file ->
                 ChooserDialog(context)
                     .withFilter(false, false, "json")
                     .displayPath(true)
@@ -55,21 +56,15 @@ class DrawerNavigationItemListener(
                     .cancelOnTouchOutside(true)
                     .build()
                     .show()
-            }
-            R.id.d_nav_reset_rfid_results -> {
-                CoroutineScope(database.dbDispatcher).launch {
-                    database.deleteRfidResults(docId)
-                }
-            }
-            R.id.d_nav_reset_barcode_results -> {
-                CoroutineScope(database.dbDispatcher).launch {
-                    database.deleteBarcodeResults(docId)
-                }
-            }
-            R.id.d_nav_setting -> {
-                val intent = Intent(context, SettingsActivity::class.java)
-                (context as FragmentActivity).startActivity(intent)
-            }
+            R.id.d_nav_reset_rfid_results -> scannerViewModel.cleanRfidLeftovers()
+            R.id.d_nav_reset_barcode_results -> scannerViewModel.cleanBarcodeLeftovers()
+            R.id.d_nav_setting ->
+                (context as FragmentActivity).startActivity(
+                    Intent(
+                        context,
+                        SettingsActivity::class.java
+                    )
+                )
             R.id.d_nav_info -> {
                 val fm = (context as FragmentActivity).supportFragmentManager
                 val dialogFragment = DialogFragmentInfo()

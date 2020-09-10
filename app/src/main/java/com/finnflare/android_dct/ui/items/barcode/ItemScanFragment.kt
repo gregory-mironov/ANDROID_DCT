@@ -39,74 +39,90 @@ class ItemScanFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return  if (enabled)
-        inflater.inflate(R.layout.fragment_barcode_scanner, container, false).apply {
-            correctCount = this.findViewById(R.id.barcode_correct_items_count)
-            correctCount.text = "0"
+        return if (enabled)
+            inflater.inflate(R.layout.fragment_barcode_scanner, container, false).apply {
+                correctCount = this.findViewById(R.id.barcode_correct_items_count)
+                correctCount.text = scannerViewModel.correctBarcodeItemsCount.value.toString()
 
-            wrongCount = this.findViewById(R.id.barcode_wrong_items_count)
-            correctCount.text = "0"
+                wrongCount = this.findViewById(R.id.barcode_wrong_items_count)
+                wrongCount.text = scannerViewModel.wrongBarcodeItemsCount.value.toString()
 
-            planCount = this.findViewById(R.id.barcode_plan_items_count)
-            planCount.text = "0"
+                planCount = this.findViewById(R.id.barcode_plan_items_count)
+                planCount.text = scannerViewModel.planItemsCount.value.toString()
 
-            itemDescription = this.findViewById(R.id.scanner_item_description)
-            itemColor = this.findViewById(R.id.scanner_item_color)
-            itemSize = this.findViewById(R.id.scanner_item_size)
-            itemState = this.findViewById(R.id.scanner_item_state)
+                itemDescription = this.findViewById(R.id.scanner_item_description)
+                itemColor = this.findViewById(R.id.scanner_item_color)
+                itemSize = this.findViewById(R.id.scanner_item_size)
+                itemState = this.findViewById(R.id.scanner_item_state)
 
-            scannerViewModel.scanResult.observe(viewLifecycleOwner, enabledScanObserver)
-        }
-    else
-        inflater.inflate(R.layout.fragment_barcode_camera, container, false).apply {
-            progressBar = this.findViewById(R.id.cameraProgressBar)
-
-            correctCount = this.findViewById(R.id.camera_correct_items_count)
-
-            wrongCount = this.findViewById(R.id.camera_wrong_items_count)
-
-            planCount = this.findViewById(R.id.camera_plan_items_count)
-            this.findViewById<Button>(R.id.cameraScanButton).setOnClickListener {
-                scannerViewModel.scanner.startBarcodeScanUI()
+                scannerViewModel.scanResult.observe(viewLifecycleOwner, enabledScanObserver)
             }
-        }
+        else
+            inflater.inflate(R.layout.fragment_barcode_camera, container, false).apply {
+                progressBar = this.findViewById(R.id.cameraProgressBar)
+
+                correctCount = this.findViewById(R.id.camera_correct_items_count)
+                correctCount.text = scannerViewModel.correctBarcodeItemsCount.value.toString()
+
+                wrongCount = this.findViewById(R.id.camera_wrong_items_count)
+                wrongCount.text = scannerViewModel.wrongBarcodeItemsCount.value.toString()
+
+                planCount = this.findViewById(R.id.camera_plan_items_count)
+                planCount.text = scannerViewModel.planItemsCount.value.toString()
+
+                this.findViewById<Button>(R.id.cameraScanButton).setOnClickListener {
+                    scannerViewModel.scanner.startBarcodeScanUI()
+                }
+            }
     }
 
     override fun onStart() {
         super.onStart()
-        updateCounts()
-    }
 
-    private fun updateCounts() {
-        lifecycleScope.launch {
-            var correct = 0
-            var wrong = 0
+        if (enabled) {
+            scannerViewModel.correctBarcodeItemsCount.observe(this, Observer {
+                correctCount.text = it.toString()
+            })
 
-            scannerViewModel.factItemsList.value!!.distinct().forEach {
-                if (it.barcodeCount > it.planCount) {
-                    wrong += it.barcodeCount - it.planCount
-                    correct += it.planCount
-                }
-                else
-                    correct += it.barcodeCount
-            }
+            scannerViewModel.wrongBarcodeItemsCount.observe(this, Observer {
+                wrongCount.text = it.toString()
+            })
 
-            correctCount.text = correct.toString()
-            wrongCount.text = wrong.toString()
+            scannerViewModel.planItemsCount.observe(this, Observer {
+                planCount.text = it.toString()
+            })
 
-            var plan = 0
-            scannerViewModel.planItemsList.value!!.forEach { plan += it.planCount }
-            planCount.text = plan.toString()
-
-            if (enabled)
-                return@launch
-
-            progressBar?.let {
-                it.max = plan + wrong
-                it.progress = plan + wrong
-                it.secondaryProgress = correct
-            }
+            return
         }
+
+        scannerViewModel.correctBarcodeItemsCount.observe(this, Observer {
+            progressBar?.secondaryProgress = it
+            correctCount.text = it.toString()
+        })
+
+        scannerViewModel.wrongBarcodeItemsCount.observe(this, Observer {
+            progressBar?.let { pb ->
+
+                pb.max += it - if (wrongCount.text.toString()
+                        .isEmpty()
+                ) 0 else wrongCount.text.toString().toInt()
+
+                pb.progress = pb.max
+            }
+            wrongCount.text = it.toString()
+        })
+
+        scannerViewModel.planItemsCount.observe(this, Observer {
+            progressBar?.let { pb ->
+
+                pb.max += it - if (planCount.text.toString()
+                        .isEmpty()
+                ) 0 else planCount.text.toString().toInt()
+
+                pb.progress = pb.max
+            }
+            planCount.text = it.toString()
+        })
     }
 
     companion object {
@@ -117,24 +133,22 @@ class ItemScanFragment : Fragment() {
             }
     }
 
-    private val enabledScanObserver = Observer<Triple<String, String, String>> {
-        if (it.first.isEmpty() && it.second.isEmpty() && it.third.isEmpty())
+    private val enabledScanObserver = Observer<Triple<String, String, String>> { res ->
+        if (res.first.isEmpty() && res.second.isEmpty() && res.third.isEmpty())
             return@Observer
 
-        lifecycleScope.launch {
-            CoroutineScope(scannerViewModel.scannerDispatcher).launch {
-                scannerViewModel.increaseItemCount(it.first, it.second, it.third)
-                scannerViewModel.scanResult.postValue(Triple("", "", ""))
-            }.join()
+        CoroutineScope(scannerViewModel.scannerDispatcher).launch {
+            scannerViewModel.increaseItemCount(res.first, res.second, res.third)
+            scannerViewModel.scanResult.postValue(Triple("", "", ""))
 
-            scannerViewModel.getItemData(it.first, it.second, it.third).apply {
-                itemDescription?.text = this.first
-                itemColor?.text = this.second.first
-                itemSize?.text = this.second.second
-                itemState?.text = this.second.third
+            scannerViewModel.getItemData(res.first, res.second, res.third).let { data ->
+                lifecycleScope.launch {
+                    itemDescription?.text = data.first
+                    itemColor?.text = data.second.first
+                    itemSize?.text = data.second.second
+                    itemState?.text = data.second.third
+                }
             }
-
-            updateCounts()
         }
     }
 }
