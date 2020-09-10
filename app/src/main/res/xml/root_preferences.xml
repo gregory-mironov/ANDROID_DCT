@@ -7,30 +7,30 @@
         app:key="setting_center_servel_url"
         app:useSimpleSummaryProvider="true" />
 
-    <androidx.preference.EditTextPreference
-        android:title="@string/setting_image_url_title"
-        app:iconSpaceReserved="false"
-        app:key="setting_image_url"
-        app:useSimpleSummaryProvider="true" />
+<!--    <androidx.preference.EditTextPreference-->
+<!--        android:title="@string/setting_image_url_title"-->
+<!--        app:iconSpaceReserved="false"-->
+<!--        app:key="setting_image_url"-->
+<!--        app:useSimpleSummaryProvider="true" />-->
 
-    <androidx.preference.SwitchPreferenceCompat
-        app:iconSpaceReserved="false"
-        app:key="setting_send_errors"
-        app:title="@string/setting_send_errors_title" />
+<!--    <androidx.preference.SwitchPreferenceCompat-->
+<!--        app:iconSpaceReserved="false"-->
+<!--        app:key="setting_send_errors"-->
+<!--        app:title="@string/setting_send_errors_title" />-->
 
-    <androidx.preference.SwitchPreferenceCompat
-        app:iconSpaceReserved="false"
-        app:key="setting_upload_images"
-        app:title="@string/setting_download_images_title" />
+<!--    <androidx.preference.SwitchPreferenceCompat-->
+<!--        app:iconSpaceReserved="false"-->
+<!--        app:key="setting_upload_images"-->
+<!--        app:title="@string/setting_download_images_title" />-->
 
-    <androidx.preference.SwitchPreferenceCompat
-        app:iconSpaceReserved="false"
-        app:key="setting_search_unknown"
-        app:title="@string/setting_search_unknown_title" />
+<!--    <androidx.preference.SwitchPreferenceCompat-->
+<!--        app:iconSpaceReserved="false"-->
+<!--        app:key="setting_search_unknown"-->
+<!--        app:title="@string/setting_search_unknown_title" />-->
 
-    <androidx.preference.SwitchPreferenceCompat
-        app:iconSpaceReserved="false"
-        app:key="setting_send_data_online"
-        app:title="@string/setting_send_data_online" />
+<!--    <androidx.preference.SwitchPreferenceCompat-->
+<!--        app:iconSpaceReserved="false"-->
+<!--        app:key="setting_send_data_online"-->
+<!--        app:title="@string/setting_send_data_online" />-->
 
 </androidx.preference.PreferenceScreen>
