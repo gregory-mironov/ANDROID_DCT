@@ -1,6 +1,7 @@
 package com.finnflare.android_dct
 
 import android.app.Application
+import android.content.Context
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -54,9 +55,9 @@ class CUIViewModel(application: Application) : AndroidViewModel(application), Ko
     val locationList = MutableLiveData<MutableList<Location>>(mutableListOf())
     val documentList = MutableLiveData<MutableList<Document>>(mutableListOf())
 
-    fun getLocationsList() {
+    fun getLocationsList(context: Context) {
         CoroutineScope(databaseViewModel.dbDispatcher).launch {
-            networkViewModel.getLocationsList()
+            networkViewModel.getLocationsList(context)
 
             locationList.value?.let { list ->
                 list.clear()
@@ -69,12 +70,12 @@ class CUIViewModel(application: Application) : AndroidViewModel(application), Ko
         }
     }
 
-    suspend fun getDocumentsList(locationId: String) {
+    suspend fun getDocumentsList(context: Context, locationId: String) {
         CoroutineScope(databaseViewModel.dbDispatcher).launch {
             val date = if (month < 9) "$year-0${month + 1}-${day}T00:00:00"
             else "$year-${month + 1}-${day}T00:00:00"
 
-            networkViewModel.getShopDocs(date, locationId)
+            networkViewModel.getShopDocs(context, date, locationId)
 
             documentList.value?.let { list ->
                 list.clear()

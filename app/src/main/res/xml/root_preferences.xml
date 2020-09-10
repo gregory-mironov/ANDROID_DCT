@@ -4,7 +4,7 @@
     <androidx.preference.EditTextPreference
         android:title="@string/setting_center_servel_url_title"
         app:iconSpaceReserved="false"
-        app:key="setting_center_servel_url"
+        app:key="@string/serv_addr"
         app:useSimpleSummaryProvider="true" />
 
 <!--    <androidx.preference.EditTextPreference-->

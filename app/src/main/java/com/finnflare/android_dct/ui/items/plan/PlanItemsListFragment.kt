@@ -125,7 +125,7 @@ class PlanItemsListFragment : Fragment() {
         view.findViewById<SwipeRefreshLayout>(R.id.planSwipeRefresh).apply {
             this.setOnRefreshListener {
                 lifecycleScope.launch {
-                    scannerViewModel.refreshItemsList()
+                    scannerViewModel.refreshItemsList(this@PlanItemsListFragment.requireContext())
                     this@apply.isRefreshing = false
                 }
             }

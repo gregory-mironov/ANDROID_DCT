@@ -32,7 +32,7 @@ class DrawerNavigationItemListener(
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.d_nav_send_to_server -> network.sendActualDocState(docId)
+            R.id.d_nav_send_to_server -> network.sendActualDocState(context, docId)
             R.id.d_nav_save_results ->
                 CoroutineScope(Dispatchers.IO).launch {
                     database.saveToFile(context, docId)

@@ -65,7 +65,7 @@ class DocumentChooseFragment : Fragment(),  SearchView.OnQueryTextListener {
 
         view.findViewById<SwipeRefreshLayout>(R.id.documentSwipeRefresh).setOnRefreshListener {
             lifecycleScope.launch {
-                uiViewModel.getDocumentsList(locationId)
+                uiViewModel.getDocumentsList(this@DocumentChooseFragment.requireContext(), locationId)
                 documentSwipeRefresh.isRefreshing = false
             }
         }

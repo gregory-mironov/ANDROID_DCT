@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Application name -->
-    <string name="app_name" translatable="false">ANDROID_DCT</string>
+    <string name="app_name">DCT</string>
 
     <!--  LoginActivity labels  -->
     <string name="label_login">Login</string>
@@ -60,14 +60,6 @@
         product data.</string>
     <string name="d_f_info_developers">Developers:\nMironov Gregory\nNedoluzhko Denis</string>
     <string name="d_f_info_version">Version 1.0</string>
-
-    <!-- Setting labels -->
-    <string name="setting_center_servel_url_title">Central server URL</string>
-    <string name="setting_image_url_title">Images URL</string>
-    <string name="setting_send_errors_title">Send errors to server</string>
-    <string name="setting_download_images_title">Download images</string>
-    <string name="setting_search_unknown_title">Search for unknown items</string>
-    <string name="setting_send_data_online">Send data online</string>
 
     <!-- Array data -->
     <string name="array_not_selected_list">Not choosed</string>

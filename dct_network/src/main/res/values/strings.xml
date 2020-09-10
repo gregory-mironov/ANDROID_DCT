@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Setting labels -->
+    <string name="setting_center_servel_url_title">Central server URL</string>
+    <string name="setting_image_url_title">Images URL</string>
+    <string name="setting_send_errors_title">Send errors to server</string>
+    <string name="setting_download_images_title">Download images</string>
+    <string name="setting_search_unknown_title">Search for unknown items</string>
+    <string name="setting_send_data_online">Send data online</string>
+
+    <string name="serv_addr" translatable="false">setting_center_servel_url</string>
+    <string name="img_serv_addr" translatable="false">setting_image_url</string>
+
+    <string name="app_error_title">Error</string>
+    <string name="app_error_empty_address">Server\'s address must be non empty</string>
+    <string name="app_error_initialization">Smth went wrong. Please, try again</string>
+</resources>

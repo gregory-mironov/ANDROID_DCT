@@ -1,6 +1,8 @@
 package com.finnflare.dct_network
 
 import android.app.Application
+import android.content.Context
+import android.preference.PreferenceManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.finnflare.dct_database.CDatabaseViewModel
@@ -30,10 +32,38 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
     private val database by inject<CDatabaseViewModel>()
 
     val authSuccessful = MutableLiveData<Boolean>()
+    val errorMessage = MutableLiveData<String>()
 
-    fun checkAuth(login: String, password: String) {
+    fun check_serv_addr(context: Context) {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val address =
+            preferences.getString(
+                context.getString(com.finnflare.dct_network.R.string.serv_addr),
+                ""
+            ).toString()
+
+
+        if (address.isEmpty())
+            throw Exception(
+                context.resources.getString(
+                    com.finnflare.dct_network.R.string.app_error_empty_address
+                )
+            )
+
+        if (address != CNetworkService.url && !CNetworkService.init(address))
+            throw Exception(
+                context.resources.getString(
+                    com.finnflare.dct_network.R.string.app_error_initialization
+                )
+            )
+    }
+
+    fun checkAuth(context: Context, login: String, password: String) {
         CoroutineScope(netDispatcher).launch {
             try {
+                check_serv_addr(context)
+
                 val request = CAuthRequest(
                     header = Header(
                         method = "tsd.Login",
@@ -45,7 +75,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
                     )
                 )
 
-                val response = CNetworkService.Api.auth(request)
+                val response = CNetworkService.Api!!.auth(request)
 
                 if (!response.isSuccessful) {
                     authSuccessful.postValue(false)
@@ -62,14 +92,17 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
+                errorMessage.postValue(e.message.toString())
             }
 
             authSuccessful.postValue(false)
         }
     }
 
-    suspend fun getLocationsList() {
+    suspend fun getLocationsList(context: Context) {
         try {
+            check_serv_addr(context)
+
             val request = CShopsRequest(
                 header = Header(
                     method = "tsd.get.shops",
@@ -78,7 +111,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
                 request = com.finnflare.dct_network.classes.shops.Request()
             )
 
-            val response = CNetworkService.Api.getShopsList(request)
+            val response = CNetworkService.Api!!.getShopsList(request)
 
             if (!response.isSuccessful) {
                 return
@@ -93,11 +126,14 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
         } catch (e: UnknownHostException) {
         } catch (e: SocketTimeoutException) {
         } catch (e: Exception) {
+            errorMessage.postValue(e.message.toString())
         }
     }
 
-    suspend fun getShopDocs(date: String, shopId: String) {
+    suspend fun getShopDocs(context: Context, date: String, shopId: String) {
         try {
+            check_serv_addr(context)
+
             val docs = getDocsList(date, shopId)
             val mc = getMCList(shopId)
             val (goods, states) = getGoodsList(shopId)
@@ -107,6 +143,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
         } catch (e: UnknownHostException) {
         } catch (e: SocketTimeoutException) {
         } catch (e: Exception) {
+            errorMessage.postValue(e.message.toString())
         }
     }
 
@@ -122,7 +159,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
             )
         )
 
-        val docsResponse = CNetworkService.Api.getDocsList(docsRequest)
+        val docsResponse = CNetworkService.Api!!.getDocsList(docsRequest)
 
         if (!docsResponse.isSuccessful) {
             throw Error("")
@@ -161,7 +198,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
                 )
             )
 
-            val mcResponse = CNetworkService.Api.getMarkingCodesList(mcRequest)
+            val mcResponse = CNetworkService.Api!!.getMarkingCodesList(mcRequest)
 
             if (!mcResponse.isSuccessful)
                 break
@@ -209,7 +246,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
                 )
             )
 
-            val goodsResponse = CNetworkService.Api.getGoodsList(mcRequest)
+            val goodsResponse = CNetworkService.Api!!.getGoodsList(mcRequest)
 
             if (!goodsResponse.isSuccessful)
                 throw Error("")
@@ -241,8 +278,10 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
         return Pair(goods, states)
     }
 
-    suspend fun getLeftoversList(docId: String) {
+    suspend fun getLeftoversList(context: Context, docId: String) {
         try {
+            check_serv_addr(context)
+
             val request = CLeftoversRequest(
                 header = Header(
                     method = "tsd.get.leftovers",
@@ -253,7 +292,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
                 )
             )
 
-            val response = CNetworkService.Api.getLeftoversList(request)
+            val response = CNetworkService.Api!!.getLeftoversList(request)
 
             if (!response.isSuccessful) {
                 throw Error("")
@@ -277,12 +316,15 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
         } catch (e: UnknownHostException) {
         } catch (e: SocketTimeoutException) {
         } catch (e: Exception) {
+            errorMessage.postValue(e.message.toString())
         }
     }
 
-    fun sendActualDocState(docId: String) {
+    fun sendActualDocState(context: Context, docId: String) {
         CoroutineScope(netDispatcher).launch {
             try {
+                check_serv_addr(context)
+
                 val storeId = database.getDocInfo(docId).mStoreId
 
                 val request = CActualDocsRequest(
@@ -295,7 +337,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
                     )
                 )
 
-                val response = CNetworkService.Api.uploadActualDocs(request)
+                val response = CNetworkService.Api!!.uploadActualDocs(request)
 
                 if (!response.isSuccessful)
                     return@launch
@@ -303,13 +345,16 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
+                errorMessage.postValue(e.message.toString())
             }
         }
     }
 
-    fun sendActualDocsState() {
+    fun sendActualDocsState(context: Context) {
         CoroutineScope(netDispatcher).launch {
             try {
+                check_serv_addr(context)
+
                 val docs =
                     mutableListOf<com.finnflare.dct_network.classes.actual_docs.Doc>().apply {
                         database.getDocsList().map {
@@ -327,7 +372,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
                     )
                 )
 
-                val response = CNetworkService.Api.uploadActualDocs(request)
+                val response = CNetworkService.Api!!.uploadActualDocs(request)
 
                 if (!response.isSuccessful) {
                     return@launch
@@ -336,6 +381,7 @@ class CNetworkViewModel(application: Application) : AndroidViewModel(application
             } catch (e: UnknownHostException) {
             } catch (e: SocketTimeoutException) {
             } catch (e: Exception) {
+                errorMessage.postValue(e.message.toString())
             }
         }
     }

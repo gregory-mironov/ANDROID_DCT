@@ -43,7 +43,7 @@ class DrawerNavigationLocationListener(private val mContext: Context):
                         uiViewModel.day = dayOfMonth
                     }, uiViewModel.year, uiViewModel.month, uiViewModel.day)
                 .show()
-            R.id.d_nav_send_to_server -> network.sendActualDocsState()
+            R.id.d_nav_send_to_server -> network.sendActualDocsState(mContext)
             R.id.d_nav_save_results ->
                 CoroutineScope(Dispatchers.IO).launch {
                     database.saveToFile(context)

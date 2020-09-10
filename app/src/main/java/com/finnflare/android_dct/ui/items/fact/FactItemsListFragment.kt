@@ -125,7 +125,7 @@ class FactItemsListFragment : Fragment() {
         view.findViewById<SwipeRefreshLayout>(R.id.factSwipeRefresh).apply {
             this.setOnRefreshListener {
                 CoroutineScope(scannerViewModel.scannerDispatcher).launch {
-                    scannerViewModel.refreshItemsList()
+                    scannerViewModel.refreshItemsList(this@FactItemsListFragment.requireContext())
                     this@apply.isRefreshing = false
                 }
             }

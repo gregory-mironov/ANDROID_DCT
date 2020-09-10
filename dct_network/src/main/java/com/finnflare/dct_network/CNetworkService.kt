@@ -6,23 +6,30 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal object CNetworkService {
-    private const val baseURL = "https://api.finnflare.com:48014/tsd/hs/im/api/"
+    var url = ""
+        private set
 
-    val Api: IFinnFlareApiService
+    internal var Api: IFinnFlareApiService? = null
 
-    init {
-        val client = OkHttpClient.Builder()
+    fun init(new_url: String?): Boolean {
+        if (new_url != null && new_url.isNotEmpty())
+            url = new_url
 
-        if (BuildConfig.DEBUG) {
-            val logging = HttpLoggingInterceptor()
-            logging.level = HttpLoggingInterceptor.Level.BODY
-            client.addInterceptor(logging)
-        }
+        if (url.isEmpty())
+            return false
 
         Api = Retrofit.Builder()
-            .baseUrl(baseURL)
+            .baseUrl(url)
             .addConverterFactory(MoshiConverterFactory.create())
-            .client(client.build())
+            .client(OkHttpClient.Builder().apply {
+                if (BuildConfig.DEBUG) {
+                    val logging = HttpLoggingInterceptor()
+                    logging.level = HttpLoggingInterceptor.Level.BODY
+                    this.addInterceptor(logging)
+                }
+            }.build())
             .build().create(IFinnFlareApiService::class.java)
+
+        return true
     }
 }

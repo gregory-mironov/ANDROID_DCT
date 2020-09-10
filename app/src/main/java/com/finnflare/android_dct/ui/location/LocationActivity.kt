@@ -51,7 +51,7 @@ class LocationActivity : AppCompatActivity(),
             }
 
         lifecycleScope.launch {
-            uiViewModel.getLocationsList()
+            uiViewModel.getLocationsList(this@LocationActivity)
         }
     }
 

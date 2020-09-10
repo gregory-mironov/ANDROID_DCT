@@ -1,6 +1,7 @@
 package com.finnflare.scanner
 
 import android.app.Application
+import android.content.Context
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -107,9 +108,9 @@ class CScannerViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    suspend fun refreshItemsList() {
+    suspend fun refreshItemsList(context: Context) {
         CoroutineScope(database.dbDispatcher).launch {
-            network.getLeftoversList(docId)
+            network.getLeftoversList(context, docId)
             getItemsList()
         }.join()
     }

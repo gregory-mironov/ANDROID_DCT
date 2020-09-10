@@ -62,7 +62,7 @@ class LocationChooseFragment : Fragment(), SearchView.OnQueryTextListener {
 
         view.findViewById<SwipeRefreshLayout>(R.id.locationSwipeRefresh).setOnRefreshListener {
             lifecycleScope.launch {
-                uiViewModel.getLocationsList()
+                uiViewModel.getLocationsList(this@LocationChooseFragment.requireContext())
                 locationSwipeRefresh.isRefreshing = false
             }
         }

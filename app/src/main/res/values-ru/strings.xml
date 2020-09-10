@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Application name -->
+    <string name="app_name">Терминал</string>
 
     <!--  LoginActivity labels  -->
     <string name="label_login">Логин</string>
@@ -53,14 +55,6 @@
     <string name="d_f_info_developers">Разработчики:\nМиронов Григорий\nНедолужко Денис</string>
     <string name="d_f_info_about_app">Это приложение разработано для терминалов сбора данных о товарах</string>
     <string name="d_f_info_version">Версия 1.0</string>
-
-    <!-- Setting labels -->
-    <string name="setting_center_servel_url_title">URL центрального сервера</string>
-    <string name="setting_image_url_title">URL изображений</string>
-    <string name="setting_send_errors_title">Передавать ошибки на сервер</string>
-    <string name="setting_download_images_title">Загружать изображения</string>
-    <string name="setting_search_unknown_title">Искать неизветсные товары</string>
-    <string name="setting_send_data_online">Передавать данные онлайн</string>
 
     <!-- Array data -->
     <string name="array_not_selected_list">Не выбрано</string>
