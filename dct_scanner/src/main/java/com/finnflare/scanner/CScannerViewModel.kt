@@ -168,10 +168,10 @@ class CScannerViewModel(application: Application) : AndroidViewModel(application
         it.barcodeCount > it.planCount || it.rfidCount > it.planCount
     }
 
-    fun increaseItemCount(gtin: String, sn: String, rfid: String): Int {
+    fun increaseItemCount(gtin: String, sn: String, rfid: String) {
         val guid = database.getMCByGtin(gtin)?.mGuid.toString()
 
-        return when (database.scanResultProcessing(docId, gtin, sn, rfid)) {
+        when (database.scanResultProcessing(docId, gtin, sn, rfid)) {
             -4, -3 -> {
                 factItemsList.value!!.add(
                     Item(
@@ -185,8 +185,6 @@ class CScannerViewModel(application: Application) : AndroidViewModel(application
                 )
 
                 wrongRfidItemsCount.postValue(wrongRfidItemsCount.value!!.plus(1))
-
-                -3
             }
             -2 -> {
                 planItemsList.value!!.find { it.guid == guid }!!.let {
@@ -196,8 +194,6 @@ class CScannerViewModel(application: Application) : AndroidViewModel(application
                 }
 
                 correctRfidItemsCount.postValue(correctRfidItemsCount.value!!.plus(1))
-
-                -2
             }
             1 -> {
                 // planitemsList не нужно инкрементировать, т.к.
@@ -210,8 +206,6 @@ class CScannerViewModel(application: Application) : AndroidViewModel(application
                     else
                         correctBarcodeItemsCount.postValue(correctBarcodeItemsCount.value!!.plus(1))
                 }
-
-                1
             }
             2 -> {
                 planItemsList.value!!.find { it.guid == guid }!!.let {
@@ -221,8 +215,6 @@ class CScannerViewModel(application: Application) : AndroidViewModel(application
                 }
 
                 correctBarcodeItemsCount.postValue(correctBarcodeItemsCount.value!!.plus(1))
-
-                2
             }
             3, 4 -> {
                 factItemsList.value!!.add(
@@ -237,10 +229,7 @@ class CScannerViewModel(application: Application) : AndroidViewModel(application
                 )
 
                 wrongBarcodeItemsCount.postValue(wrongBarcodeItemsCount.value!!.plus(1))
-
-                3
             }
-            else -> 0
         }
     }
 

@@ -11,36 +11,21 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.finnflare.android_dct.R
 import com.finnflare.scanner.CScannerViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
+@ObsoleteCoroutinesApi
 class RFIDItemScanFragment : Fragment() {
     private val scannerViewModel by inject<CScannerViewModel>()
 
     private var enabled = false
 
-    private val scanResObserver = Observer<Triple<String, String, String>> {
-        when (scannerViewModel.increaseItemCount(it.first, it.second, it.third)) {
-            -1 -> {}
-            0 -> {
-                correctCount?.text = (correctCount?.text.toString().toInt() + 1).toString()
-
-                if (!enabled)
-                    progressBar?.secondaryProgress = correctCount?.text.toString().toInt()
-            }
-            1 -> {
-                wrongCount?.text = (wrongCount?.text.toString().toInt() + 1).toString()
-
-                if (!enabled)
-                    progressBar?.progress =
-                        planCount?.text.toString().toInt() + wrongCount?.text.toString().toInt()
-            }
-        }
-    }
-
-    private var progressBar: ProgressBar? = null
-    private var correctCount: TextView? = null
-    private var wrongCount: TextView? = null
-    private var planCount: TextView? = null
+    private lateinit var progressBar: ProgressBar
+    private lateinit var correctCount: TextView
+    private lateinit var wrongCount: TextView
+    private lateinit var planCount: TextView
 
     private var running = false
 
@@ -55,24 +40,20 @@ class RFIDItemScanFragment : Fragment() {
 
         return inflater.inflate(R.layout.fragment_rfid_enabled, container, false).apply {
             progressBar = this.findViewById(R.id.rfidProgressBar)
-            progressBar?.progress = 100
-            progressBar?.secondaryProgress = 25
+            progressBar.progress = 100
+            progressBar.secondaryProgress = 25
 
             correctCount = this.findViewById(R.id.rfid_correct_items_count)
-            correctCount?.text = "0"
 
             wrongCount = this.findViewById(R.id.rfid_wrong_items_count)
-            wrongCount?.text = "0"
 
             planCount = this.findViewById(R.id.rfid_plan_items_count)
-            planCount?.text = "0"
 
             this.findViewById<Button>(R.id.rfidScanButton).setOnClickListener {
                 if (running) {
                     scannerViewModel.scanner.stopRFIDScanUI()
                     (it as Button).text = getString(R.string.start_scan)
-                }
-                else {
+                } else {
                     scannerViewModel.scanner.startRFIDScanUI()
                     (it as Button).text = getString(R.string.stop_scan)
                 }
@@ -84,14 +65,48 @@ class RFIDItemScanFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (enabled)
-            scannerViewModel.scanResult.observe(viewLifecycleOwner, scanResObserver)
-    }
 
-    override fun onStop() {
-        super.onStop()
-        if (enabled)
-            scannerViewModel.scanResult.removeObserver(scanResObserver)
+        if (!enabled)
+            return
+
+        scannerViewModel.scanResult.observe(viewLifecycleOwner, Observer {
+            if (it.first.isEmpty() && it.second.isEmpty() && it.third.isEmpty())
+                return@Observer
+
+            scannerViewModel.scanResult.postValue(Triple("", "", ""))
+            CoroutineScope(scannerViewModel.scannerDispatcher).launch {
+                scannerViewModel.increaseItemCount(it.first, it.second, it.third)
+            }
+        })
+
+        scannerViewModel.planItemsCount.observe(this, Observer {
+            progressBar.let { pb ->
+
+                pb.max += it - if (planCount.text.toString()
+                        .isEmpty()
+                ) 0 else planCount.text.toString().toInt()
+
+                pb.progress = pb.max
+            }
+            planCount.text = it.toString()
+        })
+
+        scannerViewModel.correctRfidItemsCount.observe(this, Observer {
+            progressBar.secondaryProgress = it
+            correctCount.text = it.toString()
+        })
+
+        scannerViewModel.wrongRfidItemsCount.observe(this, Observer {
+            progressBar.let { pb ->
+
+                pb.max += it - if (wrongCount.text.toString()
+                        .isEmpty()
+                ) 0 else wrongCount.text.toString().toInt()
+
+                pb.progress = pb.max
+            }
+            wrongCount.text = it.toString()
+        })
     }
 
     companion object {
