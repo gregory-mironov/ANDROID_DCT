@@ -133,21 +133,24 @@ class ItemScanFragment : Fragment() {
             }
     }
 
-    private val enabledScanObserver = Observer<Triple<String, String, String>> { res ->
-        if (res.first.isEmpty() && res.second.isEmpty() && res.third.isEmpty())
+    private val enabledScanObserver = Observer<Triple<String, String, String>> {
+        if (it.first.isEmpty() && it.second.isEmpty() && it.third.isEmpty())
             return@Observer
 
+        scannerViewModel.scanResult.postValue(Triple("", "", ""))
         CoroutineScope(scannerViewModel.scannerDispatcher).launch {
-            scannerViewModel.increaseItemCount(res.first, res.second, res.third)
-            scannerViewModel.scanResult.postValue(Triple("", "", ""))
+            scannerViewModel.increaseItemCount(it.first, it.second, it.third)
 
-            scannerViewModel.getItemData(res.first, res.second, res.third).let { data ->
-                lifecycleScope.launch {
-                    itemDescription?.text = data.first
-                    itemColor?.text = data.second.first
-                    itemSize?.text = data.second.second
-                    itemState?.text = data.second.third
-                }
+            val data = scannerViewModel.getItemData(it.first, it.second, it.third)
+            lifecycleScope.launch {
+                itemDescription?.text =
+                    if (data.first.isNotEmpty()) data.first
+                    else resources.getString(R.string.items_empty_name_corrector)
+
+                itemColor?.text = data.second.first
+                itemSize?.text = data.second.second
+                itemState?.text = data.second.third
+
             }
         }
     }

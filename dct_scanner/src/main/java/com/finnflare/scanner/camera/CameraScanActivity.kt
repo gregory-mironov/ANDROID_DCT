@@ -20,7 +20,9 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import kotlinx.android.synthetic.main.activity_continuous_scan.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 @ObsoleteCoroutinesApi
@@ -41,6 +43,7 @@ class CameraScanActivity : AppCompatActivity() {
         if (it.first.isEmpty() && it.second.isEmpty() && it.third.isEmpty())
             return@Observer
 
+        viewModel.scanResult.postValue(Triple("", "", ""))
         CoroutineScope(viewModel.scannerDispatcher).launch {
             viewModel.increaseItemCount(it.first, it.second, it.third)
 
@@ -48,12 +51,6 @@ class CameraScanActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 full_description_of_item?.text = if (data.first.isNotEmpty()) data.first
                 else resources.getString(R.string.items_empty_name_corrector)
-            }
-
-            GlobalScope.launch {
-                withContext(Dispatchers.Main) {
-                    viewModel.scanResult.value = Triple("", "", "")
-                }
             }
         }
     }
